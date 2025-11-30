@@ -3,20 +3,30 @@ export enum Method {
   POST = "POST",
 }
 
+type RequestOptions = {
+  method?: Method;
+  body?: unknown;
+  headers?: Record<string, string>;
+  query?: Record<string, string | number | boolean>;
+};
+
 export class ApiClient {
   constructor(private baseUrl: string) {}
 
-  async request<T>(
-    path: string,
-    opts: {
-      method?: Method;
-      body?: unknown;
-      headers?: Record<string, string>;
-    } = {},
-  ): Promise<T> {
-    const { method = Method.GET, body, headers = {} } = opts;
+  async request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
+    const { method = Method.GET, body, headers = {}, query } = opts;
 
-    const res = await fetch(this.baseUrl + path, {
+    // building of the url, with query if applicable.
+    let url = this.baseUrl + path;
+    if (query) {
+      const qs = new URLSearchParams();
+      for (const key in query) {
+        const value = query[key];
+        if (value !== undefined) qs.append(key, String(value));
+      }
+    }
+
+    const res = await fetch(url, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
@@ -28,7 +38,6 @@ export class ApiClient {
       throw new Error(`inskewl: api ${path} went ${res.status}...\n${text}`);
     }
 
-    const data = await res.json();
-    return data;
+    return res.json() as Promise<T>;
   }
 }
