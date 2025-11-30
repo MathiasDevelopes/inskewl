@@ -24,6 +24,7 @@ export class ApiClient {
         const value = query[key];
         if (value !== undefined) qs.append(key, String(value));
       }
+      url += "?" + qs.toString();
     }
 
     const res = await fetch(url, {
