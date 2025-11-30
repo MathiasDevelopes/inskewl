@@ -1,0 +1,32 @@
+{
+  "name": "inskewl",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathiasDevelopes/inskewl.git"
+  },
+  "keywords": [
+    "inschool"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/MathiasDevelopes/inskewl/issues"
+  },
+  "homepage": "https://github.com/MathiasDevelopes/inskewl#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/node": "^24.10.1",
+    "rollup": "^4.53.3",
+    "rollup-plugin-userscript-metablock": "^0.4.3",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
+  }
+}

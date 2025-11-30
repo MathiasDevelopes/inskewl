@@ -1,0 +1,10 @@
+{
+  "name": "inskewl",
+  "namespace": "Violentmonkey Scripts",
+  "version": "0.0.1",
+  "description": "inskewl",
+  "author": "MathiasDevelopes",
+  "match": ["https://*.inschool.visma.no/*"],
+  "grant": "none",
+  "run-at": "document-idle"
+}
