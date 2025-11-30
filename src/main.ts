@@ -1,6 +1,5 @@
 import { api } from "./api/api";
 import { Timetable } from "./types/timetable";
-import { User } from "./types/user";
 
 (async function () {
   try {
