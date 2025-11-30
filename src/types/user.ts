@@ -1,19 +1,21 @@
 export interface User {
-  username: any | null; // we can probably assume username will be string if filled, but i dont have info about this.
+  username: any;
   displayName: string;
   givenName: string;
   familyName: string;
   roles: string[];
   academicYearId: number;
-  facultyId: any | null; // dont have info about these two.
-  localId: any | null; // ...
+  facultyId: any;
+  localId: any;
   learnerId: number;
   userInfoId: number;
-  locale: {
-    country: string;
-    language: string;
-    locale: string;
-  };
+  locale: Locale;
   schoolName: string;
   tenant: number;
+}
+
+export interface Locale {
+  country: string;
+  language: string;
+  locale: string;
 }

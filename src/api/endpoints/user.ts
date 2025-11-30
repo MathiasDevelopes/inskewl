@@ -1,22 +1,15 @@
 import { Timetable } from "../../types/timetable";
 import { User } from "../../types/user";
 import { ApiClient, Method } from "../apiClient";
+import { Session } from "../api";
 
 export class UserApi {
   private client: ApiClient;
-  private learnerId: number | null;
+  private session: Session;
 
-  constructor(client: ApiClient) {
-    this.learnerId = null;
+  constructor(client: ApiClient, session: Session) {
     this.client = client;
-  }
-
-  // Almost every api call related to user requires learner id, so we cache it here.
-  private async ensureLearnerId(): Promise<number> {
-    if (this.learnerId != null) return this.learnerId;
-    const user = await this.client.request<User>("/permissions/user");
-    this.learnerId = user.learnerId;
-    return this.learnerId;
+    this.session = session;
   }
 
   async getCurrentUser(): Promise<User> {
@@ -34,7 +27,7 @@ export class UserApi {
     types: string[] = ["LESSON", "EVENT", "ACTIVITY", "SUBSTITUTION"],
     extraInfo = true,
   ) {
-    const learnerId = await this.ensureLearnerId();
+    const learnerId = await this.session.getLearnerId();
 
     // dd/mm/yyyy
     const dateStr = week.toLocaleDateString("en-GB");
