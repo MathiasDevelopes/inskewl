@@ -33,3 +33,4 @@ Du vil nå finne `inskewl.user.js` i `dist` mappen i prosjektet.
 - [ ] Eksporter timeplan til .ics (modul)
 - [ ] Kan jeg ta fravær? (modul)
 - [ ] Dokumentasjon om API-et.
+- [ ] Modul-laster
