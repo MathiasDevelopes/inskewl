@@ -18,10 +18,8 @@ export class AttendanceApi {
   ): Promise<AttendanceSubjectGroup[]> {
     const learnerId = await this.session.getLearnerId();
 
-    const academicYearId = academicYear.id;
-
     return this.client.request<AttendanceSubjectGroup[]>(
-      `/attendance/subject-groups/learner/${learnerId}/academic-year/${academicYearId}`,
+      `/attendance/subject-groups/learner/${learnerId}/academic-year/${academicYear.id}`,
     );
   }
 }
