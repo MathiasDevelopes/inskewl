@@ -15,4 +15,10 @@ export class UserApi {
   async getCurrentUser(): Promise<User> {
     return this.client.request<User>("/permissions/user");
   }
+
+  async getMaturity(): Promise<boolean> {
+    const learnerId = await this.session.getLearnerId();
+
+    return this.client.request<boolean>(`/learner/${learnerId}/maturity`);
+  }
 }
