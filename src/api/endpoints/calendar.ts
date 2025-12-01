@@ -11,7 +11,7 @@ export class CalendarApi {
     this.session = session;
   }
 
-  async getAcademicYears() {
+  async getAcademicYears(): Promise<AcademicYear[]> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.request<AcademicYear[]>(
