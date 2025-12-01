@@ -22,7 +22,7 @@ export class TimetableApi {
     // types kan også inneholde EXAM og ASSESSMENT
     types: TimetableType[] = ["LESSON", "EVENT", "ACTIVITY", "SUBSTITUTION"],
     extraInfo = true,
-  ) {
+  ): Promise<Timetable> {
     const learnerId = await this.session.getLearnerId();
 
     // dd/mm/yyyy
