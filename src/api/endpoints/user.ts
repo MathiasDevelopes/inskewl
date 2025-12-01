@@ -13,6 +13,6 @@ export class UserApi {
   }
 
   async getCurrentUser(): Promise<User> {
-    return this.client.request("/permissions/user");
+    return this.client.request<User>("/permissions/user");
   }
 }
