@@ -12,7 +12,6 @@ export class AttendanceApi {
     this.session = session;
   }
 
-  // academicyear burde kanskje ikke være lagret i session nei.
   async getAttendanceForSubjectGroups(
     academicYear: AcademicYear,
   ): Promise<AttendanceSubjectGroup[]> {
