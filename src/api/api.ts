@@ -1,5 +1,6 @@
 import { User } from "../types/user";
 import { ApiClient } from "./apiClient";
+import { AttendanceApi } from "./endpoints/attendance";
 import { CalendarApi } from "./endpoints/calendar";
 import { TimetableApi } from "./endpoints/timetable";
 import { UserApi } from "./endpoints/user";
@@ -13,11 +14,13 @@ export class Session {
   user: UserApi;
   timetable: TimetableApi;
   calendar: CalendarApi;
+  attendance: AttendanceApi;
 
   constructor(public client: ApiClient) {
     this.user = new UserApi(this.client, this);
     this.timetable = new TimetableApi(this.client, this);
     this.calendar = new CalendarApi(this.client, this);
+    this.attendance = new AttendanceApi(this.client, this);
   }
 
   async getLearnerId(): Promise<number> {

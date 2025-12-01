@@ -1,0 +1,27 @@
+import { AttendanceSubjectGroup } from "../../types/attendance";
+import { AcademicYear } from "../../types/calendar";
+import { Session } from "../api";
+import { ApiClient } from "../apiClient";
+
+export class AttendanceApi {
+  private client: ApiClient;
+  private session: Session;
+
+  constructor(client: ApiClient, session: Session) {
+    this.client = client;
+    this.session = session;
+  }
+
+  // academicyear burde kanskje ikke være lagret i session nei.
+  async getAttendanceForSubjectGroups(
+    academicYear: AcademicYear,
+  ): Promise<AttendanceSubjectGroup[]> {
+    const learnerId = await this.session.getLearnerId();
+
+    const academicYearId = academicYear.id;
+
+    return this.client.request<AttendanceSubjectGroup[]>(
+      `/attendance/subject-groups/learner/${learnerId}/academic-year/${academicYearId}`,
+    );
+  }
+}
