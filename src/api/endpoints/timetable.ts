@@ -1,4 +1,4 @@
-import { Timetable } from "../../types/timetable";
+import { Timetable, TimetableType } from "../../types/timetable";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 
@@ -20,7 +20,7 @@ export class TimetableApi {
   async getTimetable(
     week: Date,
     // types kan også inneholde EXAM og ASSESSMENT
-    types: string[] = ["LESSON", "EVENT", "ACTIVITY", "SUBSTITUTION"],
+    types: TimetableType[] = ["LESSON", "EVENT", "ACTIVITY", "SUBSTITUTION"],
     extraInfo = true,
   ) {
     const learnerId = await this.session.getLearnerId();

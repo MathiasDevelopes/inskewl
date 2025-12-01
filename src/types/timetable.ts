@@ -1,3 +1,11 @@
+export type TimetableType =
+  | "LESSON"
+  | "EVENT"
+  | "ACTIVITY"
+  | "SUBSTITUTION"
+  | "EXAM"
+  | "ASSESSMENT";
+
 export interface Timetable {
   startDate: string;
   startTime: string;
