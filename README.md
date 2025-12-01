@@ -2,13 +2,13 @@
 WIP
 
 ## Hva gjør dette?
-inskewl skal være et modulbasert userscript som kan legge til funksjoner som ikke normalt fines i InSchool.
+inskewl skal være et modulbasert userscript som kan legge til funksjoner som ikke normalt finnes i InSchool.
 
 ## Hva er inkludert?
-Foreløpig veldig lite, basic implementasjon av api helpers og noen få endpoints.
+Noen få API endpoints er implementert, disse oppdateres foreløpig når min kode trenger de.
 
 ## Authentication?
-Siden dette kjøres som et userscript, må du bare logge inn på InSchool.
+Bruker bare nettleseren sine credentials for fetch requests.
 
 # Building
 Det er veldig enkelt å builde dette userscriptet, hvis du vil legge til mer moduler eller bare builde det selv.
