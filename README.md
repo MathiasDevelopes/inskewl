@@ -27,10 +27,3 @@ npm run build
 ```
 
 Du vil nå finne `inskewl.user.js` i `dist` mappen i prosjektet.
-
-## TODO
-- [ ] CI for automatisk bygging av UserScript, og GitHub Release på ny versjon.
-- [ ] Eksporter timeplan til .ics (modul)
-- [ ] Kan jeg ta fravær? (modul)
-- [ ] Dokumentasjon om API-et.
-- [ ] Modul-laster
