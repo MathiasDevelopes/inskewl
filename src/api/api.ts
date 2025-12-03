@@ -5,6 +5,7 @@ import { CalendarApi } from "./endpoints/calendar";
 import { SchoolApi } from "./endpoints/school";
 import { TimetableApi } from "./endpoints/timetable";
 import { UserApi } from "./endpoints/user";
+import { AssessmentApi } from "./endpoints/assessment";
 
 // fungerer kun i fanen med visma...
 const client: ApiClient = new ApiClient(`${window.location.origin}/control`);
@@ -17,6 +18,7 @@ export class Session {
   calendar: CalendarApi;
   attendance: AttendanceApi;
   school: SchoolApi;
+  assessment: AssessmentApi;
 
   constructor(public client: ApiClient) {
     this.user = new UserApi(this.client, this);
@@ -24,6 +26,7 @@ export class Session {
     this.calendar = new CalendarApi(this.client, this);
     this.attendance = new AttendanceApi(this.client, this);
     this.school = new SchoolApi(this.client, this);
+    this.assessment = new AssessmentApi(this.client, this);
   }
 
   async getLearnerId(): Promise<number> {
