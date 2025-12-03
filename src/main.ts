@@ -1,15 +1,15 @@
-import { api } from "./api/api";
-import { School } from "./api/types/school";
+import { ModuleLoader } from "./modules/core/ModuleLoader";
+import { UrlWatcher } from "./modules/core/UrlWatcher";
+import { TestModule } from "./modules/test";
 
 (async function () {
-  try {
-    const currentSchool: School = await api.school.getCurrent();
-    console.log(currentSchool);
+  const moduleLoader = new ModuleLoader([new TestModule()]);
 
-    const maturity: boolean = await api.user.getMaturity();
-    console.log(`is maturity: ${maturity}`);
-  } catch (err) {
-    console.log("ermmmm");
-    console.log(err);
-  }
+  const watcher = new UrlWatcher((url: string) => {
+    moduleLoader.handleUrlChange(url);
+  });
+
+  watcher.start();
+
+  moduleLoader.handleUrlChange(window.location.href);
 })();
