@@ -1,5 +1,5 @@
 import { api } from "../src/api/api";
-import { Timetable } from "../src/types/timetable";
+import { Timetable } from "../src/api/types/timetable";
 
 (async function () {
   try {
