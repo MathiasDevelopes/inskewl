@@ -1,4 +1,4 @@
-import { AcademicYear } from "../../types/calendar";
+import { AcademicYear } from "../types/calendar";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 

@@ -1,5 +1,5 @@
 import { api } from "./api/api";
-import { School } from "./types/school";
+import { School } from "./api/types/school";
 
 (async function () {
   try {

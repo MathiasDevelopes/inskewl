@@ -1,4 +1,4 @@
-import { Timetable, TimetableType } from "../../types/timetable";
+import { Timetable, TimetableType } from "../types/timetable";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 

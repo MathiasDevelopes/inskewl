@@ -1,4 +1,4 @@
-import { School } from "../../types/school";
+import { School } from "../types/school";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 

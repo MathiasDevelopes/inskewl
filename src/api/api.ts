@@ -1,4 +1,4 @@
-import { User } from "../types/user";
+import { User } from "./types/user";
 import { ApiClient } from "./apiClient";
 import { AttendanceApi } from "./endpoints/attendance";
 import { CalendarApi } from "./endpoints/calendar";

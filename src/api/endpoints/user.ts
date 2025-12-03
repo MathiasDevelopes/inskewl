@@ -1,6 +1,6 @@
-import { Timetable } from "../../types/timetable";
-import { User } from "../../types/user";
-import { ApiClient, Method } from "../apiClient";
+import { Timetable } from "../types/timetable";
+import { User } from "../types/user";
+import { ApiClient } from "../apiClient";
 import { Session } from "../api";
 
 export class UserApi {

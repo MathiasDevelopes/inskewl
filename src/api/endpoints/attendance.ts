@@ -1,5 +1,5 @@
-import { AttendanceSubjectGroup } from "../../types/attendance";
-import { AcademicYear } from "../../types/calendar";
+import { AttendanceSubjectGroup } from "../types/attendance";
+import { AcademicYear } from "../types/calendar";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 
