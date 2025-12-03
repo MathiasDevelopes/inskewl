@@ -27,13 +27,13 @@ export interface TimetableItem {
   academicYearId: any;
   entityId: number;
   label: string;
-  type: string;
+  type: TimetableType;
   originalType?: string;
   locations: string[];
   mainRoom?: string;
   additionalRooms?: any[];
   colour: string;
-  teachingGroupId: number;
+  teachingGroupId: number | null;
   blockName: any;
   blockId: any;
   blockDescription: any;
@@ -42,7 +42,7 @@ export interface TimetableItem {
   assessment: any;
   hasFutureAbsence: boolean;
   teacherName?: string;
-  teachers: string[];
+  teachers: string[] | null;
   extraInfo: any;
   periodNumberInDay: any;
 }
