@@ -31,7 +31,7 @@ export class Session {
 
   async getLearnerId(): Promise<number> {
     if (this.learnerId != null) return this.learnerId;
-    const user: User = await this.client.request<User>("/permissions/user");
+    const user: User = await this.user.getCurrentUser();
     this.learnerId = user.learnerId;
     return this.learnerId;
   }
