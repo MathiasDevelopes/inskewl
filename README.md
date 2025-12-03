@@ -1,5 +1,5 @@
 # inskewl
-> et modulbasert userscript som 
+> et modulbasert userscript som legger til funksjoner til InSchool
 
 ⚠️**Prosjektstatus:** work in progress (mye kan inneholde feil / mangler)
 
