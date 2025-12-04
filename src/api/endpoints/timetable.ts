@@ -1,4 +1,4 @@
-import { Timetable, TimetableType } from "../types/timetable";
+import { Timetable, TimetableSchema, TimetableType } from "../types/timetable";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 
@@ -28,8 +28,9 @@ export class TimetableApi {
     // dd/mm/yyyy
     const dateStr = week.toLocaleDateString("en-GB");
 
-    return this.client.request<Timetable>(
+    return this.client.requestWithSchema(
       `/timetablev2/learner/${learnerId}/fetch/ALL/0/current`,
+      TimetableSchema,
       {
         query: {
           forWeek: dateStr,

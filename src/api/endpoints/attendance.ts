@@ -1,7 +1,11 @@
-import { AttendanceSubjectGroup } from "../types/attendance";
+import {
+  AttendanceSubjectGroup,
+  AttendanceSubjectGroupSchema,
+} from "../types/attendance";
 import { AcademicYear } from "../types/calendar";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
+import z from "zod";
 
 export class AttendanceApi {
   private client: ApiClient;
@@ -17,8 +21,9 @@ export class AttendanceApi {
   ): Promise<AttendanceSubjectGroup[]> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.request<AttendanceSubjectGroup[]>(
+    return this.client.requestWithSchema(
       `/attendance/subject-groups/learner/${learnerId}/academic-year/${academicYear.id}`,
+      z.array(AttendanceSubjectGroupSchema),
     );
   }
 }

@@ -1,6 +1,7 @@
-import { AcademicYear } from "../types/calendar";
+import { AcademicYear, AcademicYearSchema } from "../types/calendar";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
+import z from "zod";
 
 export class CalendarApi {
   private client: ApiClient;
@@ -14,8 +15,9 @@ export class CalendarApi {
   async getAcademicYears(): Promise<AcademicYear[]> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.request<AcademicYear[]>(
+    return this.client.requestWithSchema(
       `/calendar/v2/academicyears/learner/${learnerId}`,
+      z.array(AcademicYearSchema),
     );
   }
 }

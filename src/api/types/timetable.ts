@@ -1,54 +1,60 @@
-export type TimetableType =
-  | "LESSON"
-  | "EVENT"
-  | "ACTIVITY"
-  | "SUBSTITUTION"
-  | "EXAM"
-  | "ASSESSMENT";
+import { z } from "zod";
 
-export interface Timetable {
-  startDate: string;
-  startTime: string;
-  endTime: string;
-  timetableItems: TimetableItem[];
-  warnings: any[];
-  daysInWeek: number;
-  presence: any;
-  absences: any[];
-  schools: School[];
-}
+export const TimetableTypeSchema = z.union([
+  z.literal("LESSON"),
+  z.literal("EVENT"),
+  z.literal("ACTIVITY"),
+  z.literal("SUBSTITUTION"),
+  z.literal("EXAM"),
+  z.literal("ASSESSMENT"),
+]);
 
-export interface TimetableItem {
-  id: any;
-  startTime: string;
-  endTime: string;
-  date: string;
-  tenant: number;
-  academicYearId: any;
-  entityId: number;
-  label: string;
-  type: TimetableType;
-  originalType?: string;
-  locations: string[];
-  mainRoom?: string;
-  additionalRooms?: any[];
-  colour: string;
-  teachingGroupId: number | null;
-  blockName: any;
-  blockId: any;
-  blockDescription: any;
-  subject?: string;
-  subjectCode?: string;
-  assessment: any;
-  hasFutureAbsence: boolean;
-  teacherName?: string;
-  teachers: string[] | null;
-  extraInfo: any;
-  periodNumberInDay: any;
-}
+export const TimetableItemSchema = z.object({
+  id: z.any(),
+  startTime: z.string(),
+  endTime: z.string(),
+  date: z.string(),
+  tenant: z.number(),
+  academicYearId: z.any(),
+  entityId: z.number(),
+  label: z.string(),
+  type: TimetableTypeSchema,
+  originalType: z.string().optional(),
+  locations: z.array(z.string()),
+  mainRoom: z.string().optional(),
+  additionalRooms: z.array(z.any()).optional(),
+  colour: z.string(),
+  teachingGroupId: z.number().nullable(),
+  blockName: z.any(),
+  blockId: z.any(),
+  blockDescription: z.any(),
+  subject: z.string().optional(),
+  subjectCode: z.string().optional(),
+  assessment: z.any(),
+  hasFutureAbsence: z.boolean(),
+  teacherName: z.string().optional(),
+  teachers: z.array(z.string()).nullable(),
+  extraInfo: z.any(),
+  periodNumberInDay: z.any(),
+});
 
-export interface School {
-  tenant: number;
-  name: string;
-  isMainSchool: boolean;
-}
+export const SchoolSchema = z.object({
+  tenant: z.number(),
+  name: z.string(),
+  isMainSchool: z.boolean(),
+});
+
+export const TimetableSchema = z.object({
+  startDate: z.string(),
+  startTime: z.string(),
+  endTime: z.string(),
+  timetableItems: z.array(TimetableItemSchema),
+  warnings: z.array(z.any()),
+  daysInWeek: z.number(),
+  presence: z.any(),
+  absences: z.array(z.any()),
+  schools: z.array(SchoolSchema),
+});
+
+export type Timetable = z.infer<typeof TimetableSchema>;
+export type TimetableType = z.infer<typeof TimetableTypeSchema>;

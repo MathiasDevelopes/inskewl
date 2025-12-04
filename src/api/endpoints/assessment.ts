@@ -1,6 +1,6 @@
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
-import { Behaviour } from "../types/assessment";
+import { Behaviour, BehaviourSchema } from "../types/assessment";
 
 export class AssessmentApi {
   private client: ApiClient;
@@ -14,6 +14,9 @@ export class AssessmentApi {
   async getBehaviour(): Promise<Behaviour> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.request<Behaviour>(`/assessment/behaviour/${learnerId}`);
+    return this.client.requestWithSchema(
+      `/assessment/behaviour/${learnerId}`,
+      BehaviourSchema,
+    );
   }
 }

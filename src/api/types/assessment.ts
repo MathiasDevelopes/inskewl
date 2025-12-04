@@ -1,31 +1,35 @@
-export interface Behaviour {
-  learnerName: string;
-  learnerId: number;
-  remarks: Remark[];
-  remarksCountByType: RemarksCountByType;
-  results: any[];
-  currentSchoolIsMain: any;
-}
+import { z } from "zod";
 
-export interface Remark {
-  id: number;
-  assessmentId: number;
-  learnerId: number;
-  teacherId: number;
-  lessonId: number;
-  teacherName: string;
-  subjectCode: string;
-  subjectName: string;
-  dateTime: string;
-  remark: string;
-  remarkType: string;
-  schoolInfo: SchoolInfo;
-}
+export const SchoolInfoSchema = z.object({
+  tenant: z.number(),
+  schoolName: z.string(),
+  external: z.boolean(),
+});
 
-export interface SchoolInfo {
-  tenant: number;
-  schoolName: string;
-  external: boolean;
-}
+export const RemarksCountByTypeSchema = z.object({});
 
-export interface RemarksCountByType {}
+export const RemarkSchema = z.object({
+  id: z.number(),
+  assessmentId: z.number(),
+  learnerId: z.number(),
+  teacherId: z.number(),
+  lessonId: z.number(),
+  teacherName: z.string(),
+  subjectCode: z.string(),
+  subjectName: z.string(),
+  dateTime: z.string(),
+  remark: z.string(),
+  remarkType: z.string(),
+  schoolInfo: SchoolInfoSchema,
+});
+
+export const BehaviourSchema = z.object({
+  learnerName: z.string(),
+  learnerId: z.number(),
+  remarks: z.array(RemarkSchema),
+  remarksCountByType: RemarksCountByTypeSchema,
+  results: z.array(z.any()),
+  currentSchoolIsMain: z.any(),
+});
+
+export type Behaviour = z.infer<typeof BehaviourSchema>;

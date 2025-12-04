@@ -1,4 +1,4 @@
-import { School } from "../types/school";
+import { School, SchoolSchema } from "../types/school";
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
 
@@ -12,6 +12,6 @@ export class SchoolApi {
   }
 
   async getCurrent(): Promise<School> {
-    return this.client.request<School>("/schoolinfo/current");
+    return this.client.requestWithSchema("/schoolinfo/current", SchoolSchema);
   }
 }

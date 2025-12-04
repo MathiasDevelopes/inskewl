@@ -29,5 +29,8 @@
     "rollup-plugin-userscript-metablock": "^0.4.3",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
   }
 }

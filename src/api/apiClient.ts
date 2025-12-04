@@ -1,3 +1,5 @@
+import { ZodType } from "zod";
+
 export enum Method {
   GET = "GET",
   POST = "POST",
@@ -40,5 +42,14 @@ export class ApiClient {
     }
 
     return res.json() as Promise<T>;
+  }
+
+  async requestWithSchema<T>(
+    path: string,
+    schema: ZodType<T>,
+    opts: RequestOptions = {},
+  ): Promise<T> {
+    const json = await this.request(path, opts);
+    return schema.parse(json);
   }
 }

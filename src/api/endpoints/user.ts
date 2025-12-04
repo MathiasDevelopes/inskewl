@@ -1,5 +1,5 @@
 import { Timetable } from "../types/timetable";
-import { User } from "../types/user";
+import { User, UserSchema } from "../types/user";
 import { ApiClient } from "../apiClient";
 import { Session } from "../api";
 
@@ -13,7 +13,7 @@ export class UserApi {
   }
 
   async getCurrentUser(): Promise<User> {
-    return this.client.request<User>("/permissions/user");
+    return this.client.requestWithSchema("/permissions/user", UserSchema);
   }
 
   async getMaturity(): Promise<boolean> {

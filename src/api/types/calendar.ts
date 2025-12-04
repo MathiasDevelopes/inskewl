@@ -1,26 +1,30 @@
-export interface AcademicYear {
-  id: number;
-  version: number;
-  tenant: number;
-  code: string;
-  name: string;
-  studentStartDate: string;
-  currentYear: boolean;
-  terms: Term[];
-  year: number;
-  daysInCycle: number;
-  editable: boolean;
-  endDate: string;
-  startDate: string;
-}
+import { z } from "zod";
 
-export interface Term {
-  id: number;
-  version: number;
-  startDate: string;
-  endDate: string;
-  code: string;
-  name: string;
-  term: string;
-  current: boolean;
-}
+export const TermSchema = z.object({
+  id: z.number(),
+  version: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  code: z.string(),
+  name: z.string(),
+  term: z.string(),
+  current: z.boolean(),
+});
+
+export const AcademicYearSchema = z.object({
+  id: z.number(),
+  version: z.number(),
+  tenant: z.number(),
+  code: z.string(),
+  name: z.string(),
+  studentStartDate: z.string(),
+  currentYear: z.boolean(),
+  terms: z.array(TermSchema),
+  year: z.number(),
+  daysInCycle: z.number(),
+  editable: z.boolean(),
+  endDate: z.string(),
+  startDate: z.string(),
+});
+
+export type AcademicYear = z.infer<typeof AcademicYearSchema>;
