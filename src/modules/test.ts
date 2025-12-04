@@ -17,7 +17,7 @@ export class TestModule extends VismaModule {
     let totalTeachers = 0;
 
     timetable.timetableItems.forEach((t) => {
-      t.teachers.forEach((teacher) => {
+      t.teachers?.forEach((teacher) => {
         totalTeachers++;
         teacherCounts[teacher] = (teacherCounts[teacher] || 0) + 1;
       });
