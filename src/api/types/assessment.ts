@@ -33,3 +33,10 @@ export const BehaviourSchema = z.object({
 });
 
 export type Behaviour = z.infer<typeof BehaviourSchema>;
+
+export const RemarkLimitSchema = z.object({
+  orderliness: z.number(),
+  conduct: z.number(),
+});
+
+export type RemarkLimit = z.infer<typeof RemarkLimitSchema>;

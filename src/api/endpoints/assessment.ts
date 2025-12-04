@@ -1,6 +1,11 @@
 import { Session } from "../api";
 import { ApiClient } from "../apiClient";
-import { Behaviour, BehaviourSchema } from "../types/assessment";
+import {
+  Behaviour,
+  BehaviourSchema,
+  RemarkLimit,
+  RemarkLimitSchema,
+} from "../types/assessment";
 
 export class AssessmentApi {
   private client: ApiClient;
@@ -17,6 +22,13 @@ export class AssessmentApi {
     return this.client.requestWithSchema(
       `/assessment/behaviour/${learnerId}`,
       BehaviourSchema,
+    );
+  }
+
+  async getRemarkLimit(): Promise<RemarkLimit> {
+    return this.client.requestWithSchema(
+      `/assessment/remark/limit`,
+      RemarkLimitSchema,
     );
   }
 }
