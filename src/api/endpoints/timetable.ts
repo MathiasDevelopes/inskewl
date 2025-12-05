@@ -7,6 +7,7 @@ import {
 } from "../types/timetable";
 import { Session } from "../api";
 import { ApiClient, Method } from "../apiClient";
+import z from "zod";
 
 export class TimetableApi {
   private client: ApiClient;
@@ -48,13 +49,12 @@ export class TimetableApi {
   }
 
   /* Internally a post request, but we expose it as get because the only thing posted is learner id. */
-  async getAdditionalActivityDetails(): Promise<ActivityDetail> {
-    /* NOTE: ActivityDetail is already an array. */
+  async getAdditionalActivityDetails(): Promise<ActivityDetail[]> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.requestWithSchema(
       "/timetablev2/additional-activity-details",
-      ActivityDetailSchema,
+      z.array(ActivityDetailSchema),
       {
         method: Method.POST,
         body: [learnerId],

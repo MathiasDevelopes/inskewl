@@ -59,14 +59,12 @@ export const TimetableSchema = z.object({
 export type Timetable = z.infer<typeof TimetableSchema>;
 export type TimetableType = z.infer<typeof TimetableTypeSchema>;
 
-export const ActivityDetailSchema = z.array(
-  z.object({
-    activityTimeslotId: z.number(),
-    subjects: z.array(
-      z.object({ subjectName: z.string(), minutesDeliverable: z.number() }),
-    ),
-    baseClasses: z.array(z.unknown()),
-  }),
-);
+export const ActivityDetailSchema = z.object({
+  activityTimeslotId: z.number(),
+  subjects: z.array(
+    z.object({ subjectName: z.string(), minutesDeliverable: z.number() }),
+  ),
+  baseClasses: z.array(z.unknown()),
+});
 
 export type ActivityDetail = z.infer<typeof ActivityDetailSchema>;
