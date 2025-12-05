@@ -1,6 +1,12 @@
-import { Timetable, TimetableSchema, TimetableType } from "../types/timetable";
+import {
+  ActivityDetail,
+  ActivityDetailSchema,
+  Timetable,
+  TimetableSchema,
+  TimetableType,
+} from "../types/timetable";
 import { Session } from "../api";
-import { ApiClient } from "../apiClient";
+import { ApiClient, Method } from "../apiClient";
 
 export class TimetableApi {
   private client: ApiClient;
@@ -37,6 +43,21 @@ export class TimetableApi {
           "extra-info": extraInfo,
           types: types.join(","),
         },
+      },
+    );
+  }
+
+  /* Internally a post request, but we expose it as get because the only thing posted is learner id. */
+  async getAdditionalActivityDetails(): Promise<ActivityDetail> {
+    /* NOTE: ActivityDetail is already an array. */
+    const learnerId = await this.session.getLearnerId();
+
+    return this.client.requestWithSchema(
+      "/timetablev2/additional-activity-details",
+      ActivityDetailSchema,
+      {
+        method: Method.POST,
+        body: [learnerId],
       },
     );
   }
