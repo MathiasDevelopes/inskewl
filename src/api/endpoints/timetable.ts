@@ -35,7 +35,7 @@ export class TimetableApi {
     // dd/mm/yyyy
     const dateStr = week.toLocaleDateString("en-GB");
 
-    return this.client.requestWithSchema(
+    return this.client.getWithSchema(
       `/timetablev2/learner/${learnerId}/fetch/ALL/0/current`,
       TimetableSchema,
       {
@@ -52,13 +52,10 @@ export class TimetableApi {
   async getAdditionalActivityDetails(): Promise<ActivityDetail[]> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.requestWithSchema(
+    return this.client.postWithSchema(
       "/timetablev2/additional-activity-details",
+      [learnerId],
       z.array(ActivityDetailSchema),
-      {
-        method: Method.POST,
-        body: [learnerId],
-      },
     );
   }
 }

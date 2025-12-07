@@ -19,14 +19,14 @@ export class AssessmentApi {
   async getBehaviour(): Promise<Behaviour> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.requestWithSchema(
+    return this.client.getWithSchema(
       `/assessment/behaviour/${learnerId}`,
       BehaviourSchema,
     );
   }
 
   async getRemarkLimit(): Promise<RemarkLimit> {
-    return this.client.requestWithSchema(
+    return this.client.getWithSchema(
       `/assessment/remark/limit`,
       RemarkLimitSchema,
     );

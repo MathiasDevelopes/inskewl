@@ -15,7 +15,7 @@ export class CalendarApi {
   async getAcademicYears(): Promise<AcademicYear[]> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.requestWithSchema(
+    return this.client.getWithSchema(
       `/calendar/v2/academicyears/learner/${learnerId}`,
       z.array(AcademicYearSchema),
     );

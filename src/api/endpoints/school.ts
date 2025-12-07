@@ -12,6 +12,6 @@ export class SchoolApi {
   }
 
   async getCurrent(): Promise<School> {
-    return this.client.requestWithSchema("/schoolinfo/current", SchoolSchema);
+    return this.client.getWithSchema("/schoolinfo/current", SchoolSchema);
   }
 }

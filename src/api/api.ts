@@ -8,7 +8,7 @@ import { UserApi } from "./endpoints/user";
 import { AssessmentApi } from "./endpoints/assessment";
 
 // fungerer kun i fanen med visma...
-const client: ApiClient = new ApiClient(`${window.location.origin}/control`);
+const client: ApiClient = new ApiClient(`${window.location.origin}`);
 
 export class Session {
   private learnerId: number | null = null;

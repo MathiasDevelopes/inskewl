@@ -13,12 +13,12 @@ export class UserApi {
   }
 
   async getCurrentUser(): Promise<User> {
-    return this.client.requestWithSchema("/permissions/user", UserSchema);
+    return this.client.getWithSchema("/permissions/user", UserSchema);
   }
 
   async getMaturity(): Promise<boolean> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.request<boolean>(`/learner/${learnerId}/maturity`);
+    return this.client.get<boolean>(`/learner/${learnerId}/maturity`);
   }
 }

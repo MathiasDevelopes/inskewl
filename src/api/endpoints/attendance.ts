@@ -21,7 +21,7 @@ export class AttendanceApi {
   ): Promise<AttendanceSubjectGroup[]> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.requestWithSchema(
+    return this.client.getWithSchema(
       `/attendance/subject-groups/learner/${learnerId}/academic-year/${academicYear.id}`,
       z.array(AttendanceSubjectGroupSchema),
     );
