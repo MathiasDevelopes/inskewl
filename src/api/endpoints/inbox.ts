@@ -24,4 +24,9 @@ export class InboxApi {
       },
     });
   }
+
+  /* Returns the count of new messages in your inbox */
+  async getNewCount(): Promise<number> {
+    return this.client.get<number>("/inbox/countNew");
+  }
 }
