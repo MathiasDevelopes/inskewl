@@ -26,7 +26,6 @@ export class TimetableApi {
    */
   async getTimetable(
     week: Date,
-    // types kan også inneholde EXAM og ASSESSMENT
     types: TimetableType[] = ["LESSON", "EVENT", "ACTIVITY", "SUBSTITUTION"],
     extraInfo = true,
   ): Promise<Timetable> {
