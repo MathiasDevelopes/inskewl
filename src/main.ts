@@ -1,6 +1,7 @@
 import { ModuleLoader } from "./modules/core/ModuleLoader";
 import { UrlWatcher } from "./modules/core/UrlWatcher";
 import { TestModule } from "./modules/test";
+import { TimetableToICS } from "./modules/timetabletoics";
 
 (async function () {
   const moduleLoader = new ModuleLoader([new TestModule()]);
