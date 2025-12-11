@@ -10,8 +10,8 @@
   - [Forutsetninger](#forutsetninger)
   - [Steg for steg](#steg-for-steg)
 - [For utviklere (skumle greier)](#for-utviklere-skumle-greier)
-  - [Autentisering](#autentisering)
   - [Litt om prosjektet](#litt-om-prosjektet)
+  - [Autentisering](#autentisering)
   - [Funksjoner (API)](#funksjoner-api)
   - [Bygging fra kildekode](#bygging-fra-kildekode)
     - [Requirements](#requirements)
@@ -23,10 +23,13 @@
 **inskewl** er et userscript som legger til ekstra funksjoner til VIS InSchool
 
 ## Funksjoner
-KOMMER SNART! :)
+### Planlagt
+- [ ] Eksportere timeplanen din til en universell `.ics`-kalenderfil  
+      (kompatibel med Microsoft Exchange, Google Calendar, Apple Calendar, osv.)
+- [ ] Visma Wrapped, oppsummering av skoleåret.
 
 # Installasjon
-## forutsetninger
+## Forutsetninger
 * En moderne nettleser (Chrome, Edge, Firefox, Brave, ...)
 * En av disse userscript-managerene 
   * **Violetmonkey** (anbefalt)
@@ -43,12 +46,12 @@ Installer en av disse via din nettleser sitt extension-marketplace.
 
 # For utviklere (skumle greier)
 
-## Autentisering
-Userscriptet bruker eksisterende session-cookies, så ingen ekstra login.
-
 ## Litt om prosjektet
 Prosjektet er bygd rundt:
-* et **hjemmelaga API-interface** (med typer)
+* et **hjemmelaga API-interface** (med typer, data validation)
+
+## Autentisering
+Userscriptet bruker eksisterende session-cookies, så ingen ekstra login.
 
 API mappa er helt selvstendig, så den kan brukes i andre prosjekter.
 ## Funksjoner
@@ -58,7 +61,7 @@ typed interface til InSchool endpoints
 du kan:
 * hente data programmatisk
 * gjøre handlinger via API-et
-* bruke det som standalone bibliotek
+* bruke det som standalone bibliotek (du må selv fikse autentisering)
 
 ## Bygging fra kildekode
 Hvis du vil bygge scriptet selv.
