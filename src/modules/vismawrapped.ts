@@ -14,10 +14,8 @@ export class VismaWrapped extends VismaModule {
     // for current week
     const timetable = await api.timetable.getTimetable(new Date());
 
-    const teacherHeatMap = this.getTeacherWithMostOccurances(timetable);
-    const sortedTeachers = Object.entries(teacherHeatMap).sort(
-      ([, a], [, b]) => b - a,
-    ); // sort for teacher count
+    const teacherHeatMap = this.getTeachersAndOccurances(timetable);
+    const sortedTeachers = this.sortTeachersByHours(teacherHeatMap);
 
     let alertString = "";
 
@@ -38,7 +36,8 @@ export class VismaWrapped extends VismaModule {
     // console.groupEnd();
   }
 
-  private getTeacherWithMostOccurances(
+  // Returns a Record<string, number> type of the teacher's name and occurences in the timetable.
+  private getTeachersAndOccurances(
     timetable: Timetable,
   ): Record<string, number> {
     // teacher mapping for name to number of lessons
@@ -50,5 +49,14 @@ export class VismaWrapped extends VismaModule {
     });
 
     return teacherMap;
+  }
+
+  // Takes input of Record<string, number>, where string is the teacher's name and number is the occurances, and sorts them by the occurance count.
+  private sortTeachersByHours(teacherHeatMap: Record<string, number>) {
+    const sortedTeachers = Object.entries(teacherHeatMap).sort(
+      ([, a], [, b]) => b - a,
+    ); // sort for teacher count
+
+    return sortedTeachers;
   }
 }
