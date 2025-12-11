@@ -33,13 +33,13 @@ KOMMER SNART! :)
   * Tampermonkey
   * Greasemonkey
 
-Installer via din nettleser sitt extension-marketplace.
+Installer en av disse via din nettleser sitt extension-marketplace.
 
 ## Steg for steg
-1. Dobbeltrykk på `inschool.user.js` i Nedlastinger mappen din.
-2. Trykk installer på fanen som kommer opp.
-3. Åpne VIS InSchool, så starter scriptet av seg selv.
-
+1. Last ned nyeste utgave av `inschool.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
+2. Dobbeltrykk på `inschool.user.js` i Nedlastinger mappen din.
+3. Trykk installer på fanen som kommer opp.
+4. Åpne VIS InSchool, så starter scriptet av seg selv.
 
 # For utviklere (skumle greier)
 
