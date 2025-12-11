@@ -1,5 +1,6 @@
 import { api } from "../api/api";
 import { Timetable } from "../api/types/timetable";
+import { onDomReady } from "./core/DOMHelper";
 import { VismaModule } from "./core/VismaModule";
 
 export class VismaWrapped extends VismaModule {
@@ -11,6 +12,23 @@ export class VismaWrapped extends VismaModule {
 
   // can we do asynchronous function if the module loader dosent use async for now?
   async load(): Promise<void> {
+    onDomReady(() => {
+      const btn = document.createElement("button");
+      btn.id = "vismawrapped";
+      btn.textContent = "Show your wrapped";
+      btn.addEventListener("click", this.alertTeachers.bind(this));
+      document.body.appendChild(btn);
+    });
+
+    // console.groupEnd();
+  }
+
+  unload(): void {
+    const btn = document.getElementById("vismawrapped");
+    btn?.remove();
+  }
+
+  private async alertTeachers(): Promise<void> {
     // for current week
     const timetable = await api.timetable.getTimetable(new Date());
 
