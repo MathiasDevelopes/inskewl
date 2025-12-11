@@ -5,7 +5,10 @@ import { TimetableToICS } from "./modules/timetabletoics";
 import { VismaWrapped } from "./modules/vismawrapped";
 
 (async function () {
-  const moduleLoader = new ModuleLoader([new VismaWrapped()]);
+  const moduleLoader = new ModuleLoader([
+    new VismaWrapped(),
+    new TimetableToICS(),
+  ]);
 
   const watcher = new UrlWatcher((url: string) => {
     moduleLoader.handleUrlChange(url);
