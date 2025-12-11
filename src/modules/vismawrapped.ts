@@ -30,7 +30,7 @@ export class VismaWrapped extends VismaModule {
     // console.groupEnd();
     //
     sortedTeachers.forEach(([teacher, count]) => {
-      alertString += `${teacher} med ${count} timer.\n`;
+      alertString += `${teacher} med ${count} skoletimer.\n`;
     });
 
     alert(alertString);
