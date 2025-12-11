@@ -57,6 +57,7 @@ export const TimetableSchema = z.object({
 });
 
 export type Timetable = z.infer<typeof TimetableSchema>;
+export type TimetableItem = z.infer<typeof TimetableItemSchema>;
 export type TimetableType = z.infer<typeof TimetableTypeSchema>;
 
 export const ActivityDetailSchema = z.object({
