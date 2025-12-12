@@ -75,7 +75,7 @@ DTSTART:${start}
 DTEND:${end}
 SUMMARY:${item.subject ?? item.label}
 ${item.locations.length ? `LOCATION:${item.locations.join(", ")}` : ""}
-DESCRIPTION:Type: ${item.type}${item.subject ? `, Subject: ${item.subject}` : ""}${item.teacherName ? `, Teacher: ${item.teacherName}` : ""}
+DESCRIPTION:Type: ${item.type}${item.label ? `, ${item.label}` : ""}${item.teacherName ? `, Teacher: ${item.teacherName}` : ""}
 END:VEVENT
     `.trim();
   }
