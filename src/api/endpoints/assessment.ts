@@ -11,14 +11,14 @@ export class AssessmentApi extends Endpoint {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
-      `/assessment/behaviour/${learnerId}`,
+      `assessment/behaviour/${learnerId}`,
       BehaviourSchema,
     );
   }
 
   async getRemarkLimit(): Promise<RemarkLimit> {
     return this.client.getWithSchema(
-      `/assessment/remark/limit`,
+      `assessment/remark/limit`,
       RemarkLimitSchema,
     );
   }

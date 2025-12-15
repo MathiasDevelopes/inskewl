@@ -10,7 +10,9 @@ import { InboxApi } from "./endpoints/inbox";
 import { EventsApi } from "./endpoints/events";
 
 // fungerer kun i fanen med visma...
-const client: ApiClient = new ApiClient(`${window.location.origin}`);
+const client: ApiClient = new ApiClient(
+  new URL(`${window.location.origin}/control/`),
+);
 
 export class Session {
   private learnerId: number | null = null;

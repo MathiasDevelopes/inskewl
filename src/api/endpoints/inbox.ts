@@ -7,7 +7,7 @@ export class InboxApi extends Endpoint {
 
     we put pageSize to a very big value to get all messages.
     */
-    return this.client.getWithSchema("/inbox/messages", MessagesSchema, {
+    return this.client.getWithSchema("inbox/messages", MessagesSchema, {
       query: {
         page: 0,
         pageSize: 1000,
@@ -18,6 +18,6 @@ export class InboxApi extends Endpoint {
 
   /* Returns the count of new messages in your inbox */
   async getNewCount(): Promise<number> {
-    return this.client.get<number>("/inbox/countNew");
+    return this.client.get<number>("inbox/countNew");
   }
 }

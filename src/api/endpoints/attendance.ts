@@ -13,7 +13,7 @@ export class AttendanceApi extends Endpoint {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
-      `/attendance/subject-groups/learner/${learnerId}/academic-year/${academicYear.id}`,
+      `attendance/subject-groups/learner/${learnerId}/academic-year/${academicYear.id}`,
       z.array(AttendanceSubjectGroupSchema),
     );
   }

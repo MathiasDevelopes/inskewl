@@ -26,7 +26,7 @@ export class TimetableApi extends Endpoint {
     const dateStr = week.toLocaleDateString("en-GB");
 
     return this.client.getWithSchema(
-      `/timetablev2/learner/${learnerId}/fetch/ALL/0/current`,
+      `timetablev2/learner/${learnerId}/fetch/ALL/0/current`,
       TimetableSchema,
       {
         query: {
@@ -43,7 +43,7 @@ export class TimetableApi extends Endpoint {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.postWithSchema(
-      "/timetablev2/additional-activity-details",
+      "timetablev2/additional-activity-details",
       [learnerId],
       z.array(ActivityDetailSchema),
     );

@@ -11,7 +11,7 @@ type RequestOptions = {
 };
 
 export class ApiClient {
-  constructor(private baseUrl: string) {}
+  constructor(private baseUrl: URL) {}
 
   private async request<T>(
     method: Method,
@@ -21,9 +21,7 @@ export class ApiClient {
   ): Promise<T> {
     const { headers = {}, query } = opts;
 
-    /* hacky fix for url joining, /control should probably be in this.baseUrl,
-    but URL class strips everything except the base url for base? property */
-    const url = new URL("/control" + path, this.baseUrl);
+    const url = new URL(path, this.baseUrl);
     if (query) {
       for (const [k, v] of Object.entries(query)) {
         url.searchParams.set(k, String(v));

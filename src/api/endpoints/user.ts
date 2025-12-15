@@ -16,7 +16,7 @@ export class UserApi extends Endpoint {
     // ?filterType=ALL&filterId=0&action=current
 
     return this.client.getWithSchema(
-      `/learner/${learnerId}/personal`,
+      `learner/${learnerId}/personal`,
       PersonalInfoSchema,
       {
         query: {
@@ -31,6 +31,6 @@ export class UserApi extends Endpoint {
   async getMaturity(): Promise<boolean> {
     const learnerId = await this.session.getLearnerId();
 
-    return this.client.get<boolean>(`/learner/${learnerId}/maturity`);
+    return this.client.get<boolean>(`learner/${learnerId}/maturity`);
   }
 }

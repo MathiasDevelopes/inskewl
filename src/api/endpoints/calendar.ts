@@ -7,7 +7,7 @@ export class CalendarApi extends Endpoint {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
-      `/calendar/v2/academicyears/learner/${learnerId}`,
+      `calendar/v2/academicyears/learner/${learnerId}`,
       z.array(AcademicYearSchema),
     );
   }
