@@ -1,16 +1,7 @@
-import { Session } from "../api";
-import { ApiClient } from "../apiClient";
+import { Endpoint } from "../endpoint";
 import { Messages, MessagesSchema } from "../types/inbox";
 
-export class InboxApi {
-  private client: ApiClient;
-  private session: Session;
-
-  constructor(client: ApiClient, session: Session) {
-    this.client = client;
-    this.session = session;
-  }
-
+export class InboxApi extends Endpoint {
   async getMessages(): Promise<Messages> {
     /* default values are ?page=0&pageSize=10&filterType=ALL
 

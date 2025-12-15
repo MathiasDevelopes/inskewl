@@ -1,5 +1,4 @@
-import { Session } from "../api";
-import { ApiClient } from "../apiClient";
+import { Endpoint } from "../endpoint";
 import {
   Behaviour,
   BehaviourSchema,
@@ -7,15 +6,7 @@ import {
   RemarkLimitSchema,
 } from "../types/assessment";
 
-export class AssessmentApi {
-  private client: ApiClient;
-  private session: Session;
-
-  constructor(client: ApiClient, session: Session) {
-    this.client = client;
-    this.session = session;
-  }
-
+export class AssessmentApi extends Endpoint {
   async getBehaviour(): Promise<Behaviour> {
     const learnerId = await this.session.getLearnerId();
 

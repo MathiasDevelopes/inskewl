@@ -4,18 +4,9 @@ import {
   User,
   UserSchema,
 } from "../types/user";
-import { ApiClient } from "../apiClient";
-import { Session } from "../api";
+import { Endpoint } from "../endpoint";
 
-export class UserApi {
-  private client: ApiClient;
-  private session: Session;
-
-  constructor(client: ApiClient, session: Session) {
-    this.client = client;
-    this.session = session;
-  }
-
+export class UserApi extends Endpoint {
   async getCurrentUser(): Promise<User> {
     return this.client.getWithSchema("/permissions/user", UserSchema);
   }

@@ -3,19 +3,10 @@ import {
   AttendanceSubjectGroupSchema,
 } from "../types/attendance";
 import { AcademicYear } from "../types/calendar";
-import { Session } from "../api";
-import { ApiClient } from "../apiClient";
 import z from "zod";
+import { Endpoint } from "../endpoint";
 
-export class AttendanceApi {
-  private client: ApiClient;
-  private session: Session;
-
-  constructor(client: ApiClient, session: Session) {
-    this.client = client;
-    this.session = session;
-  }
-
+export class AttendanceApi extends Endpoint {
   async getAttendanceForSubjectGroups(
     academicYear: AcademicYear,
   ): Promise<AttendanceSubjectGroup[]> {

@@ -1,17 +1,8 @@
 import { AcademicYear, AcademicYearSchema } from "../types/calendar";
-import { Session } from "../api";
-import { ApiClient } from "../apiClient";
 import z from "zod";
+import { Endpoint } from "../endpoint";
 
-export class CalendarApi {
-  private client: ApiClient;
-  private session: Session;
-
-  constructor(client: ApiClient, session: Session) {
-    this.client = client;
-    this.session = session;
-  }
-
+export class CalendarApi extends Endpoint {
   async getAcademicYears(): Promise<AcademicYear[]> {
     const learnerId = await this.session.getLearnerId();
 

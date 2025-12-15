@@ -5,19 +5,10 @@ import {
   TimetableSchema,
   TimetableType,
 } from "../types/timetable";
-import { Session } from "../api";
-import { ApiClient, Method } from "../apiClient";
 import z from "zod";
+import { Endpoint } from "../endpoint";
 
-export class TimetableApi {
-  private client: ApiClient;
-  private session: Session;
-
-  constructor(client: ApiClient, session: Session) {
-    this.client = client;
-    this.session = session;
-  }
-
+export class TimetableApi extends Endpoint {
   /**
    *
    * @param week A date which is in the week you want to get the timetable for.
