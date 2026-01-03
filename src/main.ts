@@ -6,6 +6,7 @@ import { VismaWrapped } from "./modules/vismawrapped";
 
 (async function () {
   const moduleLoader = new ModuleLoader([
+    new TestModule(),
     new VismaWrapped(),
     new TimetableToICS(),
   ]);

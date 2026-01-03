@@ -1,56 +1,34 @@
-import { api } from "../api/api";
-import { onDomReady } from "./core/DOMHelper";
+import { Injectable } from "./core/Injectable";
 import { VismaModule } from "./core/VismaModule";
 
 export class TestModule extends VismaModule {
   name = "testmodule";
-  originalColor: string = "";
+  description = "Test the module system works.";
 
   shouldLoad(url: string): boolean {
     return url.endsWith("dashboard/"); // for now
   }
 
-  async load(): Promise<void> {
-    const timetable = await api.timetable.getTimetable(new Date());
-
-    const teacherCounts: Record<string, number> = {};
-    let totalTeachers = 0;
-
-    timetable.timetableItems.forEach((t) => {
-      t.teachers?.forEach((teacher) => {
-        totalTeachers++;
-        teacherCounts[teacher] = (teacherCounts[teacher] || 0) + 1;
-      });
-    });
-
-    console.log("Total teacher occurrences:", totalTeachers);
-
-    // find teacher with most occurrences
-    let maxTeacher = "";
-    let maxCount = 0;
-
-    for (const [teacher, count] of Object.entries(teacherCounts)) {
-      if (count > maxCount) {
-        maxCount = count;
-        maxTeacher = teacher;
-      }
-    }
-
-    console.log(
-      "Teacher with most occurrences:",
-      maxTeacher,
-      "(",
-      maxCount,
-      ")",
-    );
-    onDomReady(() => {
-      this.originalColor = document.body.style.backgroundColor;
-      document.body.style.backgroundColor = "#ffcccc";
-    });
-  }
-
-  unload(): void {
-    document.body.style.backgroundColor = this.originalColor;
-    console.log("test unloaded");
+  injectables(): Injectable[] {
+    return [
+      {
+        id: "testing-div",
+        target: "body",
+        placement: "append",
+        render: () => {
+          const el = document.createElement("div");
+          el.textContent = "TESTING";
+          el.style.position = "fixed";
+          el.style.bottom = "8px";
+          el.style.right = "8px";
+          el.style.padding = "4px 6px";
+          el.style.background = "lime";
+          el.style.color = "black";
+          el.style.fontSize = "12px";
+          el.style.zIndex = "999999";
+          return el;
+        },
+      },
+    ];
   }
 }

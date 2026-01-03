@@ -1,31 +1,31 @@
 import { api } from "../api/api";
 import { Timetable } from "../api/types/timetable";
-import { onDomReady } from "./core/DOMHelper";
+import { Injectable } from "./core/Injectable";
 import { VismaModule } from "./core/VismaModule";
 
 export class VismaWrapped extends VismaModule {
   name: string = "VismaWrapped";
+  description = "A wrapped function similar to Spotify's";
 
   shouldLoad(url: string): boolean {
     return url.includes("dashboard"); // can load on any, but we load it on dashboard.
   }
 
-  // can we do asynchronous function if the module loader dosent use async for now?
-  async load(): Promise<void> {
-    onDomReady(() => {
-      const btn = document.createElement("button");
-      btn.id = "vismawrapped";
-      btn.textContent = "Show your wrapped";
-      btn.addEventListener("click", this.alertTeachers.bind(this));
-      document.body.appendChild(btn);
-    });
-
-    // console.groupEnd();
-  }
-
-  unload(): void {
-    const btn = document.getElementById("vismawrapped");
-    btn?.remove();
+  injectables(): Injectable[] {
+    return [
+      {
+        id: this.name + "button",
+        target: "body",
+        placement: "append",
+        render: () => {
+          const btn = document.createElement("button");
+          btn.id = "vismawrapped";
+          btn.textContent = "Show your wrapped";
+          btn.onclick = () => this.alertTeachers();
+          return btn;
+        },
+      },
+    ];
   }
 
   private async alertTeachers(): Promise<void> {

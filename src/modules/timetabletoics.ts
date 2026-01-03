@@ -1,48 +1,38 @@
 import { api } from "../api/api";
 import { TimetableItem } from "../api/types/timetable";
-import { onDomReady } from "./core/DOMHelper";
+import { Injectable } from "./core/Injectable";
 import { VismaModule } from "./core/VismaModule";
 import { makeDate } from "./utils/parsing";
 
 export class TimetableToICS extends VismaModule {
   name: string = "TimetableToICS";
-  private observer?: MutationObserver;
+  description = "Export your calendar to the .ics format";
 
   shouldLoad(url: string): boolean {
     return url.includes("dashboard");
   }
 
-  load(): void {
-    onDomReady(() => {
-      const obs = new MutationObserver(() => {
-        const dropdown = document.querySelector("ul.dropdown-menu");
-        if (dropdown && !dropdown.querySelector("#timetabletoics")) {
+  injectables(): Injectable[] {
+    return [
+      {
+        id: "export-ics-btn",
+        target: "ul.dropdown-menu",
+        placement: "append",
+        render: () => {
+          const li = document.createElement("li");
+          li.setAttribute("role", "menuitem");
+
           const btn = document.createElement("button");
           btn.id = "timetabletoics";
           btn.className = "vsware-capitalize dropdown-item";
           btn.textContent = "Export to ICS";
-          btn.addEventListener("click", this.exportToICS.bind(this));
+          btn.onclick = () => this.exportToICS();
 
-          const li = document.createElement("li");
-          li.setAttribute("role", "menuitem");
           li.appendChild(btn);
-
-          dropdown.appendChild(li);
-        }
-      });
-
-      obs.observe(document.body, { childList: true, subtree: true });
-    });
-  }
-
-  unload(): void {
-    // stopp observeren hvis den finnes
-    this.observer?.disconnect();
-    this.observer = undefined;
-
-    // fjern knappen
-    const btn = document.getElementById("timetabletoics");
-    btn?.remove();
+          return li;
+        },
+      },
+    ];
   }
 
   /* Entrypoint for the button. */
