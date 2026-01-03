@@ -1,4 +1,9 @@
-import { AcademicYear, AcademicYearSchema } from "../types/calendar";
+import {
+  AcademicYear,
+  AcademicYearSchema,
+  DayCount,
+  DayCountSchema,
+} from "../types/calendar";
 import z from "zod";
 import { Endpoint } from "../endpoint";
 
@@ -9,6 +14,14 @@ export class CalendarApi extends Endpoint {
     return this.client.getWithSchema(
       `calendar/v2/academicyears/learner/${learnerId}`,
       z.array(AcademicYearSchema),
+    );
+  }
+
+  // Get the amount of learning days, vacation days, and planning days.
+  async getDayCount(academicYearId: number): Promise<DayCount> {
+    return this.client.getWithSchema(
+      `calendar/v2/academicyears/${academicYearId}/daycount`,
+      DayCountSchema,
     );
   }
 }

@@ -28,3 +28,11 @@ export const AcademicYearSchema = z.object({
 });
 
 export type AcademicYear = z.infer<typeof AcademicYearSchema>;
+
+export const DayCountSchema = z.object({
+  learningDays: z.number(),
+  planningDays: z.number(),
+  vacationDays: z.number(),
+});
+
+export type DayCount = z.infer<typeof DayCountSchema>;
