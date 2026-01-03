@@ -21,10 +21,13 @@ export class TimetableToICS extends VismaModule {
         render: () => {
           const li = document.createElement("li");
           li.setAttribute("role", "menuitem");
+          li.setAttribute("tabindex", "-1");
 
           const btn = document.createElement("button");
           btn.id = "timetabletoics";
           btn.className = "vsware-capitalize dropdown-item";
+          // required for proper styling of the button inside the dropdown menu
+          btn.setAttribute("data-v-649b0c40", "");
           btn.textContent = "Export to ICS";
           btn.onclick = () => this.exportToICS();
 
