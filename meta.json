@@ -2,9 +2,13 @@
   "name": "inskewl",
   "namespace": "Violentmonkey Scripts",
   "version": "0.0.1",
-  "description": "inskewl",
+  "description": "A userscript that adds useful features to VIS InSchool",
   "author": "MathiasDevelopes",
   "match": ["https://*.inschool.visma.no/*"],
   "grant": "none",
-  "run-at": "document-idle"
+  "run-at": "document-idle",
+  "updateURL": "https://github.com/MathiasDevelopes/inskewl/releases/latest/download/inskewl.user.js",
+  "downloadURL": "https://github.com/MathiasDevelopes/inskewl/releases/latest/download/inskewl.user.js",
+  "homepageURL": "https://github.com/MathiasDevelopes/inskewl",
+  "supportURL": "https://github.com/MathiasDevelopes/inskewl/issues"
 }
