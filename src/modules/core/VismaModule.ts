@@ -2,7 +2,7 @@ import { Injectable } from "./Injectable";
 
 export abstract class VismaModule {
   abstract name: string;
-  description?: string;
+  abstract description: string;
 
   abstract shouldLoad(url: string): boolean;
 
