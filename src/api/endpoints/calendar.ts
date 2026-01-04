@@ -18,9 +18,9 @@ export class CalendarApi extends Endpoint {
   }
 
   // Get the amount of learning days, vacation days, and planning days.
-  async getDayCount(academicYearId: number): Promise<DayCount> {
+  async getDayCount(academicYear: AcademicYear): Promise<DayCount> {
     return this.client.getWithSchema(
-      `calendar/v2/academicyears/${academicYearId}/daycount`,
+      `calendar/v2/academicyears/${academicYear.id}/daycount`,
       DayCountSchema,
     );
   }
