@@ -60,6 +60,16 @@ class TimetableExporter {
     const start = this.formatDate(item.date, item.startTime);
     const end = this.formatDate(item.date, item.endTime);
 
+    const teacherDisplay = () => {
+      if (item.teachers && item.teachers.length > 1) {
+        return `Teachers: ${item.teachers?.join(", ")}`;
+      } else if (item.teacherName) {
+        return item.teacherName;
+      } else {
+        return "";
+      }
+    };
+
     return `
 BEGIN:VEVENT
 UID:${item.id}-${Math.random().toString(36).substr(2, 9)}@inskewl
@@ -68,7 +78,7 @@ DTSTART:${start}
 DTEND:${end}
 SUMMARY:${item.subject ?? item.label}
 ${item.locations.length ? `LOCATION:${item.locations.join(", ")}` : ""}
-DESCRIPTION:Type: ${item.type}${item.label ? `, ${item.label}` : ""}${item.teacherName ? `, Teacher: ${item.teacherName}` : ""}
+DESCRIPTION:Type: ${item.type}${item.label ? `, ${item.label}` : ""}${teacherDisplay()}
 END:VEVENT
     `.trim();
   }
