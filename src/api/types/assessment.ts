@@ -8,6 +8,8 @@ export const SchoolInfoSchema = z.object({
 
 export const RemarksCountByTypeSchema = z.object({});
 
+export const RemarkTypeSchema = z.union([z.literal("CONDUCT")]);
+
 export const RemarkSchema = z.object({
   id: z.number(),
   assessmentId: z.number(),
@@ -15,13 +17,18 @@ export const RemarkSchema = z.object({
   teacherId: z.number(),
   lessonId: z.number(),
   teacherName: z.string(),
+  // UDIR subject code
   subjectCode: z.string(),
+  // UDIR subject name
   subjectName: z.string(),
+  // Format for dateTime is yyyy-mm-ddThh:mm:ss
   dateTime: z.string(),
   remark: z.string(),
-  remarkType: z.string(),
+  remarkType: RemarkTypeSchema,
   schoolInfo: SchoolInfoSchema,
 });
+
+export type RemarkType = z.infer<typeof RemarkTypeSchema>;
 
 export const BehaviourSchema = z.object({
   learnerName: z.string(),
@@ -34,6 +41,7 @@ export const BehaviourSchema = z.object({
 
 export type Behaviour = z.infer<typeof BehaviourSchema>;
 
+// The upper limit for how many remarks you can have.
 export const RemarkLimitSchema = z.object({
   orderliness: z.number(),
   conduct: z.number(),
