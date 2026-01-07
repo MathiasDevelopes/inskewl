@@ -62,9 +62,9 @@ class TimetableExporter {
 
     const teacherDisplay = () => {
       if (item.teachers && item.teachers.length > 1) {
-        return `Teachers: ${item.teachers?.join(", ")}`;
+        return `Teachers: ${item.teachers.join(", ")}`;
       } else if (item.teacherName) {
-        return item.teacherName;
+        return `Teacher: ${item.teacherName}`;
       } else {
         return "";
       }
