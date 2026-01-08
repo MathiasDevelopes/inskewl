@@ -17,7 +17,6 @@ export class ICSExporter extends Exporter {
     ];
 
     for (const event of events) {
-      const uid = event.uid ?? `${event.id}@myapp`;
       lines.push(
         "BEGIN:VEVENT",
         `UID:${event.id}`,
