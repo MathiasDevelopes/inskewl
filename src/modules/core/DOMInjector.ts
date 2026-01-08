@@ -8,10 +8,19 @@ export class DomInjector {
     for (const inj of module.injectables()) {
       const key = `${module.name}:${inj.id}`;
 
-      if (this.injected.has(key)) continue;
+      if (this.injected.has(key)) {
+        const el = this.injected.get(key);
+        if (el && document.contains(el)) {
+          continue;
+        } else {
+          this.injected.delete(key);
+        }
+      }
 
       const target = document.querySelector(inj.target);
-      if (!target) continue;
+      if (!target) {
+        continue;
+      }
 
       const el = inj.render();
 
