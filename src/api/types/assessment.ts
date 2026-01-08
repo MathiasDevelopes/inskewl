@@ -21,8 +21,9 @@ export const RemarkSchema = z.object({
   subjectCode: z.string(),
   // UDIR subject name
   subjectName: z.string(),
-  // Format for dateTime is yyyy-mm-ddThh:mm:ss
-  dateTime: z.string(),
+  dateTime: z.iso
+    .datetime({ local: true })
+    .describe("local datetime; no timezone; assumed Europe/Oslo timezone."),
   remark: z.string(),
   remarkType: RemarkTypeSchema,
   schoolInfo: SchoolInfoSchema,
