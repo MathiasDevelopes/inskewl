@@ -3,7 +3,7 @@ import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
 import { makeDate } from "../utils/parsing";
 import { ICSExporter } from "./exporters/ics";
-import { CalendarEvent } from "./model/event";
+import { CalendarEvent, ICSCalendarEvent } from "./model/event";
 
 export class TimetableExporter extends VismaModule {
   name: string = "TimetableExporter";
@@ -45,7 +45,8 @@ export class TimetableExporter extends VismaModule {
     const timetable = await api.timetable.getTimetable(new Date());
 
     // Mapping of TimetableItem to generic CalendarEvent
-    const events: CalendarEvent[] = timetable.timetableItems.map((item) => {
+    const events: ICSCalendarEvent[] = timetable.timetableItems.map((item) => {
+      const uid = `${Math.random().toString(36).substr(2, 9)}@inskewl`;
       const start = makeDate(item.date, item.startTime);
       const end = makeDate(item.date, item.endTime);
 
@@ -55,11 +56,12 @@ export class TimetableExporter extends VismaModule {
         descriptionParts.push(`Teacher(s): ${item.teachers.join(", ")}`);
 
       return {
-        id: item.id,
+        id: uid,
         name: item.subject ?? item.label ?? "Event",
         start,
         end,
         location: item.locations?.join(", "),
+        uid: uid,
       };
     });
 

@@ -8,3 +8,7 @@ export interface CalendarEvent {
   description?: string;
   location?: string;
 }
+
+export interface ICSCalendarEvent extends CalendarEvent {
+  uid?: string;
+}
