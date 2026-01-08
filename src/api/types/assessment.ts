@@ -18,12 +18,15 @@ export const RemarkSchema = z.object({
   lessonId: z.number(),
   teacherName: z.string(),
   // UDIR subject code
-  subjectCode: z.string(),
-  // UDIR subject name
-  subjectName: z.string(),
-  dateTime: z.iso
-    .datetime({ local: true })
-    .describe("local datetime; no timezone; assumed Europe/Oslo timezone."),
+  subjectCode: z.string().meta({
+    description: "UDIR subject code",
+  }),
+  subjectName: z.string().meta({
+    description: "UDIR subject name",
+  }),
+  dateTime: z.iso.datetime({ local: true }).meta({
+    description: "A local datetime, Europe/Oslo timezone.",
+  }),
   remark: z.string(),
   remarkType: RemarkTypeSchema,
   schoolInfo: SchoolInfoSchema,

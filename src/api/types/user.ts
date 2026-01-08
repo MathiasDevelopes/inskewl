@@ -3,7 +3,9 @@ import { z } from "zod";
 export const LocaleSchema = z.object({
   country: z.string(),
   language: z.string(),
-  locale: z.string(),
+  locale: z.string().meta({
+    description: "ISO 639 + ISO 3166 locale tag.",
+  }),
 });
 
 export const UserSchema = z.object({
@@ -39,7 +41,7 @@ export const PersonalInfoSchema = z.object({
   countryCode: z.string(),
   mobilePhone: z.string(),
   homePhone: z.null(),
-  email: z.string(),
+  email: z.email(),
   classGroupId: z.null(),
   otherId: z.null(),
   leavingDestination: z.null(),
@@ -47,11 +49,11 @@ export const PersonalInfoSchema = z.object({
   destinationLEACode: z.null(),
   destinationEstablishment: z.null(),
   middleNames: z.null(),
-  birthDate: z.string(),
+  birthDate: z.iso.date(),
   gender: z.string(),
   religionAffiliationCode: z.null(),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
   localId: z.null(),
   photoURL: z.string(),
   showPhone: z.null(),
@@ -128,7 +130,7 @@ export const PersonalInfoSchema = z.object({
   learnerId: z.object({
     typeId: z.number(),
     userInfoId: z.number(),
-    immutableUserId: z.string(),
+    immutableUserId: z.uuid(),
   }),
   leavingEarlyInFuture: z.boolean(),
 });

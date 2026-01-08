@@ -11,9 +11,12 @@ export const TimetableTypeSchema = z.union([
 
 export const TimetableItemSchema = z.object({
   id: z.any(),
-  startTime: z.string(),
-  endTime: z.string(),
-  date: z.string(),
+  startTime: z.iso.time(),
+  endTime: z.iso.time(),
+  // TODO: Create a custom format for this type of date.
+  date: z.string().meta({
+    description: "A date in the format dd/mm/yyyy",
+  }),
   tenant: z.number(),
   academicYearId: z.any(),
   entityId: z.number(),
@@ -23,7 +26,9 @@ export const TimetableItemSchema = z.object({
   locations: z.array(z.string()),
   mainRoom: z.string().nullable().optional(),
   additionalRooms: z.array(z.any()).nullable().optional(),
-  colour: z.string(),
+  colour: z.string().meta({
+    description: "Hexadecimal color for UI display of timetable entry.",
+  }),
   teachingGroupId: z.number().nullable(),
   blockName: z.any(),
   blockId: z.any(),

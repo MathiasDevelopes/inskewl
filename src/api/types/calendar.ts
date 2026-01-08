@@ -3,8 +3,8 @@ import { z } from "zod";
 export const TermSchema = z.object({
   id: z.number(),
   version: z.number(),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
   code: z.string(),
   name: z.string(),
   term: z.string(),
@@ -17,14 +17,14 @@ export const AcademicYearSchema = z.object({
   tenant: z.number(),
   code: z.string(),
   name: z.string(),
-  studentStartDate: z.string(),
+  studentStartDate: z.iso.date(),
   currentYear: z.boolean(),
   terms: z.array(TermSchema),
   year: z.number(),
   daysInCycle: z.number(),
   editable: z.boolean(),
-  endDate: z.string(),
-  startDate: z.string(),
+  startDate: z.iso.date(),
+  endDate: z.iso.date(),
 });
 
 export type AcademicYear = z.infer<typeof AcademicYearSchema>;
