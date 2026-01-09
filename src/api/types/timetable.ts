@@ -11,52 +11,94 @@ export const TimetableTypeSchema = z.union([
 
 export const TimetableItemSchema = z.object({
   id: z.any(),
-  startTime: z.iso.time(),
-  endTime: z.iso.time(),
+  startTime: z.iso.time().meta({
+    description: "Start time for the timetable item",
+  }),
+  endTime: z.iso.time().meta({
+    description: "End time ofr the timetable item",
+  }),
   // TODO: Create a custom format for this type of date.
   date: z.string().meta({
     description: "A date in the format dd/mm/yyyy",
   }),
-  tenant: z.number(),
+  tenant: z.number().meta({
+    description: "ID of the tenant the timetable item is in",
+  }),
   academicYearId: z.any(),
   entityId: z.number(),
-  label: z.string(),
+  label: z.string().meta({
+    description:
+      "A string which combines the classes name, UDIR subject code. E.g 2ITA/ITK2001/1",
+  }),
   type: TimetableTypeSchema,
   originalType: z.string().nullable().optional(),
-  locations: z.array(z.string()),
-  mainRoom: z.string().nullable().optional(),
+  locations: z.array(z.string()).meta({
+    description: "Array of the locations the timetable item takes place in",
+  }),
+  mainRoom: z.string().nullable().optional().meta({
+    description:
+      "The identifier of the main room the timetable item takes place in",
+  }),
   additionalRooms: z.array(z.any()).nullable().optional(),
   colour: z.string().meta({
-    description: "Hexadecimal color for UI display of timetable entry.",
+    description: "Hexadecimal color for UI display of timetable item entry.",
   }),
   teachingGroupId: z.number().nullable(),
   blockName: z.any(),
   blockId: z.any(),
   blockDescription: z.any(),
-  subject: z.string().nullable().optional(),
-  subjectCode: z.string().nullable().optional(),
+  subject: z.string().nullable().optional().meta({
+    description: "Name of the subject",
+  }),
+  subjectCode: z.string().nullable().optional().meta({
+    description: "UDIR subject code",
+  }),
   assessment: z.any(),
-  hasFutureAbsence: z.boolean(),
-  teacherName: z.string().nullable().optional(),
-  teachers: z.array(z.string()).nullable(),
+  hasFutureAbsence: z.boolean().meta({
+    description:
+      "Boolean indicating if future absence is registered on this timetable item",
+  }),
+  teacherName: z.string().nullable().optional().meta({
+    description: "Full name of the teacher",
+  }),
+  teachers: z.array(z.string()).nullable().meta({
+    description:
+      "Array of teachers registered for this timetable item. Used if multiple teachers",
+  }),
   extraInfo: z.any(),
   periodNumberInDay: z.any(),
 });
 
 export const SchoolSchema = z.object({
-  tenant: z.number(),
-  name: z.string(),
-  isMainSchool: z.boolean(),
+  tenant: z.number().meta({
+    description: "ID of the tenant",
+  }),
+  name: z.string().meta({
+    description: "Full name of the school",
+  }),
+  isMainSchool: z.boolean().meta({
+    description: "Boolean indicating if this is the main school",
+  }),
 });
 
 export const TimetableSchema = z.object({
-  startDate: z.string(),
-  startTime: z.string(),
-  endTime: z.string(),
+  startDate: z.string().meta({
+    description: "Starting date of the timetable in the format dd/mm/yyyy",
+  }),
+  startTime: z.iso.time().meta({
+    description:
+      "Earliest starting time for day in the timetable (approximate)",
+  }),
+  endTime: z.iso.time().meta({
+    description: "End time for the longest day in the timetable (approximate)",
+  }),
   timetableItems: z.array(TimetableItemSchema),
   warnings: z.array(z.any()),
-  daysInWeek: z.number(),
+  daysInWeek: z.number().meta({
+    description: "How many days are in the timetable week",
+  }),
   presence: z.any(),
+  // TODO: Accuqire more info about timetable, especially absences
   absences: z.array(z.any()),
   schools: z.array(SchoolSchema),
 });
