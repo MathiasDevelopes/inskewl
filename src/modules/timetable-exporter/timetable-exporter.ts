@@ -83,7 +83,7 @@ export class TimetableExporter extends VismaModule {
     console.log(currentTerm);
 
     const weeks: Date[] = this.getWeekStartDates(
-      new Date(currentTerm.startDate),
+      new Date(),
       new Date(currentTerm.endDate),
     );
 
