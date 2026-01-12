@@ -76,8 +76,6 @@ export class TimetableExporter extends VismaModule {
       (t) => t.current,
     )[0];
 
-    console.log(currentTerm);
-
     const weeks: Date[] = this.getWeekStartDates(
       new Date(),
       new Date(currentTerm.endDate),
@@ -88,13 +86,9 @@ export class TimetableExporter extends VismaModule {
     );
 
     // Mapping of TimetableItem to generic CalendarEvent
-    const events: CalendarEvent[] = [];
-
-    timetables.forEach((timetable) => {
-      timetable.timetableItems.forEach((timetableItem) => {
-        events.push(fromTimetableItem(timetableItem));
-      });
-    });
+    const events: CalendarEvent[] = timetables.flatMap((t) =>
+      t.timetableItems.map(fromTimetableItem),
+    );
 
     const exporter = new ICSExporter();
     const blob = exporter.exportToBlob(events);
