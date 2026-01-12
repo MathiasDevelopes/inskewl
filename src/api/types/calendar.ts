@@ -28,6 +28,8 @@ export const TermSchema = z.object({
   }),
 });
 
+export type Term = z.infer<typeof TermSchema>;
+
 export const AcademicYearSchema = z.object({
   id: z.number().meta({
     description: "ID of the academic year",

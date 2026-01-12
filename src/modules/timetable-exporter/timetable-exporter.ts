@@ -1,9 +1,15 @@
 import { api } from "../../api/api";
+import { AcademicYear, Term } from "../../api/types/calendar";
+import { Timetable } from "../../api/types/timetable";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
 import { makeDate } from "../utils/parsing";
 import { ICSExporter } from "./exporters/ics";
-import { CalendarEvent, ICSCalendarEvent } from "./model/event";
+import {
+  CalendarEvent,
+  fromTimetableItem,
+  ICSCalendarEvent,
+} from "./model/event";
 
 export class TimetableExporter extends VismaModule {
   name: string = "TimetableExporter";
@@ -39,30 +45,59 @@ export class TimetableExporter extends VismaModule {
     ];
   }
 
+  // ja dette er ai ikke døm jeg er trøtt
+  getWeekStartDates(startDate: Date, endDate: Date): Date[] {
+    const weekStarts: Date[] = [];
+    const currentDate = new Date(startDate.getTime()); // Use a copy to avoid modifying the original date
+
+    // Set the initial date to the first Monday on or after the original start date
+    const startDay = currentDate.getDay();
+    const daysUntilMonday = startDay === 0 ? 1 : 1 - startDay; // Handle Sunday (0) as needing +1 day to reach Monday
+    currentDate.setDate(currentDate.getDate() + daysUntilMonday);
+
+    // Ensure the initial date is not before the original start date (this could happen if the start date was Sunday)
+    if (currentDate < startDate) {
+      currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    // Loop through the dates, adding 7 days in each iteration until the date exceeds the end date
+    while (currentDate <= endDate) {
+      weekStarts.push(new Date(currentDate.getTime())); // Push a new Date object to the array
+      currentDate.setDate(currentDate.getDate() + 7); // Increment by a week
+    }
+
+    return weekStarts;
+  }
+
   /* Entrypoint for the button. */
   private async exportToICS(): Promise<void> {
-    // TODO: Add selector for week you want to export
-    const timetable = await api.timetable.getTimetable(new Date());
+    const academicYears = await api.calendar.getAcademicYears();
+    const currentAcademicYear: AcademicYear = academicYears.filter(
+      (academicYear) => academicYear.currentYear,
+    )[0];
+
+    const currentTerm: Term = currentAcademicYear.terms.filter(
+      (t) => t.current,
+    )[0];
+
+    console.log(currentTerm);
+
+    const weeks: Date[] = this.getWeekStartDates(
+      new Date(currentTerm.startDate),
+      new Date(currentTerm.endDate),
+    );
+
+    const timetables: Timetable[] = await Promise.all(
+      weeks.map((week) => api.timetable.getTimetable(week)),
+    );
 
     // Mapping of TimetableItem to generic CalendarEvent
-    const events: ICSCalendarEvent[] = timetable.timetableItems.map((item) => {
-      const uid = `${Math.random().toString(36).substr(2, 9)}@inskewl`;
-      const start = makeDate(item.date, item.startTime);
-      const end = makeDate(item.date, item.endTime);
+    const events: CalendarEvent[] = [];
 
-      const descriptionParts = [`Type: ${item.type}`];
-      if (item.label) descriptionParts.push(item.label);
-      if (item.teachers?.length && item.teachers.length > 1)
-        descriptionParts.push(`Teacher(s): ${item.teachers.join(", ")}`);
-
-      return {
-        id: uid,
-        name: item.subject ?? item.label ?? "Event",
-        start,
-        end,
-        location: item.locations?.join(", "),
-        uid: uid,
-      };
+    timetables.forEach((timetable) => {
+      timetable.timetableItems.forEach((timetableItem) => {
+        events.push(fromTimetableItem(timetableItem));
+      });
     });
 
     const exporter = new ICSExporter();
