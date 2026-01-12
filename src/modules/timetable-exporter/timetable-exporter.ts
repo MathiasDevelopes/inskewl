@@ -72,9 +72,7 @@ export class TimetableExporter extends VismaModule {
       (academicYear) => academicYear.currentYear,
     )[0];
 
-    const currentTerm: Term = currentAcademicYear.terms.filter(
-      (t) => t.current,
-    )[0];
+    const currentTerm: Term = currentAcademicYear.terms.find((t) => t.current)!;
 
     const weeks: Date[] = this.getWeekStartDates(
       new Date(),
