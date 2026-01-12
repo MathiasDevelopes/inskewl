@@ -1,4 +1,4 @@
-import { ICSCalendarEvent } from "../model/event";
+import { CalendarEvent } from "../model/event";
 import { Exporter } from "../model/exporter";
 
 export class ICSExporter extends Exporter {
@@ -9,7 +9,7 @@ export class ICSExporter extends Exporter {
       .replace(/\.\d{3}/, "");
   }
 
-  exportToBlob(events: ICSCalendarEvent[]): Blob {
+  exportToBlob(events: CalendarEvent[]): Blob {
     const lines: string[] = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
