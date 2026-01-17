@@ -1,32 +1,32 @@
 # inskewl
-> Et modulbasert userscript som legger til funksjoner til VIS InSchool
+> Et modulbasert userscript som gjør VIS InSchool bedre
 
-⚠️**Prosjektstatus:** work in progress (mye kan inneholde feil / mangler)
+**Status:** Work in progress (ting er i aktiv utvikling)
 
 ## Innholdsfortegnelse
 - [Om prosjektet](#om-prosjektet)
 - [Funksjoner](#funksjoner)
+  - [Planlagt](#planlagt)
 - [Installasjon](#installasjon)
   - [Forutsetninger](#forutsetninger)
-  - [Steg for steg](#steg-for-steg)
+  - [Installasjonssteg](#installasjonssteg)
 - [For utviklere (skumle greier)](#for-utviklere-skumle-greier)
-  - [Litt om prosjektet](#litt-om-prosjektet)
-  - [Autentisering](#autentisering)
-  - [Funksjoner (API)](#funksjoner-api)
-  - [Bygging fra kildekode](#bygging-fra-kildekode)
+  - [Bygg fra kildekode](#bygg-fra-kildekode)
     - [Requirements](#requirements)
     - [Kommandoer](#kommandoer)
     - [Utviklingsmodus](#utviklingsmodus)
 
 
 ## Om prosjektet
-**inskewl** er et userscript som legger til ekstra funksjoner til VIS InSchool
+**inskewl** er et userscript som legger til grunnleggende funksjonalitet som ikke er der fra starten av.
+
+Opprinnelig laget fordi at VIS InSchool kun støtter eksport av timeplanen din i PDF (i store 2026 🙏)
 
 ## Funksjoner
-### Planlagt
-- [ ] Eksportere timeplanen din til en universell `.ics`-kalenderfil  
+- [X] Eksportere det nåverende halvåret til en universell `.ics`-kalenderfil
       (kompatibel med Microsoft Exchange, Google Calendar, Apple Calendar, osv.)
-- [ ] Visma Wrapped, oppsummering av skoleåret.
+### Planlagt
+Neste ting jeg irriterer meg over
 
 # Installasjon
 ## Forutsetninger
@@ -36,9 +36,7 @@
   * Tampermonkey
   * Greasemonkey
 
-Installer en av disse via din nettleser sitt extension-marketplace.
-
-## Steg for steg
+## Installasjonssteg
 1. Last ned nyeste utgave av `inschool.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
 2. Dobbeltrykk på `inschool.user.js` i Nedlastinger mappen din.
 3. Trykk installer på fanen som kommer opp.
@@ -46,25 +44,15 @@ Installer en av disse via din nettleser sitt extension-marketplace.
 
 # For utviklere (skumle greier)
 
-## Litt om prosjektet
-Prosjektet er bygd rundt:
-* et **hjemmelaga API-interface** (med typer, data validation)
+Vil du bidra eller lage din egen modul? Sjekk ut [wikien](https://github.com/MathiasDevelopes/inskewl/wiki)!
 
-## Autentisering
-Userscriptet bruker eksisterende session-cookies, så ingen ekstra login.
+**Kort versjon:**
+- Basert på et reverse-engineered, uoffisielt VIS InSchool API
+- Sterk typing + runtime validation via Zod
+- Moduler er selvstendige, så det er lett å legge til nye funksjoner.
+- API-en kan også brukes som standalone bibliotek i andre prosjekter (må fikse autentisering selv).
 
-API mappa er helt selvstendig, så den kan brukes i andre prosjekter.
-## Funksjoner
-#### API
-typed interface til InSchool endpoints
-
-du kan:
-* hente data programmatisk
-* gjøre handlinger via API-et
-* bruke det som standalone bibliotek (du må selv fikse autentisering)
-
-## Bygging fra kildekode
-Hvis du vil bygge scriptet selv.
+## Bygg fra kildekode
 
 ### Requirements
 - Node
@@ -79,7 +67,7 @@ npm install
 npm run build
 ```
 
-Du vil nå finne `inskewl.user.js` i `dist` mappen i prosjektet.
+Du vil nå finne `inskewl.user.js` i `dist` mappen etterpå.
 
 ## Utviklingsmodus
 ```sh
