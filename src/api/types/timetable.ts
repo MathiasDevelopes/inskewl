@@ -15,7 +15,7 @@ export const TimetableItemSchema = z.object({
     description: "Start time for the timetable item",
   }),
   endTime: z.iso.time().meta({
-    description: "End time ofr the timetable item",
+    description: "End time of the timetable item",
   }),
   // TODO: Create a custom format for this type of date.
   date: z.string().meta({
