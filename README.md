@@ -73,4 +73,4 @@ Du vil nå finne `inskewl.user.js` i `dist` mappen etterpå.
 ```sh
 npm run dev
 ```
-Rebuilder automatisk når du lagrer filen (najs)
+Rebuilder automatisk når du lagrer filer (najs)
