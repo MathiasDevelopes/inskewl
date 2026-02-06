@@ -1,7 +1,7 @@
 # inskewl
 > Et modulbasert userscript som gjør VIS InSchool bedre
 
-**Status:** Work in progress (ting er i aktiv utvikling)
+**Status:** Work in progress (ting er i aktiv utvikling, ingen GitHub releases enda)
 
 ## Innholdsfortegnelse
 - [Om prosjektet](#om-prosjektet)
