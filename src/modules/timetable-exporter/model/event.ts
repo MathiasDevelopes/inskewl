@@ -1,7 +1,7 @@
 // Blueprint for a CalendarEvent.
 
 import { TimetableItem } from "../../../api/types/timetable";
-import { makeDate } from "../../utils/parsing";
+import { combineDateWithTime } from "../../utils/parsing";
 
 // Calender formats can extend this interface with features unique to that calender format.
 export interface CalendarEvent {
@@ -15,8 +15,8 @@ export interface CalendarEvent {
 
 export function fromTimetableItem(item: TimetableItem): CalendarEvent {
   const uid = `${Math.random().toString(36).substr(2, 9)}@inskewl`;
-  const start = makeDate(item.date, item.startTime);
-  const end = makeDate(item.date, item.endTime);
+  const start = combineDateWithTime(item.date, item.startTime);
+  const end = combineDateWithTime(item.date, item.endTime);
 
   const descriptionParts = [`Type: ${item.type}`];
   if (item.label) descriptionParts.push(item.label);
