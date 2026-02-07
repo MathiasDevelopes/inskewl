@@ -1,14 +1,15 @@
 import { z } from "zod";
+import { transformISODate } from "../../utils/parsing";
 
 export const TermSchema = z.object({
   id: z.number().meta({
     description: "ID of the term",
   }),
   version: z.number(),
-  startDate: z.iso.date().meta({
+  startDate: z.iso.date().transform(transformISODate).meta({
     description: "Start date of the term",
   }),
-  endDate: z.iso.date().meta({
+  endDate: z.iso.date().transform(transformISODate).meta({
     description: "End date of the term",
   }),
   code: z.string().meta({
@@ -44,7 +45,7 @@ export const AcademicYearSchema = z.object({
   name: z.string().meta({
     description: "Name of current academic year, e.g 20252026",
   }),
-  studentStartDate: z.iso.date(),
+  studentStartDate: z.iso.date().transform(transformISODate),
   currentYear: z.boolean().meta({
     description: "Boolean that represents if this is the current academic year",
   }),
@@ -54,10 +55,10 @@ export const AcademicYearSchema = z.object({
     description: "Amount of days in the academic year cycle, e.g 5",
   }),
   editable: z.boolean(),
-  startDate: z.iso.date().meta({
+  startDate: z.iso.date().transform(transformISODate).meta({
     description: "Start date of the academic year",
   }),
-  endDate: z.iso.date().meta({
+  endDate: z.iso.date().transform(transformISODate).meta({
     description: "End date of the academic year",
   }),
 });

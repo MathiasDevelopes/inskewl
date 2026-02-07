@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { transformISODate } from "../../utils/parsing";
 
 export const UserRole = z.enum([
   "ROLE_TEACHER",
@@ -73,7 +74,7 @@ export const EventSchema = z.object({
     description:
       "A boolean indicating if you are required to attend this event",
   }),
-  date: z.iso.date().meta({
+  date: z.iso.date().transform(transformISODate).meta({
     description: "Date the event is scheduled for",
   }),
   startTime: z.iso.time().meta({

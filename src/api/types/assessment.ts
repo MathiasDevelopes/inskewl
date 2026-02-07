@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { transformISODateTime } from "../../utils/parsing";
 
 export const SchoolInfoSchema = z.object({
   tenant: z.number().meta({
@@ -36,7 +37,7 @@ export const RemarkSchema = z.object({
   subjectName: z.string().meta({
     description: "UDIR subject name",
   }),
-  dateTime: z.iso.datetime({ local: true }).meta({
+  dateTime: z.iso.datetime({ local: true }).transform(transformISODateTime).meta({
     description: "A local datetime, Europe/Oslo timezone.",
   }),
   remark: z.string().meta({

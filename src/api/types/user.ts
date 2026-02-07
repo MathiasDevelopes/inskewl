@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { transformISODate } from "../../utils/parsing";
 
 export const LocaleSchema = z.object({
   country: z.string(),
@@ -49,11 +50,11 @@ export const PersonalInfoSchema = z.object({
   destinationLEACode: z.null(),
   destinationEstablishment: z.null(),
   middleNames: z.null(),
-  birthDate: z.iso.date(),
+  birthDate: z.iso.date().transform(transformISODate),
   gender: z.string(),
   religionAffiliationCode: z.null(),
-  startDate: z.iso.date(),
-  endDate: z.iso.date(),
+  startDate: z.iso.date().transform(transformISODate),
+  endDate: z.iso.date().transform(transformISODate),
   localId: z.null(),
   photoURL: z.string(),
   showPhone: z.null(),

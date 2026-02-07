@@ -3,7 +3,6 @@ import { AcademicYear, Term } from "../../api/types/calendar";
 import { Timetable } from "../../api/types/timetable";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
-import { makeDate } from "../utils/parsing";
 import { ICSExporter } from "./exporters/ics";
 import { CalendarEvent, fromTimetableItem } from "./model/event";
 
@@ -76,7 +75,7 @@ export class TimetableExporter extends VismaModule {
 
     const weeks: Date[] = this.getWeekStartDates(
       new Date(),
-      new Date(currentTerm.endDate),
+      currentTerm.endDate,
     );
 
     const timetables: Timetable[] = await Promise.all(

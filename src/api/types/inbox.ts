@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { transformISODateTime } from "../../utils/parsing";
 
 export const UserRole = z.enum([
   "ROLE_TEACHER",
@@ -50,10 +51,10 @@ export const MessageSchema = z.object({
   }),
   status: z.string(),
   lineType: z.string(),
-  createdOn: z.iso.datetime({ offset: true }).meta({
+  createdOn: z.iso.datetime({ offset: true }).transform(transformISODateTime).meta({
     description: "The datetime the message was created on",
   }),
-  modifiedOn: z.iso.datetime({ offset: true }).nullable().optional().meta({
+  modifiedOn: z.iso.datetime({ offset: true }).nullable().optional().transform((val) => val ? transformISODateTime(val) : val).meta({
     description: "The datetime the message was last modified on.",
   }),
   origin: z.string().meta({

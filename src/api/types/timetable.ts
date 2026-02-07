@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { transformDDMMYYYY } from "../../utils/parsing";
 
 export const TimetableTypeSchema = z.union([
   z.literal("LESSON"),
@@ -17,8 +18,8 @@ export const TimetableItemSchema = z.object({
   endTime: z.iso.time().meta({
     description: "End time of the timetable item",
   }),
-  // TODO: Create a custom format for this type of date.
-  date: z.string().meta({
+  // Date in dd/mm/yyyy format, transformed to Date object
+  date: z.string().transform(transformDDMMYYYY).meta({
     description: "A date in the format dd/mm/yyyy",
   }),
   tenant: z.number().meta({
@@ -82,7 +83,7 @@ export const SchoolSchema = z.object({
 });
 
 export const TimetableSchema = z.object({
-  startDate: z.string().meta({
+  startDate: z.string().transform(transformDDMMYYYY).meta({
     description: "Starting date of the timetable in the format dd/mm/yyyy",
   }),
   startTime: z.iso.time().meta({
