@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformISODateTime } from "../../modules/utils/parsing";
+import { transformISODateTime } from "../../utils/parsing";
 
 export const UserRole = z.enum([
   "ROLE_TEACHER",

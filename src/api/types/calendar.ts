@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformISODate } from "../../modules/utils/parsing";
+import { transformISODate } from "../../utils/parsing";
 
 export const TermSchema = z.object({
   id: z.number().meta({

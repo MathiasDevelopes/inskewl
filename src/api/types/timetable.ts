@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformDDMMYYYY } from "../../modules/utils/parsing";
+import { transformDDMMYYYY } from "../../utils/parsing";
 
 export const TimetableTypeSchema = z.union([
   z.literal("LESSON"),

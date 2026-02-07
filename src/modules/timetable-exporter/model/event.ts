@@ -1,7 +1,7 @@
 // Blueprint for a CalendarEvent.
 
 import { TimetableItem } from "../../../api/types/timetable";
-import { combineDateWithTime } from "../../utils/parsing";
+import { combineDateWithTime } from "../../../utils/parsing";
 
 // Calender formats can extend this interface with features unique to that calender format.
 export interface CalendarEvent {
