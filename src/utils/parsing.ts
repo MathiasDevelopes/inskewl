@@ -43,18 +43,28 @@ export function transformDDMMYYYY(dateStr: string): Date {
  * Transforms an ISO date string to a Date object
  * @param isoDate An ISO date string (e.g., "2023-12-31")
  * @returns Date
+ * @throws Error if the ISO date is invalid
  */
 export function transformISODate(isoDate: string): Date {
-  return new Date(isoDate);
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid ISO date: ${isoDate}`);
+  }
+  return date;
 }
 
 /**
  * Transforms an ISO datetime string to a Date object
  * @param isoDatetime An ISO datetime string (e.g., "2023-12-31T12:00:00")
  * @returns Date
+ * @throws Error if the ISO datetime is invalid
  */
 export function transformISODateTime(isoDatetime: string): Date {
-  return new Date(isoDatetime);
+  const date = new Date(isoDatetime);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid ISO datetime: ${isoDatetime}`);
+  }
+  return date;
 }
 
 /**
