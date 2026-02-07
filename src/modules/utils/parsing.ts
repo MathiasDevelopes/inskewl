@@ -21,10 +21,22 @@ export function makeDate(date: string, time: string): Date {
  * Transforms a date string in dd/mm/yyyy format to a Date object
  * @param dateStr A date in the format dd/mm/yyyy
  * @returns Date
+ * @throws Error if the date format is invalid
  */
 export function transformDDMMYYYY(dateStr: string): Date {
-  const [d, m, y] = dateStr.split("/");
-  return new Date(Number(y), Number(m) - 1, Number(d));
+  const parts = dateStr.split("/");
+  if (parts.length !== 3) {
+    throw new Error(`Invalid date format: ${dateStr}. Expected dd/mm/yyyy`);
+  }
+  const [d, m, y] = parts.map(Number);
+  if (isNaN(d) || isNaN(m) || isNaN(y)) {
+    throw new Error(`Invalid date values: ${dateStr}`);
+  }
+  const date = new Date(y, m - 1, d);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date: ${dateStr}`);
+  }
+  return date;
 }
 
 /**
@@ -50,14 +62,22 @@ export function transformISODateTime(isoDatetime: string): Date {
  * @param date A Date object
  * @param time A time string in HH:mm format
  * @returns Date with the specified time
+ * @throws Error if the time format is invalid
  */
 export function combineDateWithTime(date: Date, time: string): Date {
-  const [h, min] = time.split(":");
+  const parts = time.split(":");
+  if (parts.length !== 2) {
+    throw new Error(`Invalid time format: ${time}. Expected HH:mm`);
+  }
+  const [h, min] = parts.map(Number);
+  if (isNaN(h) || isNaN(min) || h < 0 || h > 23 || min < 0 || min > 59) {
+    throw new Error(`Invalid time values: ${time}`);
+  }
   return new Date(
     date.getFullYear(),
     date.getMonth(),
     date.getDate(),
-    Number(h),
-    Number(min),
+    h,
+    min,
   );
 }

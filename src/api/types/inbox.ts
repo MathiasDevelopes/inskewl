@@ -54,7 +54,7 @@ export const MessageSchema = z.object({
   createdOn: z.iso.datetime({ offset: true }).transform(transformISODateTime).meta({
     description: "The datetime the message was created on",
   }),
-  modifiedOn: z.iso.datetime({ offset: true }).transform(transformISODateTime).nullable().optional().meta({
+  modifiedOn: z.iso.datetime({ offset: true }).nullable().optional().transform((val) => val ? transformISODateTime(val) : val).meta({
     description: "The datetime the message was last modified on.",
   }),
   origin: z.string().meta({
