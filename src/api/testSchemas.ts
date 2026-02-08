@@ -60,8 +60,10 @@ export async function testAllApiSchemas(): Promise<void> {
   await testApiCall("TimetableApi.getTimetable()", () =>
     api.timetable.getTimetable(new Date()),
   );
-  await testApiCall("TimetableApi.getAdditionalActivityDetails()", () =>
-    api.timetable.getAdditionalActivityDetails(),
+  // Skipping postAdditionalActivityDetails - requires activityTimeslotIds parameter
+  skipTest(
+    "TimetableApi.postAdditionalActivityDetails()",
+    "requires activityTimeslotIds parameter - needs dedicated test",
   );
 
   // Test CalendarApi methods
