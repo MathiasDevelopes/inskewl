@@ -3,8 +3,9 @@ import { ZodError } from "zod";
 
 interface TestResult {
   name: string;
-  success: boolean;
-  error?: ZodError;
+  status: "passed" | "failed" | "skipped";
+  error?: unknown;
+  reason?: string;
 }
 
 /**
@@ -25,21 +26,25 @@ export async function testAllApiSchemas(): Promise<void> {
   ): Promise<T | null> => {
     try {
       const result = await fn();
-      results.push({ name, success: true });
+      results.push({ name, status: "passed" });
       console.log(`✅ ${name}`);
       return result;
     } catch (error) {
+      results.push({ name, status: "failed", error });
+      console.error(`❌ ${name}`);
       if (error instanceof ZodError) {
-        results.push({ name, success: false, error });
-        console.error(`❌ ${name}`);
         console.error("Zod validation error:", error);
       } else {
-        results.push({ name, success: false });
-        console.error(`❌ ${name}`);
         console.error("Unexpected error:", error);
       }
       return null;
     }
+  };
+
+  // Helper function to record a skipped test
+  const skipTest = (name: string, reason: string): void => {
+    results.push({ name, status: "skipped", reason });
+    console.log(`⏭️  ${name} (skipped: ${reason})`);
   };
 
   // Test UserApi methods
@@ -69,12 +74,19 @@ export async function testAllApiSchemas(): Promise<void> {
     await testApiCall("CalendarApi.getDayCount()", () =>
       api.calendar.getDayCount(academicYears[0]),
     );
+  } else {
+    skipTest("CalendarApi.getDayCount()", "no academic years available");
   }
 
   // Test AttendanceApi methods
   if (academicYears && academicYears.length > 0) {
     await testApiCall("AttendanceApi.getAttendanceForSubjectGroups()", () =>
       api.attendance.getAttendanceForSubjectGroups(academicYears[0]),
+    );
+  } else {
+    skipTest(
+      "AttendanceApi.getAttendanceForSubjectGroups()",
+      "no academic years available",
     );
   }
 
@@ -103,28 +115,44 @@ export async function testAllApiSchemas(): Promise<void> {
     await testApiCall(`EventsApi.getEvent(${events[0].id})`, () =>
       api.events.getEvent(events[0].id),
     );
+  } else {
+    skipTest("EventsApi.getEvent(id)", "no events available");
   }
 
   // Summary
-  const passed = results.filter((r) => r.success).length;
-  const failed = results.filter((r) => !r.success).length;
+  const passed = results.filter((r) => r.status === "passed").length;
+  const failed = results.filter((r) => r.status === "failed").length;
+  const skipped = results.filter((r) => r.status === "skipped").length;
 
   console.groupEnd();
   console.group("📊 Test Summary");
   console.log(`Total: ${results.length}`);
   console.log(`✅ Passed: ${passed}`);
   console.log(`❌ Failed: ${failed}`);
+  console.log(`⏭️  Skipped: ${skipped}`);
 
   if (failed > 0) {
     console.group("❌ Failed Tests");
     results
-      .filter((r) => !r.success)
+      .filter((r) => r.status === "failed")
       .forEach((r) => {
         console.group(r.name);
-        if (r.error) {
+        if (r.error instanceof ZodError) {
           console.error("Zod Error Details:", r.error);
+        } else if (r.error) {
+          console.error("Error Details:", r.error);
         }
         console.groupEnd();
+      });
+    console.groupEnd();
+  }
+
+  if (skipped > 0) {
+    console.group("⏭️  Skipped Tests");
+    results
+      .filter((r) => r.status === "skipped")
+      .forEach((r) => {
+        console.log(`${r.name}: ${r.reason}`);
       });
     console.groupEnd();
   }

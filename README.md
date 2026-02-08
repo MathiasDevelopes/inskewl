@@ -59,9 +59,9 @@ For å hjelpe med å rapportere feil i API-schemas, kan du teste alle API-funksj
 1. Åpne VIS InSchool i nettleseren din (du må være logget inn)
 2. Åpne Developer Tools (F12)
 3. Skriv følgende i konsollen:
-```javascript
-testAllApiSchemas()
-```
+   ```javascript
+   testAllApiSchemas()
+   ```
 
 Dette vil:
 - Kalle alle API-endepunkter
