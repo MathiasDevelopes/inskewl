@@ -39,7 +39,7 @@ export class TimetableApi extends Endpoint {
   }
 
   /**
-   * Posts a list of activityTimeslotId to get additional activity details.
+   * Posts a list of activityTimeslotIds to get additional activity details.
    * @param activityTimeslotIds - Array of activity timeslot IDs to get details for
    */
   async postAdditionalActivityDetails(
