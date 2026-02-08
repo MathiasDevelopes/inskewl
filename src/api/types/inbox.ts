@@ -1,13 +1,16 @@
 import { z } from "zod";
 import { transformISODateTime } from "../../utils/parsing";
 
+// User roles are labeled differently for different endpoints.
+// It seems the inbox/messages endpoint does not have ROLE_ prefix before the role name.
 export const UserRole = z.enum([
-  "ROLE_TEACHER",
-  "ROLE_PRINCIPAL",
-  "ROLE_LEARNER",
-  "ROLE_CONTACT",
-  "ROLE_ADMIN",
-  "ROLE_SCHOOL_OWNER",
+  "TEACHER",
+  "PRINCIPAL",
+  "LEARNER",
+  "CONTACT",
+  "ADMIN",
+  "SCHOOL_OWNER",
+  "BASIC",
 ]);
 
 export const OwnerSchema = z.object({
@@ -51,12 +54,20 @@ export const MessageSchema = z.object({
   }),
   status: z.string(),
   lineType: z.string(),
-  createdOn: z.iso.datetime({ offset: true }).transform(transformISODateTime).meta({
-    description: "The datetime the message was created on",
-  }),
-  modifiedOn: z.iso.datetime({ offset: true }).nullable().optional().transform((val) => val ? transformISODateTime(val) : val).meta({
-    description: "The datetime the message was last modified on.",
-  }),
+  createdOn: z.iso
+    .datetime({ offset: true })
+    .transform(transformISODateTime)
+    .meta({
+      description: "The datetime the message was created on",
+    }),
+  modifiedOn: z.iso
+    .datetime({ offset: true })
+    .nullable()
+    .optional()
+    .transform((val) => (val ? transformISODateTime(val) : val))
+    .meta({
+      description: "The datetime the message was last modified on.",
+    }),
   origin: z.string().meta({
     description: "Origin of the message",
   }),
