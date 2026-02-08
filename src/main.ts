@@ -22,7 +22,6 @@ if (typeof window !== "undefined" && !("testAllApiSchemas" in window)) {
 
 (async function () {
   const moduleLoader = new ModuleLoader([
-    new TestModule(),
     new VismaWrapped(),
     new TimetableExporter(),
   ]);
