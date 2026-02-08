@@ -3,6 +3,16 @@ import { UrlWatcher } from "./modules/core/UrlWatcher";
 import { TestModule } from "./modules/test";
 import { TimetableExporter } from "./modules/timetable-exporter/timetable-exporter";
 import { VismaWrapped } from "./modules/vismawrapped";
+import { testAllApiSchemas } from "./api/testSchemas";
+
+// Expose API schema test function to global window context
+declare global {
+  interface Window {
+    testAllApiSchemas: typeof testAllApiSchemas;
+  }
+}
+
+window.testAllApiSchemas = testAllApiSchemas;
 
 (async function () {
   const moduleLoader = new ModuleLoader([
