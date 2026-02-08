@@ -52,6 +52,25 @@ Vil du bidra eller lage din egen modul? Sjekk ut [wikien](https://github.com/Mat
 - Moduler er selvstendige, så det er lett å legge til nye funksjoner.
 - API-en kan også brukes som standalone bibliotek i andre prosjekter (må fikse autentisering selv).
 
+## Testing API Schemas
+
+For å hjelpe med å rapportere feil i API-schemas, kan du teste alle API-funksjoner direkte i nettleserkonsollen:
+
+1. Åpne VIS InSchool i nettleseren din (du må være logget inn)
+2. Åpne Developer Tools (F12)
+3. Skriv følgende i konsollen:
+   ```javascript
+   testAllApiSchemas()
+   ```
+
+Dette vil:
+- Kalle alle API-endepunkter
+- Validere svarene mot Zod-schemas
+- Vise en ryddig oppsummering av hvilke tester som passerte/feilet
+- Logge detaljerte Zod-feil for eventuelle schema-mismatch
+
+Bruk denne funksjonen for å rapportere tilbakemelding om feil eller manglende Zod-schemas i API-en.
+
 ## Bygg fra kildekode
 
 ### Requirements
