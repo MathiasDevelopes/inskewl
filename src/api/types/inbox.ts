@@ -46,7 +46,7 @@ export const MessageSchema = z.object({
   titleTranslation: z.string().meta({
     description: "Translation string of the title",
   }),
-  content: z.string().meta({
+  content: z.string().nullable().meta({
     description: "Content of the message. Can contain HTML",
   }),
   contentTranslation: z.string().nullable().optional().meta({

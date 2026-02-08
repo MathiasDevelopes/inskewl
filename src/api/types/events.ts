@@ -24,7 +24,7 @@ export const WorkForceSchema = z.object({
     description: "The personal id of the employee",
   }),
   displayCode: z.any(),
-  preferredGivenName: z.string().optional().meta({
+  preferredGivenName: z.string().optional().nullable().meta({
     description: "The nickname of the employee",
   }),
   givenName: z.string().meta({

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SchoolType = z.enum(["EXAM_SCHOOL", "UPPER_SECONDARY"]);
+export const SchoolType = z.enum(["EXAM_SCHOOL", "UPPER_SECONDARY", "PRIMARY"]);
 
 export const SchoolSchema = z.object({
   tenant: z.number().meta({
