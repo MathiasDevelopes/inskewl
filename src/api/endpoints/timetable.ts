@@ -38,13 +38,16 @@ export class TimetableApi extends Endpoint {
     );
   }
 
-  /* Internally a post request, but we expose it as get because the only thing posted is learner id. */
-  async getAdditionalActivityDetails(): Promise<ActivityDetail[]> {
-    const learnerId = await this.session.getLearnerId();
-
+  /**
+   * Posts a list of activityTimeslotId to get additional activity details.
+   * @param activityTimeslotIds - Array of activity timeslot IDs to get details for
+   */
+  async postAdditionalActivityDetails(
+    activityTimeslotIds: number[],
+  ): Promise<ActivityDetail[]> {
     return this.client.postWithSchema(
       "timetablev2/additional-activity-details",
-      [learnerId],
+      activityTimeslotIds,
       z.array(ActivityDetailSchema),
     );
   }
