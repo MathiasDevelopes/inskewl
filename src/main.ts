@@ -1,6 +1,5 @@
 import { ModuleLoader } from "./modules/core/ModuleLoader";
 import { UrlWatcher } from "./modules/core/UrlWatcher";
-import { TestModule } from "./modules/test";
 import { TimetableExporter } from "./modules/timetable-exporter/timetable-exporter";
 import { VismaWrapped } from "./modules/vismawrapped";
 import { testAllApiSchemas } from "./api/testSchemas";
