@@ -23,7 +23,7 @@
 Opprinnelig laget fordi at VIS InSchool kun støtter eksport av timeplanen din i PDF (i store 2026 🙏)
 
 ## Funksjoner
-- [X] Eksportere det nåverende halvåret til en universell `.ics`-kalenderfil
+- [X] Eksportere timeplanen din for halvåret til en universell `.ics`-kalenderfil
       (kompatibel med Microsoft Exchange, Google Calendar, Apple Calendar, osv.)
 ### Planlagt
 Neste ting jeg irriterer meg over
