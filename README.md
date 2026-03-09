@@ -1,5 +1,5 @@
 # inskewl
-> Et modulbasert userscript som gjør VIS InSchool bedre
+> QOL (Quality-of-Life) userscript for VIS InSchool
 
 **Status:** Work in progress (ting er i aktiv utvikling, ingen GitHub releases enda)
 
@@ -18,7 +18,7 @@
 
 
 ## Om prosjektet
-**inskewl** er et userscript som legger til grunnleggende funksjonalitet som ikke er der fra starten av.
+**inskewl** er et userscript som legger til manglende grunnleggende funksjonalitet i VIS InSchool.
 
 Opprinnelig laget fordi at VIS InSchool kun støtter eksport av timeplanen din i PDF (i store 2026 🙏)
 
@@ -37,6 +37,9 @@ Neste ting jeg irriterer meg over
   * Greasemonkey
 
 ## Installasjonssteg
+> [!WARNING]
+Disse fungerer ikke enda, gå til [Bygg fra kildekode](#bygg-fra-kildekode) for instruksjoner.
+
 1. Last ned nyeste utgave av `inschool.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
 2. Dobbeltrykk på `inschool.user.js` i Nedlastinger mappen din.
 3. Trykk installer på fanen som kommer opp.
