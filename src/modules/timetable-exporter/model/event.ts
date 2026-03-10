@@ -14,7 +14,7 @@ export interface CalendarEvent {
 }
 
 export function fromTimetableItem(item: TimetableItem): CalendarEvent {
-  const uid = `${Math.random().toString(36).substr(2, 9)}@inskewl`;
+  const uid = `${Math.random().toString(36).substring(2, 2+9)}@inskewl`;
   const start = combineDateWithTime(item.date, item.startTime);
   const end = combineDateWithTime(item.date, item.endTime);
 
