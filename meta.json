@@ -1,7 +1,6 @@
 {
   "name": "inskewl",
   "namespace": "Violentmonkey Scripts",
-  "version": "0.0.1",
   "description": "A userscript that adds useful features to VIS InSchool",
   "author": "MathiasDevelopes",
   "match": ["https://*.inschool.visma.no/*"],
