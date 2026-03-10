@@ -46,3 +46,5 @@ jobs:
           asset_path: ./dist/inskewl.user.js
           asset_name: inskewl.user.js
           asset_content_type: application/javascript
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
