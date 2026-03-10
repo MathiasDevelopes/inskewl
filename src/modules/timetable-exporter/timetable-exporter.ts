@@ -28,8 +28,18 @@ export class TimetableExporter extends VismaModule {
           const btn = document.createElement("button");
           btn.id = "timetabletoics";
           btn.className = "vsware-capitalize dropdown-item";
-          // required for proper styling of the button inside the dropdown menu
-          btn.setAttribute("data-v-649b0c40", "");
+          
+          // grab the styling dynamically from a li in same parent.
+          let dataVAttr: string | undefined;
+          const liItem = document.querySelector('ul.dropdown-menu li');
+          if (liItem) {
+            dataVAttr = [...liItem.attributes].find(attr => 
+              attr.name.startsWith("data-v")
+            )?.name;
+          }
+          if (dataVAttr) {
+            btn.setAttribute(dataVAttr, "");
+          }
           btn.textContent = "Export to ICS";
           btn.onclick = () => this.exportToICS();
 
