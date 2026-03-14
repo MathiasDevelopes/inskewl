@@ -1,8 +1,6 @@
 # inskewl
 > QOL (Quality-of-Life) userscript for VIS InSchool
 
-**Status:** Work in progress (ting er i aktiv utvikling, ingen GitHub releases enda)
-
 ## Innholdsfortegnelse
 - [Om prosjektet](#om-prosjektet)
 - [Funksjoner](#funksjoner)
@@ -37,9 +35,6 @@ Neste ting jeg irriterer meg over
   * Greasemonkey
 
 ## Installasjonssteg
-> [!WARNING]
-Disse fungerer ikke enda, gå til [Bygg fra kildekode](#bygg-fra-kildekode) for instruksjoner.
-
 1. Last ned nyeste utgave av `inschool.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
 2. Dobbeltrykk på `inschool.user.js` i Nedlastinger mappen din.
 3. Trykk installer på fanen som kommer opp.
