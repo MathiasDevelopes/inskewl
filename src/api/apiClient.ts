@@ -58,7 +58,12 @@ export class ApiClient {
     opts?: RequestOptions,
   ) {
     const json = await this.get(path, opts);
-    return schema.parse(json);
+    const result = schema.safeParse(json);
+    if (!result.success) {
+      console.warn(`[inskewl] Schema mismatch for GET ${path}:`, result.error);
+      return json as T;
+    }
+    return result.data;
   }
 
   async postWithSchema<T>(
@@ -68,6 +73,11 @@ export class ApiClient {
     opts?: RequestOptions,
   ) {
     const json = await this.post(path, body, opts);
-    return schema.parse(json);
+    const result = schema.safeParse(json);
+    if (!result.success) {
+      console.warn(`[inskewl] Schema mismatch for POST ${path}:`, result.error);
+      return json as T;
+    }
+    return result.data;
   }
 }
