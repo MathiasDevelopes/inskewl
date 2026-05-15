@@ -36,6 +36,10 @@ export class AbsenceChecker extends VismaModule {
   name = "AbsenceChecker";
   description = "Check if you can skip lessons without exceeding absence limits.";
 
+  private static readonly dataRefreshIntervalMs = 5 * 60 * 1000;
+  private static readonly lessonUnitRoundingMinutes = 5;
+  private static readonly defaultLessonUnitMinutes = 45;
+
   private panel?: HTMLDivElement;
   private toggleButton?: HTMLButtonElement;
   private daySelect?: HTMLSelectElement;
@@ -49,9 +53,9 @@ export class AbsenceChecker extends VismaModule {
   private attendanceGroups: AttendanceSubjectGroup[] = [];
   private dataLoaded = false;
   private lastLoadedAt?: number;
-  private lessonUnitMinutes = 45;
+  private lessonUnitMinutes = AbsenceChecker.defaultLessonUnitMinutes;
   private loadingPromise?: Promise<void>;
-  private readonly refreshIntervalMs = 5 * 60 * 1000;
+  private readonly refreshIntervalMs = AbsenceChecker.dataRefreshIntervalMs;
 
   shouldLoad(url: string): boolean {
     return /timetable|timeplan|dashboard/.test(url);
@@ -361,14 +365,17 @@ export class AbsenceChecker extends VismaModule {
       const end = combineDateWithTime(item.date, item.endTime);
       const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
       if (!Number.isFinite(diffMinutes) || diffMinutes <= 0) continue;
-      const rounded = Math.round(diffMinutes / 5) * 5;
+      const rounded =
+        Math.round(
+          diffMinutes / AbsenceChecker.lessonUnitRoundingMinutes,
+        ) * AbsenceChecker.lessonUnitRoundingMinutes;
       counts.set(rounded, (counts.get(rounded) ?? 0) + 1);
     }
     const sorted = Array.from(counts.entries()).sort((a, b) => {
       if (b[1] !== a[1]) return b[1] - a[1];
       return a[0] - b[0];
     });
-    return sorted[0]?.[0] ?? 45;
+    return sorted[0]?.[0] ?? AbsenceChecker.defaultLessonUnitMinutes;
   }
 
   private buildTimetableDays(items: TimetableItem[]): TimetableDay[] {
@@ -598,7 +605,7 @@ export class AbsenceChecker extends VismaModule {
       const subject = item.subject.toLowerCase();
       return this.attendanceGroups.find((group) =>
         [group.subjectName, group.subjectShortName].some(
-          (name) => name.toLowerCase() === subject,
+          (name) => name && name.toLowerCase() === subject,
         ),
       );
     }
