@@ -98,8 +98,8 @@ export class AbsenceChecker extends VismaModule {
     panel.id = "absence-checker-panel";
     panel.style.cssText = [
       "position: fixed",
-      "right: 16px",
-      "bottom: 64px",
+      "top: 0",
+      "left: 0",
       "width: 340px",
       "max-height: 70vh",
       "overflow: auto",
@@ -241,12 +241,37 @@ export class AbsenceChecker extends VismaModule {
   private showPanel(): void {
     if (!this.panel) return;
     this.panel.style.display = "block";
+    this.positionPanel();
     void this.ensureDataLoaded();
   }
 
   private hidePanel(): void {
     if (!this.panel) return;
     this.panel.style.display = "none";
+  }
+
+  private positionPanel(): void {
+    if (!this.panel || !this.toggleButton) return;
+    const spacing = 8;
+    const rect = this.toggleButton.getBoundingClientRect();
+    const panel = this.panel;
+
+    const preferredTop = rect.bottom + spacing;
+    const maxTop = window.innerHeight - panel.offsetHeight - spacing;
+    const top =
+      preferredTop + panel.offsetHeight > window.innerHeight - spacing
+        ? Math.max(spacing, rect.top - spacing - panel.offsetHeight)
+        : Math.min(preferredTop, maxTop);
+
+    const preferredLeft = rect.right - panel.offsetWidth;
+    const maxLeft = window.innerWidth - panel.offsetWidth - spacing;
+    const left = Math.min(
+      maxLeft,
+      Math.max(spacing, preferredLeft),
+    );
+
+    panel.style.top = `${Math.round(top)}px`;
+    panel.style.left = `${Math.round(left)}px`;
   }
 
   private async ensureDataLoaded(): Promise<void> {
