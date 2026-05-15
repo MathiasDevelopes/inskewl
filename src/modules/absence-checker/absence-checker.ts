@@ -58,8 +58,7 @@ export class AbsenceChecker extends VismaModule {
     return [
       {
         id: "absence-checker-toggle",
-        target:
-          ".userTimetable_timetableFilters_left.userTimetable_timetableFilters_left_xl, .userTimetable_timetableFilters_left",
+        target: ".userTimetable_timetableFilters_left",
         placement: "append",
         render: () => this.renderToggleButton(),
       },
