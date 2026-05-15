@@ -53,10 +53,9 @@ export class AbsenceChecker extends VismaModule {
   private currentDayItems: TimetableItem[] = [];
   private attendanceGroups: AttendanceSubjectGroup[] = [];
   private dataLoaded = false;
-  private lastLoadedAt = 0;
+  private lastLoadedAt = Date.now();
   private lessonUnitMinutes = AbsenceChecker.defaultLessonUnitMinutes;
   private loadingPromise?: Promise<void>;
-  private readonly refreshIntervalMs = AbsenceChecker.dataRefreshIntervalMs;
 
   shouldLoad(url: string): boolean {
     return /timetable|timeplan|dashboard/.test(url);
@@ -281,7 +280,10 @@ export class AbsenceChecker extends VismaModule {
   }
 
   private async ensureDataLoaded(): Promise<void> {
-    if (this.dataLoaded && Date.now() - this.lastLoadedAt < this.refreshIntervalMs) {
+    if (
+      this.dataLoaded &&
+      Date.now() - this.lastLoadedAt < AbsenceChecker.dataRefreshIntervalMs
+    ) {
       return;
     }
     if (!this.loadingPromise) {
@@ -352,7 +354,7 @@ export class AbsenceChecker extends VismaModule {
     start.setHours(0, 0, 0, 0);
     return Array.from({ length: Math.max(1, weeks) }, (_, index) => {
       const date = new Date(start.getTime());
-      date.setDate(start.getDate() + index * 7);
+      date.setDate(date.getDate() + index * 7);
       return date;
     });
   }
