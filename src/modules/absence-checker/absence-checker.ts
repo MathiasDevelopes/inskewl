@@ -254,24 +254,23 @@ export class AbsenceChecker extends VismaModule {
     if (!this.panel || !this.toggleButton) return;
     const spacing = 8;
     const rect = this.toggleButton.getBoundingClientRect();
-    const panel = this.panel;
 
     const preferredTop = rect.bottom + spacing;
-    const maxTop = window.innerHeight - panel.offsetHeight - spacing;
+    const maxTop = window.innerHeight - this.panel.offsetHeight - spacing;
     const top =
-      preferredTop + panel.offsetHeight > window.innerHeight - spacing
-        ? Math.max(spacing, rect.top - spacing - panel.offsetHeight)
+      preferredTop + this.panel.offsetHeight > window.innerHeight - spacing
+        ? Math.max(spacing, rect.top - spacing - this.panel.offsetHeight)
         : Math.min(preferredTop, maxTop);
 
-    const preferredLeft = rect.right - panel.offsetWidth;
-    const maxLeft = window.innerWidth - panel.offsetWidth - spacing;
+    const preferredLeft = rect.right - this.panel.offsetWidth;
+    const maxLeft = window.innerWidth - this.panel.offsetWidth - spacing;
     const left = Math.min(
       maxLeft,
       Math.max(spacing, preferredLeft),
     );
 
-    panel.style.top = `${Math.round(top)}px`;
-    panel.style.left = `${Math.round(left)}px`;
+    this.panel.style.top = `${Math.round(top)}px`;
+    this.panel.style.left = `${Math.round(left)}px`;
   }
 
   private async ensureDataLoaded(): Promise<void> {
