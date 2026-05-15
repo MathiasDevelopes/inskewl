@@ -369,6 +369,7 @@ export class AbsenceChecker extends VismaModule {
         Math.round(
           diffMinutes / AbsenceChecker.lessonUnitRoundingMinutes,
         ) * AbsenceChecker.lessonUnitRoundingMinutes;
+      if (rounded <= 0) continue;
       counts.set(rounded, (counts.get(rounded) ?? 0) + 1);
     }
     const sorted = Array.from(counts.entries()).sort((a, b) => {
@@ -623,7 +624,11 @@ export class AbsenceChecker extends VismaModule {
     const start = combineDateWithTime(item.date, item.startTime);
     const end = combineDateWithTime(item.date, item.endTime);
     const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-    const units = Math.round(diffMinutes / this.lessonUnitMinutes);
+    const unitMinutes =
+      this.lessonUnitMinutes > 0
+        ? this.lessonUnitMinutes
+        : AbsenceChecker.defaultLessonUnitMinutes;
+    const units = Math.round(diffMinutes / unitMinutes);
     return units > 0 ? units : 0;
   }
 
