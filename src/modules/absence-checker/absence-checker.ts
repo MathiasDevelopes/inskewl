@@ -458,7 +458,7 @@ export class AbsenceChecker extends VismaModule {
     for (const { group, hours } of grouped.values()) {
       const scheduled = group.totalScheduledHours;
       const absence = group.totalAbsence;
-      if (!scheduled || scheduled <= 0) {
+      if (!Number.isFinite(scheduled) || scheduled <= 0) {
         groups.push({
           group,
           addedHours: hours,
