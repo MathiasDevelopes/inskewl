@@ -52,7 +52,7 @@ export class AbsenceChecker extends VismaModule {
   private currentDayItems: TimetableItem[] = [];
   private attendanceGroups: AttendanceSubjectGroup[] = [];
   private dataLoaded = false;
-  private lastLoadedAt?: number;
+  private lastLoadedAt = 0;
   private lessonUnitMinutes = AbsenceChecker.defaultLessonUnitMinutes;
   private loadingPromise?: Promise<void>;
   private readonly refreshIntervalMs = AbsenceChecker.dataRefreshIntervalMs;
@@ -280,11 +280,7 @@ export class AbsenceChecker extends VismaModule {
   }
 
   private async ensureDataLoaded(): Promise<void> {
-    if (
-      this.dataLoaded &&
-      this.lastLoadedAt &&
-      Date.now() - this.lastLoadedAt < this.refreshIntervalMs
-    ) {
+    if (this.dataLoaded && Date.now() - this.lastLoadedAt < this.refreshIntervalMs) {
       return;
     }
     if (!this.loadingPromise) {
@@ -350,8 +346,7 @@ export class AbsenceChecker extends VismaModule {
     const diff = day === 0 ? -6 : 1 - day;
     start.setDate(start.getDate() + diff);
     start.setHours(0, 0, 0, 0);
-    const totalWeeks = Math.max(1, weeks);
-    return Array.from({ length: totalWeeks }, (_, index) => {
+    return Array.from({ length: Math.max(1, weeks) }, (_, index) => {
       const date = new Date(start.getTime());
       date.setDate(start.getDate() + index * 7);
       return date;
@@ -364,7 +359,7 @@ export class AbsenceChecker extends VismaModule {
       const start = combineDateWithTime(item.date, item.startTime);
       const end = combineDateWithTime(item.date, item.endTime);
       const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-      if (!Number.isFinite(diffMinutes) || diffMinutes <= 0) continue;
+      if (!diffMinutes || diffMinutes <= 0) continue;
       const rounded =
         Math.round(
           diffMinutes / AbsenceChecker.lessonUnitRoundingMinutes,
@@ -624,6 +619,7 @@ export class AbsenceChecker extends VismaModule {
     const start = combineDateWithTime(item.date, item.startTime);
     const end = combineDateWithTime(item.date, item.endTime);
     const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+    if (diffMinutes <= 0) return 0;
     const unitMinutes =
       this.lessonUnitMinutes > 0
         ? this.lessonUnitMinutes
