@@ -39,6 +39,7 @@ export class AbsenceChecker extends VismaModule {
   private static readonly dataRefreshIntervalMs = 5 * 60 * 1000;
   private static readonly lessonUnitRoundingMinutes = 5;
   private static readonly defaultLessonUnitMinutes = 45;
+  private static readonly defaultLookAheadWeeks = 4;
 
   private panel?: HTMLDivElement;
   private toggleButton?: HTMLButtonElement;
@@ -296,7 +297,10 @@ export class AbsenceChecker extends VismaModule {
       const academicYear = await this.getCurrentAcademicYear();
       this.attendanceGroups =
         await api.attendance.getAttendanceForSubjectGroups(academicYear);
-      const timetableItems = await this.getUpcomingTimetableItems(new Date(), 4);
+      const timetableItems = await this.getUpcomingTimetableItems(
+        new Date(),
+        AbsenceChecker.defaultLookAheadWeeks,
+      );
       this.lessonUnitMinutes = this.detectLessonUnitMinutes(timetableItems);
       this.days = this.buildTimetableDays(timetableItems);
       this.populateDaySelect();
@@ -543,7 +547,7 @@ export class AbsenceChecker extends VismaModule {
         group,
         hours: 0,
       };
-      entry.hours += this.getLessonHours(item);
+      entry.hours += this.getLessonUnits(item);
       grouped.set(group.subjectGroupId, entry);
     }
 
@@ -615,7 +619,7 @@ export class AbsenceChecker extends VismaModule {
     return null;
   }
 
-  private getLessonHours(item: TimetableItem): number {
+  private getLessonUnits(item: TimetableItem): number {
     const start = combineDateWithTime(item.date, item.startTime);
     const end = combineDateWithTime(item.date, item.endTime);
     const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
