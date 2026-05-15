@@ -282,7 +282,7 @@ export class AbsenceChecker extends VismaModule {
     const current = years.find((year) => year.currentYear);
     if (current) return current;
     if (years.length > 0) return years[0];
-    throw new Error("No academic years available");
+    throw new Error("inskewl: no academic years found in API response");
   }
 
   private buildTimetableDays(timetable: Timetable): TimetableDay[] {
