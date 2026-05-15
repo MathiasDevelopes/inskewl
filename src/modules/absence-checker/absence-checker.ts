@@ -2,6 +2,12 @@ import { api } from "../../api/api";
 import { AttendanceSubjectGroup } from "../../api/types/attendance";
 import { AcademicYear } from "../../api/types/calendar";
 import { Timetable, TimetableItem } from "../../api/types/timetable";
+import {
+  formatDateKey,
+  formatDateLabel,
+  formatPercent,
+  formatTime,
+} from "../../utils/formatting";
 import { combineDateWithTime } from "../../utils/parsing";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
@@ -291,7 +297,7 @@ export class AbsenceChecker extends VismaModule {
       ["LESSON", "SUBSTITUTION", "ACTIVITY"].includes(item.type),
     );
     for (const item of relevantItems) {
-      const key = this.formatDateKey(item.date);
+      const key = formatDateKey(item.date);
       const day = map.get(key) ?? {
         key,
         date: item.date,
@@ -317,7 +323,7 @@ export class AbsenceChecker extends VismaModule {
     for (const day of this.days) {
       const option = document.createElement("option");
       option.value = day.key;
-      option.textContent = this.formatDateLabel(day.date);
+      option.textContent = formatDateLabel(day.date);
       this.daySelect.appendChild(option);
     }
     if (this.days.length > 0) {
@@ -418,7 +424,7 @@ export class AbsenceChecker extends VismaModule {
       if (group.status === "unknown") {
         li.textContent = `${status} ${group.group.subjectGroupName}: klarte ikke å beregne fravær.`;
       } else {
-        li.textContent = `${status} ${group.group.subjectGroupName}: ${this.formatPercent(group.currentPercentage)}% → ${this.formatPercent(group.projectedPercentage)}% (grense ${this.formatPercent(group.group.defaultLimit)}%)`;
+        li.textContent = `${status} ${group.group.subjectGroupName}: ${formatPercent(group.currentPercentage)}% → ${formatPercent(group.projectedPercentage)}% (grense ${formatPercent(group.group.defaultLimit)}%)`;
       }
       list.appendChild(li);
     }
@@ -546,37 +552,11 @@ export class AbsenceChecker extends VismaModule {
 
   private formatLessonLabel(item: TimetableItem): string {
     const name = item.subject ?? item.label ?? "Ukjent fag";
-    const timeRange = `${this.formatTime(item.startTime)}-${this.formatTime(
+    const timeRange = `${formatTime(item.startTime)}-${formatTime(
       item.endTime,
     )}`;
     const room = item.mainRoom ? ` (${item.mainRoom})` : "";
     return `${timeRange} · ${name}${room}`;
-  }
-
-  private formatTime(time: string): string {
-    const parts = time.split(":");
-    if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
-    return time;
-  }
-
-  private formatDateKey(date: Date): string {
-    const y = date.getFullYear();
-    const m = `${date.getMonth() + 1}`.padStart(2, "0");
-    const d = `${date.getDate()}`.padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-
-  private formatDateLabel(date: Date): string {
-    return date.toLocaleDateString("nb-NO", {
-      weekday: "long",
-      day: "numeric",
-      month: "short",
-    });
-  }
-
-  private formatPercent(value?: number): string {
-    if (value == null || Number.isNaN(value)) return "-";
-    return value.toFixed(1);
   }
 
   private setStatus(message: string): void {
