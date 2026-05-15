@@ -23,6 +23,7 @@ Opprinnelig laget fordi at VIS InSchool kun støtter eksport av timeplanen din i
 ## Funksjoner
 - [X] Eksportere timeplanen din for halvåret til en universell `.ics`-kalenderfil
       (kompatibel med Microsoft Exchange, Google Calendar, Apple Calendar, osv.)
+- [X] Sjekk om du kan hoppe over timer uten å passere fraværsgrensen
 ### Planlagt
 Neste ting jeg irriterer meg over
 

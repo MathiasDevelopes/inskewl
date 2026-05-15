@@ -1,5 +1,6 @@
 import { ModuleLoader } from "./modules/core/ModuleLoader";
 import { UrlWatcher } from "./modules/core/UrlWatcher";
+import { AbsenceChecker } from "./modules/absence-checker/absence-checker";
 import { TimetableExporter } from "./modules/timetable-exporter/timetable-exporter";
 import { VismaWrapped } from "./modules/vismawrapped";
 import { testAllApiSchemas } from "./api/testSchemas";
@@ -22,6 +23,7 @@ if (typeof window !== "undefined" && !("testAllApiSchemas" in window)) {
 (async function () {
   const moduleLoader = new ModuleLoader([
     new VismaWrapped(),
+    new AbsenceChecker(),
     new TimetableExporter(),
   ]);
 
