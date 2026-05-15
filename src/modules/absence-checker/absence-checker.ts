@@ -1,7 +1,7 @@
 import { api } from "../../api/api";
 import { AttendanceSubjectGroup } from "../../api/types/attendance";
 import { AcademicYear } from "../../api/types/calendar";
-import { Timetable, TimetableItem } from "../../api/types/timetable";
+import { TimetableItem } from "../../api/types/timetable";
 import {
   formatDateKey,
   formatDateLabel,
@@ -48,7 +48,10 @@ export class AbsenceChecker extends VismaModule {
   private currentDayItems: TimetableItem[] = [];
   private attendanceGroups: AttendanceSubjectGroup[] = [];
   private dataLoaded = false;
+  private lastLoadedAt?: number;
+  private lessonUnitMinutes = 45;
   private loadingPromise?: Promise<void>;
+  private readonly refreshIntervalMs = 5 * 60 * 1000;
 
   shouldLoad(url: string): boolean {
     return /timetable|timeplan|dashboard/.test(url);
@@ -73,7 +76,6 @@ export class AbsenceChecker extends VismaModule {
 
   private renderToggleButton(): HTMLButtonElement {
     const btn = document.createElement("button");
-    btn.id = "absence-checker-toggle";
     btn.textContent = "Kan jeg ta fraværet?";
     btn.style.cssText = [
       "margin-left: auto",
@@ -95,7 +97,6 @@ export class AbsenceChecker extends VismaModule {
 
   private renderPanel(): HTMLDivElement {
     const panel = document.createElement("div");
-    panel.id = "absence-checker-panel";
     panel.style.cssText = [
       "position: fixed",
       "top: 0",
@@ -159,6 +160,7 @@ export class AbsenceChecker extends VismaModule {
       const selected = daySelect.value;
       this.currentDayKey = selected;
       this.updateClassList(selected);
+      this.setResults("Velg timer og sjekk fravær for denne dagen.");
     };
     dayWrapper.append(dayLabel, daySelect);
 
@@ -274,7 +276,13 @@ export class AbsenceChecker extends VismaModule {
   }
 
   private async ensureDataLoaded(): Promise<void> {
-    if (this.dataLoaded) return;
+    if (
+      this.dataLoaded &&
+      this.lastLoadedAt &&
+      Date.now() - this.lastLoadedAt < this.refreshIntervalMs
+    ) {
+      return;
+    }
     if (!this.loadingPromise) {
       this.loadingPromise = this.loadData();
     }
@@ -288,12 +296,20 @@ export class AbsenceChecker extends VismaModule {
       const academicYear = await this.getCurrentAcademicYear();
       this.attendanceGroups =
         await api.attendance.getAttendanceForSubjectGroups(academicYear);
-      const timetable: Timetable = await api.timetable.getTimetable(new Date());
-      this.days = this.buildTimetableDays(timetable);
+      const timetableItems = await this.getUpcomingTimetableItems(new Date(), 4);
+      this.lessonUnitMinutes = this.detectLessonUnitMinutes(timetableItems);
+      this.days = this.buildTimetableDays(timetableItems);
       this.populateDaySelect();
+      if (this.days.length > 0) {
+        this.setResults("Velg timer og sjekk fravær for denne dagen.");
+      } else {
+        this.classList?.replaceChildren();
+        this.setResults("Ingen timer tilgjengelig å sjekke.");
+      }
       this.dataLoaded = true;
+      this.lastLoadedAt = Date.now();
       if (this.days.length === 0) {
-        this.setStatus("Fant ingen timer i denne uka.");
+        this.setStatus("Fant ingen timer de neste ukene.");
       } else {
         this.setStatus("Velg dag og hvilke timer du vurderer å hoppe over.");
       }
@@ -313,9 +329,51 @@ export class AbsenceChecker extends VismaModule {
     throw new Error("inskewl: no academic years found in API response");
   }
 
-  private buildTimetableDays(timetable: Timetable): TimetableDay[] {
+  private async getUpcomingTimetableItems(
+    reference: Date,
+    weeks: number,
+  ): Promise<TimetableItem[]> {
+    const weekStarts = this.getUpcomingWeekStartDates(reference, weeks);
+    const timetables = await Promise.all(
+      weekStarts.map((week) => api.timetable.getTimetable(week)),
+    );
+    return timetables.flatMap((timetable) => timetable.timetableItems);
+  }
+
+  private getUpcomingWeekStartDates(reference: Date, weeks: number): Date[] {
+    const start = new Date(reference.getTime());
+    const day = start.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    start.setDate(start.getDate() + diff);
+    start.setHours(0, 0, 0, 0);
+    const totalWeeks = Math.max(1, weeks);
+    return Array.from({ length: totalWeeks }, (_, index) => {
+      const date = new Date(start.getTime());
+      date.setDate(start.getDate() + index * 7);
+      return date;
+    });
+  }
+
+  private detectLessonUnitMinutes(items: TimetableItem[]): number {
+    const counts = new Map<number, number>();
+    for (const item of items) {
+      const start = combineDateWithTime(item.date, item.startTime);
+      const end = combineDateWithTime(item.date, item.endTime);
+      const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+      if (!Number.isFinite(diffMinutes) || diffMinutes <= 0) continue;
+      const rounded = Math.round(diffMinutes / 5) * 5;
+      counts.set(rounded, (counts.get(rounded) ?? 0) + 1);
+    }
+    const sorted = Array.from(counts.entries()).sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1];
+      return a[0] - b[0];
+    });
+    return sorted[0]?.[0] ?? 45;
+  }
+
+  private buildTimetableDays(items: TimetableItem[]): TimetableDay[] {
     const map = new Map<string, TimetableDay>();
-    const relevantItems = timetable.timetableItems.filter((item) =>
+    const relevantItems = items.filter((item) =>
       ["LESSON", "SUBSTITUTION", "ACTIVITY"].includes(item.type),
     );
     for (const item of relevantItems) {
@@ -341,6 +399,7 @@ export class AbsenceChecker extends VismaModule {
 
   private populateDaySelect(): void {
     if (!this.daySelect) return;
+    const previousKey = this.currentDayKey;
     this.daySelect.innerHTML = "";
     for (const day of this.days) {
       const option = document.createElement("option");
@@ -349,7 +408,10 @@ export class AbsenceChecker extends VismaModule {
       this.daySelect.appendChild(option);
     }
     if (this.days.length > 0) {
-      this.currentDayKey = this.days[0].key;
+      const matchingDay = previousKey
+        ? this.days.find((day) => day.key === previousKey)
+        : undefined;
+      this.currentDayKey = matchingDay?.key ?? this.days[0].key;
       this.daySelect.value = this.currentDayKey;
       this.updateClassList(this.currentDayKey);
     }
@@ -535,9 +597,9 @@ export class AbsenceChecker extends VismaModule {
     if (item.subject) {
       const subject = item.subject.toLowerCase();
       return this.attendanceGroups.find((group) =>
-        [group.subjectName, group.subjectShortName]
-          .filter(Boolean)
-          .some((name) => name.toLowerCase() === subject),
+        [group.subjectName, group.subjectShortName].some(
+          (name) => name.toLowerCase() === subject,
+        ),
       );
     }
     return undefined;
@@ -553,8 +615,9 @@ export class AbsenceChecker extends VismaModule {
   private getLessonHours(item: TimetableItem): number {
     const start = combineDateWithTime(item.date, item.startTime);
     const end = combineDateWithTime(item.date, item.endTime);
-    const diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-    return diff > 0 ? diff : 0;
+    const diffMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+    const units = Math.round(diffMinutes / this.lessonUnitMinutes);
+    return units > 0 ? units : 0;
   }
 
   private getSelectedItems(): TimetableItem[] {
