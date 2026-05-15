@@ -58,7 +58,8 @@ export class AbsenceChecker extends VismaModule {
     return [
       {
         id: "absence-checker-toggle",
-        target: "body",
+        target:
+          ".userTimetable_timetableFilters_left.userTimetable_timetableFilters_left_xl",
         placement: "append",
         render: () => this.renderToggleButton(),
       },
@@ -76,10 +77,8 @@ export class AbsenceChecker extends VismaModule {
     btn.id = "absence-checker-toggle";
     btn.textContent = "Kan jeg ta fraværet?";
     btn.style.cssText = [
-      "position: fixed",
-      "right: 16px",
-      "bottom: 16px",
-      "z-index: 999999",
+      "margin-left: auto",
+      "align-self: center",
       "padding: 8px 12px",
       "border-radius: 6px",
       "border: none",
