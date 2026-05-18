@@ -27,6 +27,69 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
+export const ExchangeDetailsSchema = z.object({
+  learnerId: z.number().meta({
+    description: "The VIS ID of the learner.",
+  }),
+  type: z.string().meta({
+    description: "The type of exchange.",
+  }),
+  country: z.string().nullable().meta({
+    description: "The country of the exchange.",
+  }),
+  duration: z.string().nullable().meta({
+    description: "The duration of the exchange.",
+  }),
+});
+
+export type ExchangeDetails = z.infer<typeof ExchangeDetailsSchema>;
+
+export const SchoolEnrolmentSchema = z.object({
+  learnerId: z.number().meta({
+    description: "The VIS ID of the learner.",
+  }),
+  userInfoId: z.null(),
+  tenant: z.number().meta({
+    description: "The VIS ID of the tenant.",
+  }),
+  academicYearId: z.null(),
+  schoolName: z.string().meta({
+    description: "The name of the school the learner is enrolled in.",
+  }),
+  mainSchool: z.boolean(),
+  secondSchool: z.boolean(),
+  affiliationType: z.string(),
+  nationalIdentityNumber: z.null(),
+  immutableUserId: z.string(),
+  address1: z.string().meta({
+    description: "The first line of the learner's address.",
+  }),
+  address2: z.string().meta({
+    description: "The second line of the learner's address.",
+  }),
+  address3: z.string().meta({
+    description: "The third line of the learner's address.",
+  }),
+  address4: z.string().meta({
+    description: "The fourth line of the learner's address.",
+  }),
+  guest: z.boolean(),
+  programmeAreaEnrollmentId: z.number().meta({
+    description: "The VIS ID of the programme area enrollment.",
+  }),
+  inCurrentYear: z.boolean().meta({
+    description: "Indicates if the learner is enrolled in the current year.",
+  }),
+  // We could maybe guess that startDate is iso format, but VIS is a loose canon.
+  startDate: z.null().meta({
+    description: "The start date of the learner's enrollment.",
+  }),
+  endDate: z.iso.date().transform(transformISODate),
+  active: z.boolean(),
+});
+
+export type SchoolEnrolment = z.infer<typeof SchoolEnrolmentSchema>;
+
 export const PersonalInfoSchema = z.object({
   vsware_type: z.string(),
   displayName: z.null(),
@@ -43,7 +106,11 @@ export const PersonalInfoSchema = z.object({
   mobilePhone: z.string(),
   homePhone: z.null(),
   email: z.email(),
-  classGroupId: z.null(),
+  classGroupId: z.number().nullable().meta(
+    {
+      description: "The class group the learner is currently in. Null if the learner is not currently in a class group (probably, who knows)",
+    }
+  ),
   otherId: z.null(),
   leavingDestination: z.null(),
   leavingReason: z.null(),
@@ -57,14 +124,22 @@ export const PersonalInfoSchema = z.object({
   endDate: z.iso.date().transform(transformISODate),
   localId: z.null(),
   photoURL: z.string(),
-  showPhone: z.null(),
-  showEmail: z.null(),
-  showFullName: z.null(),
-  mainTeacherMobilePhone: z.null(),
-  mainTeacherEmail: z.null(),
-  mainTeacherFirstName: z.null(),
+  showPhone: z.boolean().nullable(),
+  showEmail: z.boolean().nullable(),
+  showFullName: z.boolean().nullable(),
+  mainTeacherMobilePhone: z.string().nullable().meta({
+    description: "The mobile phone number of the learner's main teacher. Experienced format to be +47XXXXXXXX, but not guaranteed.",
+  }),
+  mainTeacherEmail: z.string().nullable().meta({
+    description: "The email of the learner's main teacher",
+  }),
+  mainTeacherFirstName: z.string().nullable().meta({
+    description: "The first name of the learner's main teacher",
+  }),
   mainTeacherPreferredGivenName: z.null(),
-  mainTeacherLastName: z.null(),
+  mainTeacherLastName: z.string().nullable().meta({
+    description: "The last name of the learner's main teacher",
+  }),
   lockerNumber: z.null(),
   emailOptIn: z.null(),
   mainTeacherWorkforcePersonalId: z.number(),
@@ -80,7 +155,9 @@ export const PersonalInfoSchema = z.object({
   tenant: z.number(),
   previousSchoolName: z.null(),
   workforcePersonalId: z.number(),
-  classGroupName: z.null(),
+  classGroupName: z.string().nullable().meta({
+    description: "The name of the class group the learner is currently in. Experienced format is something like '2ITA'",
+  }),
   nextOfKinPhoneNumber: z.null(),
   nextOfKin: z.null(),
   language: z.null(),
@@ -109,22 +186,30 @@ export const PersonalInfoSchema = z.object({
   secondChoiceForm: z.string(),
   specialNorwegianInstruction: z.null(),
   individualDecisions: z.null(),
-  programmeArea: z.null(),
-  programmeAreaId: z.number(),
-  schoolEnrolments: z.null(),
+  programmeArea: z.string().nullable().meta({
+    description: "UDIR name of the programme area the learner is currently in.",
+  }),
+  programmeAreaId: z.number().meta({
+    description: "The VIS ID of the programme area the learner is currently in.",
+  }),
+  schoolEnrolments: z.array(SchoolEnrolmentSchema).nullable(),
   residentialAddress: z.null(),
   guest: z.boolean(),
   reasonCodeAdded: z.boolean(),
   feideName: z.string(),
   inAdultEducation: z.boolean(),
   adaptedLanguageEducation: z.boolean(),
-  partTime: z.null(),
+  partTime: z.boolean().nullable().meta({
+    description: "Whether the learner is part-time.",
+  }),
   immutableUserId: z.string(),
   endCause: z.null(),
   completionCode: z.null(),
   isSecondSchool: z.boolean(),
-  vocationalProgrammeArea: z.null(),
-  exchangeDetails: z.null(),
+  vocationalProgrammeArea: z.boolean().nullable().meta({
+    description: "Whether the learner is in a vocational programme area.",
+  }),
+  exchangeDetails: z.array(ExchangeDetailsSchema).nullable(),
   campusId: z.null(),
   duf: z.null(),
   leftEarly: z.boolean(),
