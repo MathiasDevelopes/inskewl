@@ -13,6 +13,10 @@ export const UserRole = z.enum([
   "BASIC",
 ]);
 
+// The filter type for the getMessages endpoint. ALL returns all messages, while INBOX returns only unread messages.
+export const FilterTypeSchema = z.enum(["ALL", "INBOX"]);
+export type FilterType = z.infer<typeof FilterTypeSchema>;
+
 export const MessageUserSchema = z.object({
   id: z.number().meta({
     description: "ID of the message user",
