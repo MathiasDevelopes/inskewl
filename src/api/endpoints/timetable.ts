@@ -4,6 +4,7 @@ import {
   Timetable,
   TimetableSchema,
   TimetableType,
+  TimetableTypeSchema,
 } from "../types/timetable";
 import z from "zod";
 import { Endpoint } from "../endpoint";
@@ -17,8 +18,13 @@ export class TimetableApi extends Endpoint {
    */
   async getTimetable(
     week: Date,
-    types: TimetableType[] = ["LESSON", "EVENT", "ACTIVITY", "SUBSTITUTION"],
-    extraInfo = true,
+    types: TimetableType[] = [
+      TimetableTypeSchema.enum.LESSON, 
+      TimetableTypeSchema.enum.EVENT, 
+      TimetableTypeSchema.enum.ACTIVITY, 
+      TimetableTypeSchema.enum.SUBSTITUTION
+    ],
+    extraInfo = true, // Purpose currently unknown, returns same json.
   ): Promise<Timetable> {
     const learnerId = await this.session.getLearnerId();
 

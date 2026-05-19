@@ -2,13 +2,13 @@ import { z } from "zod";
 import { transformDDMMYYYY } from "../../utils/parsing";
 import { SchoolBaseSchema } from "./school";
 
-export const TimetableTypeSchema = z.union([
-  z.literal("LESSON"),
-  z.literal("EVENT"),
-  z.literal("ACTIVITY"),
-  z.literal("SUBSTITUTION"),
-  z.literal("EXAM"),
-  z.literal("ASSESSMENT"),
+export const TimetableTypeSchema = z.enum([
+  "LESSON",
+  "EVENT",
+  "ACTIVITY",
+  "SUBSTITUTION",
+  "EXAM",
+  "ASSESSMENT",
 ]);
 
 export const TimetableItemSchema = z.object({
