@@ -13,22 +13,12 @@ export const UserRole = z.enum([
   "BASIC",
 ]);
 
-export const OwnerSchema = z.object({
+export const MessageUserSchema = z.object({
   id: z.number().meta({
-    description: "ID of the owner of the message",
+    description: "ID of the message user",
   }),
   displayName: z.string().meta({
-    description: "The full name of the owner",
-  }),
-  role: UserRole,
-});
-
-export const SenderSchema = z.object({
-  id: z.number().meta({
-    description: "The ID of the sender of the message",
-  }),
-  displayName: z.string().meta({
-    description: "The full name of the sender of the message",
+    description: "The full name of the message user",
   }),
   role: UserRole,
 });
@@ -37,9 +27,9 @@ export const MessageSchema = z.object({
   id: z.number().meta({
     description: "ID of the message",
   }),
-  owner: OwnerSchema,
-  allOwners: z.array(OwnerSchema),
-  sender: SenderSchema,
+  owner: MessageUserSchema,
+  allOwners: z.array(MessageUserSchema),
+  sender: MessageUserSchema,
   title: z.string().meta({
     description: "Title of the message",
   }),

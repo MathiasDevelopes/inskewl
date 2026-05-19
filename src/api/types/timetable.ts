@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { transformDDMMYYYY } from "../../utils/parsing";
+import { SchoolBaseSchema } from "./school";
 
 export const TimetableTypeSchema = z.union([
   z.literal("LESSON"),
@@ -70,13 +71,7 @@ export const TimetableItemSchema = z.object({
   periodNumberInDay: z.any(),
 });
 
-export const SchoolSchema = z.object({
-  tenant: z.number().meta({
-    description: "ID of the tenant",
-  }),
-  name: z.string().meta({
-    description: "Full name of the school",
-  }),
+export const SchoolSchema = SchoolBaseSchema.extend({
   isMainSchool: z.boolean().meta({
     description: "Boolean indicating if this is the main school",
   }),

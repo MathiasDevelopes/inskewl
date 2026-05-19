@@ -2,15 +2,18 @@ import { z } from "zod";
 
 export const SchoolType = z.enum(["EXAM_SCHOOL", "UPPER_SECONDARY", "PRIMARY"]);
 
-export const SchoolSchema = z.object({
+export const SchoolBaseSchema = z.object({
   tenant: z.number().meta({
     description: "ID of the tenant",
   }),
-  misTenant: z.number().meta({
-    description: "Appears to be the same as the ID of the tenant",
-  }),
   name: z.string().meta({
     description: "Full name of the school",
+  }),
+});
+
+export const SchoolSchema = SchoolBaseSchema.extend({
+  misTenant: z.number().meta({
+    description: "Appears to be the same as the ID of the tenant",
   }),
   independentSchool: z.boolean().meta({
     description: "Boolean indicating if the school is independent",
