@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformISODate } from "../../utils/parsing";
+import { transformISODate, transformISODateTime } from "../../utils/parsing";
 
 export const LocaleSchema = z.object({
   country: z.string(),
@@ -84,7 +84,9 @@ export const SchoolEnrolmentSchema = z.object({
   startDate: z.null().meta({
     description: "The start date of the learner's enrollment.",
   }),
-  endDate: z.iso.date().transform(transformISODate),
+  endDate: z.iso
+    .datetime({ local: true })
+    .transform(transformISODateTime),
   active: z.boolean(),
 });
 
@@ -209,7 +211,7 @@ export const PersonalInfoSchema = z.object({
   vocationalProgrammeArea: z.boolean().nullable().meta({
     description: "Whether the learner is in a vocational programme area.",
   }),
-  exchangeDetails: z.array(ExchangeDetailsSchema).nullable(),
+  exchangeDetails: ExchangeDetailsSchema,
   campusId: z.null(),
   duf: z.null(),
   leftEarly: z.boolean(),
