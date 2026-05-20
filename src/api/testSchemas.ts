@@ -95,6 +95,9 @@ export async function testAllApiSchemas(): Promise<void> {
   // Test SchoolApi methods
   await testApiCall("SchoolApi.getCurrent()", () => api.school.getCurrent());
 
+  // Test TenantApi methods
+  await testApiCall("TenantApi.list()", () => api.tenant.list());
+
   // Test AssessmentApi methods
   await testApiCall("AssessmentApi.getBehaviour()", () =>
     api.assessment.getBehaviour(),
