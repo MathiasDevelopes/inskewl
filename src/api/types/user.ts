@@ -95,17 +95,24 @@ export type SchoolEnrolment = z.infer<typeof SchoolEnrolmentSchema>;
 export const PersonalInfoSchema = z.object({
   vsware_type: z.string(),
   displayName: z.null(),
-  id: z.number(),
+  id: z.number().meta({
+    description: "The VIS ID of the learner.",
+  }),
   userInfoId: z.number(),
-  photoId: z.string(),
+  photoId: z.string().meta({
+    description: "The filename of the learners profile picture.",
+  }),
   givenName: z.string(),
   familyName: z.string(),
   preferredGivenName: z.null(),
   address: z.null(),
   boarderIndicator: z.null(),
-  religionName: z.null(),
-  countryCode: z.string(),
-  mobilePhone: z.string(),
+  countryCode: z.string().meta({
+    description: "The country code of the mobile number. Formatted as XX.",
+  }),
+  mobilePhone: z.string().meta({
+    description: "The mobile phone number of the learner. Formatted as XXXXXXXX.",
+  }),
   homePhone: z.null(),
   email: z.email(),
   classGroupId: z.number().nullable().meta(
@@ -120,7 +127,10 @@ export const PersonalInfoSchema = z.object({
   destinationEstablishment: z.null(),
   middleNames: z.null(),
   birthDate: z.iso.date().transform(transformISODate),
-  gender: z.string(),
+  gender: z.string().meta({
+    description: "The gender of the learner. Experienced values are 'M' for male and 'F' for female.",
+  }),
+  religionName: z.null(),
   religionAffiliationCode: z.null(),
   startDate: z.iso.date().transform(transformISODate),
   endDate: z.iso.date().transform(transformISODate),
@@ -132,7 +142,7 @@ export const PersonalInfoSchema = z.object({
   mainTeacherMobilePhone: z.string().nullable().meta({
     description: "The mobile phone number of the learner's main teacher. Experienced format to be +47XXXXXXXX, but not guaranteed.",
   }),
-  mainTeacherEmail: z.string().nullable().meta({
+  mainTeacherEmail: z.email().nullable().meta({
     description: "The email of the learner's main teacher",
   }),
   mainTeacherFirstName: z.string().nullable().meta({
