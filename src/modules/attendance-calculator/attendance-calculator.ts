@@ -4,6 +4,10 @@ import { AttendanceSubjectGroup } from "../../api/types/attendance";
 import { TimetableItem } from "../../api/types/timetable";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
+import { normHex, textColorForBg } from "../../utils/color";
+import { escapeHtml } from "../../utils/dom";
+import { fmt, fmtPct, round } from "../../utils/format";
+import { timeToMinutes } from "../../utils/time";
 
 interface SubjectAbsenceInfo {
   subjectCode: string;
@@ -21,25 +25,6 @@ interface SelectableLesson {
   item: TimetableItem;
   durationHours: number;
   selected: boolean;
-}
-
-function round(n: number, decimals = 1): number {
-  const f = 10 ** decimals;
-  return Math.round(n * f) / f;
-}
-
-function fmt(n: number): string {
-  const r = round(n);
-  return r % 1 === 0 ? r.toFixed(0) : r.toFixed(1);
-}
-
-function fmtPct(n: number): string {
-  return round(n, 2).toFixed(2);
-}
-
-function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
 }
 
 function lessonDurationHours(item: TimetableItem): number {
@@ -79,22 +64,6 @@ function computeAbsenceInfo(
   };
 }
 
-function normHex(raw: string): string {
-  const stripped = raw.replace(/^#/, "");
-  if (/^[0-9a-f]{6}$/i.test(stripped)) return `#${stripped}`;
-  if (/^[0-9a-f]{3}$/i.test(stripped)) return `#${stripped}`;
-  return "#5c6bc0";
-}
-
-function textColorForBg(hex: string): string {
-  const h = normHex(hex).replace("#", "");
-  const r = parseInt(h.substring(0, 2), 16);
-  const g = parseInt(h.substring(2, 4), 16);
-  const b = parseInt(h.substring(4, 6), 16);
-  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return lum > 0.55 ? "#222" : "#fff";
-}
-
 function canSkipLesson(
   group: AttendanceSubjectGroup | undefined,
   lessonHours: number,
@@ -131,7 +100,6 @@ export class AttendanceCalculator extends VismaModule {
   private lessons: SelectableLesson[] = [];
   private contentEl: HTMLElement | null = null;
   private currentYear: AcademicYear | null = null;
-  private badgeObserver: MutationObserver | null = null;
 
   shouldLoad(url: string): boolean {
     return url.includes("dashboard");
@@ -180,11 +148,13 @@ export class AttendanceCalculator extends VismaModule {
       this.groups = groups.filter((g) => g.totalScheduledHours > 0);
 
       this.injectBadgesOnVisma();
-      this.badgeObserver = new MutationObserver(() => this.injectBadgesOnVisma());
-      this.badgeObserver.observe(document.body, { childList: true, subtree: true });
     } catch {
       // silent — badges are a nice-to-have
     }
+  }
+
+  onMutation(): void {
+    this.injectBadgesOnVisma();
   }
 
   private injectBadgesOnVisma(): void {
@@ -367,7 +337,7 @@ export class AttendanceCalculator extends VismaModule {
     header.innerHTML = `
       <div>
         <h2 style="margin:0 0 4px;font-size:20px">Fraværskalkulator</h2>
-        <span style="color:#666;font-size:13px">${this.currentYear.name} · Totalt fravær: <strong>${fmt(totalAbsence)}t</strong> av ${fmt(totalScheduled)}t (${fmtPct(overallPct)}%)</span>
+        <span style="color:#666;font-size:13px">${escapeHtml(this.currentYear.name)} · Totalt fravær: <strong>${fmt(totalAbsence)}t</strong> av ${fmt(totalScheduled)}t (${fmtPct(overallPct)}%)</span>
       </div>
       <div style="text-align:right;font-size:13px">
         ${exceeded > 0 ? `<div style="color:${STATUS_COLORS.exceeded}">⚠ ${exceeded} fag over grensen</div>` : ""}
@@ -382,7 +352,7 @@ export class AttendanceCalculator extends VismaModule {
         const pct = group && group.totalScheduledHours > 0
           ? (hours / group.totalScheduledHours) * 100
           : 0;
-        return `${name} +${fmtPct(pct)}%`;
+        return `${escapeHtml(name)} +${fmtPct(pct)}%`;
       });
 
       const banner = document.createElement("div");
@@ -427,7 +397,7 @@ export class AttendanceCalculator extends VismaModule {
       return `
         <div style="padding:8px 10px;border-bottom:1px solid #f0f0f0;${sim ? "background:#fff8e1;" : ""}">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
-            <span style="font-weight:600;font-size:13px">${s.subjectName}</span>
+            <span style="font-weight:600;font-size:13px">${escapeHtml(s.subjectName)}</span>
             <span style="display:inline-block;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:${color}20;color:${color};flex-shrink:0;margin-left:6px">${label}</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#666">
@@ -501,8 +471,9 @@ export class AttendanceCalculator extends VismaModule {
       const lessonsForDay = dayGroups.get(day) ?? [];
       const allSelected = lessonsForDay.length > 0 && lessonsForDay.every((l) => l.selected);
 
-      const dayLabel = document.createElement("div");
-      dayLabel.style.cssText = `position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;text-transform:capitalize;cursor:pointer;user-select:none;border-radius:3px;padding:1px 0;${allSelected ? "background:#e65100;color:#fff;" : "color:#555;"}`;
+      const dayLabel = document.createElement("button");
+      dayLabel.setAttribute("type", "button");
+      dayLabel.style.cssText = `position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;text-transform:capitalize;cursor:pointer;user-select:none;border-radius:3px;padding:1px 0;border:none;outline:none;font:inherit;${allSelected ? "background:#e65100;color:#fff;" : "background:transparent;color:#555;"}`;
       dayLabel.textContent = WEEKDAYS_SHORT[day];
       dayLabel.onclick = () => {
         const newState = !allSelected;
@@ -552,13 +523,15 @@ export class AttendanceCalculator extends VismaModule {
         ? (lesson.durationHours / group.totalScheduledHours) * 100
         : 0;
 
-    const el = document.createElement("div");
+    const el = document.createElement("button");
+    el.setAttribute("type", "button");
     el.style.cssText = `
       position:absolute;top:${top + 1}px;left:1px;right:1px;height:${Math.max(height - 2, 18)}px;
       border-radius:5px;cursor:pointer;overflow:hidden;box-sizing:border-box;
       display:flex;flex-direction:column;justify-content:center;padding:1px 5px;
       font-size:11px;line-height:1.2;user-select:none;
       background:${bg};color:${fg};
+      border:none;outline:none;font:inherit;text-align:left;
       ${lesson.selected
         ? `outline:2.5px solid #222;outline-offset:-1px;filter:brightness(0.75);`
         : ``}
@@ -598,10 +571,6 @@ export class AttendanceCalculator extends VismaModule {
     if (this.panel) {
       this.panel.remove();
       this.panel = null;
-    }
-    if (this.badgeObserver) {
-      this.badgeObserver.disconnect();
-      this.badgeObserver = null;
     }
     document.querySelectorAll(`[${BADGE_ATTR}]`).forEach((el) => el.remove());
   }

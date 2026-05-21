@@ -4,6 +4,7 @@ import { VismaModule } from "./VismaModule";
 export class ModuleLoader {
   private injector = new DomInjector();
   private observer: MutationObserver;
+  private mutationTimeout: number | null = null;
 
   constructor(private modules: VismaModule[]) {
     this.observer = new MutationObserver(() => {
@@ -12,6 +13,17 @@ export class ModuleLoader {
           this.injector.inject(mod);
         }
       }
+
+      if (this.mutationTimeout) {
+        clearTimeout(this.mutationTimeout);
+      }
+      this.mutationTimeout = window.setTimeout(() => {
+        for (const mod of this.modules) {
+          if (mod._loaded) {
+            mod.onMutation?.();
+          }
+        }
+      }, 100);
     });
 
     this.observer.observe(document.body, { childList: true, subtree: true });
@@ -37,5 +49,8 @@ export class ModuleLoader {
 
   destroy() {
     this.observer.disconnect();
+    if (this.mutationTimeout) {
+      clearTimeout(this.mutationTimeout);
+    }
   }
 }
