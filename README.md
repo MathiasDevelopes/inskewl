@@ -23,6 +23,10 @@ Opprinnelig laget fordi at VIS InSchool kun støtter eksport av timeplanen din i
 ## Funksjoner
 - [X] Eksportere timeplanen din for halvåret til en universell `.ics`-kalenderfil
       (kompatibel med Microsoft Exchange, Google Calendar, Apple Calendar, osv.)
+- [X] **Fraværskalkulator**: Simuler fravær direkte i timeplanen din.
+      * Klikk på timer i timeplanen for å markere dem som fraværende/tilstede.
+      * Beregner nøyaktig fraværsprosent og timer i sanntid.
+      * Fraværsgrensen (10%) vises visuelt for å holde kontrollen.
 ### Planlagt
 Neste ting jeg irriterer meg over
 
@@ -30,13 +34,13 @@ Neste ting jeg irriterer meg over
 ## Forutsetninger
 * En moderne nettleser (Chrome, Edge, Firefox, Brave, ...)
 * En av disse userscript-managerene 
-  * **Violetmonkey** (anbefalt)
+  * **Violentmonkey** (anbefalt)
   * Tampermonkey
   * Greasemonkey
 
 ## Installasjonssteg
-1. Last ned nyeste utgave av `inschool.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
-2. Dobbeltrykk på `inschool.user.js` i Nedlastinger mappen din.
+1. Last ned nyeste utgave av `inskewl.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
+2. Dobbeltrykk på `inskewl.user.js` i Nedlastinger mappen din.
 3. Trykk installer på fanen som kommer opp.
 4. Åpne VIS InSchool, så starter scriptet av seg selv.
 
