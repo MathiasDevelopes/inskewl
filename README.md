@@ -1,97 +1,111 @@
-# inskewl
-> QOL (Quality-of-Life) userscript for VIS InSchool
+# 🏫 inskewl
 
-## Innholdsfortegnelse
-- [Om prosjektet](#om-prosjektet)
-- [Funksjoner](#funksjoner)
-  - [Planlagt](#planlagt)
-- [Installasjon](#installasjon)
-  - [Forutsetninger](#forutsetninger)
-  - [Installasjonssteg](#installasjonssteg)
-- [For utviklere (skumle greier)](#for-utviklere-skumle-greier)
-  - [Bygg fra kildekode](#bygg-fra-kildekode)
-    - [Requirements](#requirements)
-    - [Kommandoer](#kommandoer)
-    - [Utviklingsmodus](#utviklingsmodus)
+> **QOL (Quality-of-Life) userscript for VIS InSchool**  
+> Fordi VIS InSchool er greit, men kunne vært *så* mye bedre. Utviklet i det herrens år 2026 🙏
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/MathiasDevelopes/inskewl?style=flat-square&color=7c3aed&label=versjon)](https://github.com/MathiasDevelopes/inskewl/releases)
+[![GitHub license](https://img.shields.io/github/license/MathiasDevelopes/inskewl?style=flat-square&color=f59e0b&label=lisens)](https://github.com/MathiasDevelopes/inskewl/blob/main/LICENSE)
+[![Built with TypeScript](https://img.shields.io/badge/built%20with-TypeScript-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 
-## Om prosjektet
-**inskewl** er et userscript som legger til manglende grunnleggende funksjonalitet i VIS InSchool.
+---
 
-Opprinnelig laget fordi at VIS InSchool kun støtter eksport av timeplanen din i PDF (i store 2026 🙏)
+## 📌 Innholdsfortegnelse
+- [Om prosjektet](#-om-prosjektet)
+- [Funksjoner](#-funksjoner)
+- [Installasjon](#%EF%B8%8F-installasjon)
+- [For utviklere (skumle greier)](#%EF%B8%8F-for-utviklere-skumle-greier)
 
-## Funksjoner
-- [X] Eksportere timeplanen din for halvåret til en universell `.ics`-kalenderfil
-      (kompatibel med Microsoft Exchange, Google Calendar, Apple Calendar, osv.)
-- [X] **Fraværskalkulator**: Simuler fravær direkte i timeplanen din.
-      * Klikk på timer i timeplanen for å markere dem som fraværende/tilstede.
-      * Beregner nøyaktig fraværsprosent og timer i sanntid.
-      * Fraværsgrensen (10%) vises visuelt for å holde kontrollen.
-### Planlagt
-Neste ting jeg irriterer meg over
+---
 
-# Installasjon
-## Forutsetninger
-* En moderne nettleser (Chrome, Edge, Firefox, Brave, ...)
-* En av disse userscript-managerene 
-  * **Violentmonkey** (anbefalt)
-  * Tampermonkey
-  * Greasemonkey
+## 🔮 Om prosjektet
 
-## Installasjonssteg
-1. Last ned nyeste utgave av `inskewl.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases)
-2. Dobbeltrykk på `inskewl.user.js` i Nedlastinger mappen din.
-3. Trykk installer på fanen som kommer opp.
-4. Åpne VIS InSchool, så starter scriptet av seg selv.
+**inskewl** er et uoffisielt og lidenskapelig utviklet userscript som tetter hullene i VIS InSchool. 
 
-# For utviklere (skumle greier)
+Det hele startet fordi VIS InSchool kun lar deg eksportere timeplanen din som en flat PDF-fil (ja, i **2026**...). Nå gjør vi hverdagen litt smidigere, én modul om gangen.
 
-Vil du bidra eller lage din egen modul? Sjekk ut [wikien](https://github.com/MathiasDevelopes/inskewl/wiki)!
+---
 
-**Kort versjon:**
-- Basert på et reverse-engineered, uoffisielt VIS InSchool API
-- Sterk typing + runtime validation via Zod
-- Moduler er selvstendige, så det er lett å legge til nye funksjoner.
-- API-en kan også brukes som standalone bibliotek i andre prosjekter (må fikse autentisering selv).
+## ✨ Funksjoner
 
-## Testing API Schemas
+### 📅 Kalendereksport (`.ics`)
+* **Hva gjør den?** Eksporterer hele timeplanen din for halvåret til en universell `.ics`-kalenderfil.
+* **Kompatibilitet:** Fungerer sømløst med Google Calendar, Apple Calendar, Microsoft Outlook/Exchange, og alt annet som liker standard formater.
+* *Slipp å taste inn timene dine manuelt!*
 
-For å hjelpe med å rapportere feil i API-schemas, kan du teste alle API-funksjoner direkte i nettleserkonsollen:
+### 🧮 Fraværskalkulator (takk til Kari Nessa Nordtun)
+* **Hva gjør den?** Lar deg simulere fravær direkte i den interaktive timeplanen din.
+* **Simulering:** Klikk på vilkårlige timer for å lynraskt bytte status mellom tilstede og simulert fravær.
+* **Statistikk:** Beregner nøyaktig fraværsprosent og timer i sanntid.
+* **Visualisering:** Viser 10%-grensen tydelig, slik at du vet nøyaktig hvor mye du har å gå på før alarmen går. 🚨
 
-1. Åpne VIS InSchool i nettleseren din (du må være logget inn)
-2. Åpne Developer Tools (F12)
-3. Skriv følgende i konsollen:
+### ⏳ Planlagt
+* *Neste ting jeg irriterer meg over...* (Kom gjerne med forslag i [Issues](https://github.com/MathiasDevelopes/inskewl/issues)!)
+
+---
+
+## ⚙️ Installasjon
+
+### Forutsetninger
+Du trenger en moderne nettleser og en utvidelse (userscript-manager) for å kjøre scriptet:
+1. Installer en userscript-manager:
+   * **[Violentmonkey](https://violentmonkey.github.io/)** (Anbefalt – rask og open-source!)
+   * [Tampermonkey](https://www.tampermonkey.net/)
+   * [Greasemonkey](https://www.greasespot.net/)
+
+### Installasjonssteg
+1. Last ned den nyeste utgaven av `inskewl.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases).
+2. Dobbeltklikk på den nedlastede `inskewl.user.js`-filen (eller åpne den i nettleseren din).
+3. Trykk på **Installer**-knappen i fanen som automatisk dukker opp fra userscript-manageren din.
+4. Gå til VIS InSchool (eller refresh siden om du allerede er der), så starter magien av seg selv! 🎉
+
+---
+
+## 🛠️ For utviklere (skumle greier)
+
+Vil du bidra til prosjektet eller bygge din helt egen modul? Sjekk ut den fantastiske [wikien vår](https://github.com/MathiasDevelopes/inskewl/wiki)!
+
+### Kjappe fakta om arkitekturen:
+* **Uoffisielt API:** Bygget på et reverse-engineered, uoffisielt VIS InSchool API.
+* **Moderne Stack:** Sterk typing med TypeScript og runtime schema-validering via Zod.
+* **Modulært:** Hver funksjon er en frittstående modul (blueprint), som gjør det ekstremt enkelt å koble på nye ideer uten å rote til eksisterende kode.
+
+---
+
+### 🧪 Testing av API-schemas
+Hvis du opplever problemer eller mistenker at VIS har oppdatert API-et sitt, kan du validere alle Zod-schemas direkte i nettleseren din:
+1. Logg inn på VIS InSchool.
+2. Åpne utviklerverktøyet i nettleseren (**F12** -> gå til **Console**-fanen).
+3. Skriv inn følgende kommando og trykk enter:
    ```javascript
    testAllApiSchemas()
    ```
+4. Konsollen vil nå kjøre tester mot alle API-endepunkter og gi deg en ryddig rapport med suksess/feil og nøyaktige Zod-valideringsavvik.
 
-Dette vil:
-- Kalle alle API-endepunkter
-- Validere svarene mot Zod-schemas
-- Vise en ryddig oppsummering av hvilke tester som passerte/feilet
-- Logge detaljerte Zod-feil for eventuelle schema-mismatch
+---
 
-Bruk denne funksjonen for å rapportere tilbakemelding om feil eller manglende Zod-schemas i API-en.
+### 📦 Bygg fra kildekode
 
-## Bygg fra kildekode
+#### Krav
+* [Node.js](https://nodejs.org/) & `npm`
+* `git`
 
-### Requirements
-- Node
-- npm
-- git
-
-## Kommandoer
-```sh
+#### Kommandoer
+For å klone, installere og bygge prosjektet lokalt:
+```bash
+# Klon repoet
 git clone https://github.com/MathiasDevelopes/inskewl.git
 cd inskewl
+
+# Installer avhengigheter
 npm install
+
+# Bygg produksjonsversjon
 npm run build
 ```
+Den ferdige, komprimerte userscript-filen vil legge seg under `dist/inskewl.user.js`.
 
-Du vil nå finne `inskewl.user.js` i `dist` mappen etterpå.
-
-## Utviklingsmodus
-```sh
+#### Utviklingsmodus (Hot-rebuild)
+```bash
 npm run dev
 ```
-Rebuilder automatisk når du lagrer filer (najs)
+Dette starter en watcher som re-builder prosjektet lynraskt hver gang du lagrer en fil. Ganske digg! 😎
