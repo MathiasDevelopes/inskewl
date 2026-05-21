@@ -5,7 +5,7 @@ import { TimetableItem } from "../../api/types/timetable";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
 import { normHex, textColorForBg } from "../../utils/color";
-import { escapeHtml } from "../../utils/dom";
+import { createDropdownItem, escapeHtml } from "../../utils/dom";
 import { fmt, fmtPct, round } from "../../utils/format";
 import { timeToMinutes } from "../../utils/time";
 
@@ -111,29 +111,11 @@ export class AttendanceCalculator extends VismaModule {
         id: "attendance-calc-btn",
         target: "ul.dropdown-menu",
         placement: "append",
-        render: () => {
-          const li = document.createElement("li");
-          li.setAttribute("role", "menuitem");
-          li.setAttribute("tabindex", "-1");
-
-          const btn = document.createElement("button");
-          btn.id = "attendance-calc-trigger";
-          btn.className = "vsware-capitalize dropdown-item";
-
-          const liItem = document.querySelector("ul.dropdown-menu li");
-          if (liItem) {
-            const dataVAttr = [...liItem.attributes].find((attr) =>
-              attr.name.startsWith("data-v"),
-            )?.name;
-            if (dataVAttr) btn.setAttribute(dataVAttr, "");
-          }
-
-          btn.textContent = "Fraværskalkulator";
-          btn.onclick = () => this.showPanel();
-
-          li.appendChild(btn);
-          return li;
-        },
+        render: () => createDropdownItem(
+          "attendance-calc-trigger",
+          "Fraværskalkulator",
+          () => this.showPanel(),
+        ),
       },
     ];
   }

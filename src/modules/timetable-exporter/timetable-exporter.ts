@@ -3,6 +3,7 @@ import { AcademicYear, Term } from "../../api/types/calendar";
 import { Timetable } from "../../api/types/timetable";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
+import { createDropdownItem } from "../../utils/dom";
 import { ICSExporter } from "./exporters/ics";
 import { CalendarEvent, fromTimetableItem } from "./model/event";
 
@@ -20,32 +21,11 @@ export class TimetableExporter extends VismaModule {
         id: "export-ics-btn",
         target: "ul.dropdown-menu",
         placement: "append",
-        render: () => {
-          const li = document.createElement("li");
-          li.setAttribute("role", "menuitem");
-          li.setAttribute("tabindex", "-1");
-
-          const btn = document.createElement("button");
-          btn.id = "timetabletoics";
-          btn.className = "vsware-capitalize dropdown-item";
-          
-          // grab the styling dynamically from a li in same parent.
-          let dataVAttr: string | undefined;
-          const liItem = document.querySelector('ul.dropdown-menu li');
-          if (liItem) {
-            dataVAttr = [...liItem.attributes].find(attr => 
-              attr.name.startsWith("data-v")
-            )?.name;
-          }
-          if (dataVAttr) {
-            btn.setAttribute(dataVAttr, "");
-          }
-          btn.textContent = "Export to ICS";
-          btn.onclick = () => this.exportToICS();
-
-          li.appendChild(btn);
-          return li;
-        },
+        render: () => createDropdownItem(
+          "timetabletoics",
+          "Export to ICS",
+          () => this.exportToICS(),
+        ),
       },
     ];
   }
