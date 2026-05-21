@@ -1,5 +1,6 @@
 import { ModuleLoader } from "./modules/core/ModuleLoader";
 import { UrlWatcher } from "./modules/core/UrlWatcher";
+import { AttendanceCalculator } from "./modules/attendance-calculator/attendance-calculator";
 import { TimetableExporter } from "./modules/timetable-exporter/timetable-exporter";
 import { VismaWrapped } from "./modules/vismawrapped";
 import { testAllApiSchemas } from "./api/testSchemas";
@@ -21,6 +22,7 @@ if (typeof window !== "undefined" && !("testAllApiSchemas" in window)) {
 
 (async function () {
   const moduleLoader = new ModuleLoader([
+    new AttendanceCalculator(),
     new VismaWrapped(),
     new TimetableExporter(),
   ]);
