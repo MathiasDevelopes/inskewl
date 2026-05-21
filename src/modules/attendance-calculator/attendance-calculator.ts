@@ -345,6 +345,10 @@ export class AttendanceCalculator extends VismaModule {
       </div>`;
     this.contentEl.appendChild(header);
 
+    const bannerContainer = document.createElement("div");
+    bannerContainer.style.cssText = "min-height:36px;margin-bottom:12px;display:flex;align-items:center";
+    this.contentEl.appendChild(bannerContainer);
+
     if (hasSimulation) {
       const affectedSubjects = [...extra.entries()].map(([code, hours]) => {
         const group = this.groups.find((g) => g.subjectCode === code);
@@ -356,7 +360,7 @@ export class AttendanceCalculator extends VismaModule {
       });
 
       const banner = document.createElement("div");
-      banner.style.cssText = "background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:#e65100;display:flex;justify-content:space-between;align-items:center;gap:8px";
+      banner.style.cssText = "background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;padding:8px 12px;font-size:13px;color:#e65100;display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;box-sizing:border-box;min-height:36px";
       banner.innerHTML = `<span>Simulering: <strong>+${fmt(selectedHours)}t</strong> · ${affectedSubjects.join(", ")}</span>`;
       const resetBtn = document.createElement("button");
       resetBtn.textContent = "Nullstill";
@@ -366,7 +370,7 @@ export class AttendanceCalculator extends VismaModule {
         this.render();
       };
       banner.appendChild(resetBtn);
-      this.contentEl.appendChild(banner);
+      bannerContainer.appendChild(banner);
     }
 
     const layout = document.createElement("div");
