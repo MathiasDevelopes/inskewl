@@ -31,7 +31,7 @@ export const ExchangeDetailsSchema = z.object({
   learnerId: z.number().meta({
     description: "The VIS ID of the learner.",
   }),
-  type: z.string().meta({
+  type: z.string().nullable().meta({
     description: "The type of exchange.",
   }),
   country: z.string().nullable().meta({
@@ -58,7 +58,7 @@ export const SchoolEnrolmentSchema = z.object({
   }),
   mainSchool: z.boolean(),
   secondSchool: z.boolean(),
-  affiliationType: z.string(),
+  affiliationType: z.string().nullable(),
   nationalIdentityNumber: z.null(),
   immutableUserId: z.string(),
   address1: z.string().meta({
