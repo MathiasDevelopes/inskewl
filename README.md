@@ -53,10 +53,9 @@ Du trenger en moderne nettleser og en utvidelse (userscript-manager) for å kjø
    * [Greasemonkey](https://www.greasespot.net/)
 
 ### Installasjonssteg
-1. Last ned den nyeste utgaven av `inskewl.user.js` fra [Releases](https://github.com/MathiasDevelopes/inskewl/releases).
-2. Dobbeltklikk på den nedlastede `inskewl.user.js`-filen (eller åpne den i nettleseren din).
-3. Trykk på **Installer**-knappen i fanen som automatisk dukker opp fra userscript-manageren din.
-4. Gå til VIS InSchool (eller refresh siden om du allerede er der), så starter magien av seg selv! 🎉
+1. Trykk [her](https://github.com/MathiasDevelopes/inskewl/releases/latest/download/inskewl.user.js).
+2. Trykk på **Installer**-knappen i fanen som automatisk dukker opp fra userscript-manageren din.
+3. Gå til VIS InSchool (eller refresh siden om du allerede er der), så starter magien av seg selv! 🎉
 
 ---
 
