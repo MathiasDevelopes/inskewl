@@ -23,7 +23,7 @@ export class TimetableExporter extends VismaModule {
         placement: "append",
         render: () => createDropdownItem(
           "timetabletoics",
-          "Export to ICS",
+          "Eksporter timeplan",
           () => this.exportToICS(),
         ),
       },
