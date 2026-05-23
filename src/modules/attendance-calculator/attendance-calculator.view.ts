@@ -5,6 +5,7 @@ import { normHex, textColorForBg } from "../../utils/color";
 import { escapeHtml } from "../../utils/dom";
 import { fmt, fmtPct, round } from "../../utils/format";
 import { timeToMinutes } from "../../utils/time";
+import { createLogger } from "../../utils/logger";
 import {
   BADGE_ATTR,
   canSkipLesson,
@@ -18,6 +19,8 @@ import {
   resolveTimetableSubjectCode,
   isLessonLike,
 } from "./attendance-calculator.helpers";
+
+const logger = createLogger("AttendanceCalculator");
 
 export interface AttendanceCalculatorController {
   panel: HTMLElement | null;
@@ -174,7 +177,7 @@ export class AttendanceCalculatorView {
 
       this.controller.render();
     } catch (err) {
-      console.error("[AttendanceCalculator]", err);
+      logger.error("Failed to load calculator data:", err);
       panel.innerHTML = `<p style="color:#f44336">Kunne ikke hente data.</p>`;
     }
   }

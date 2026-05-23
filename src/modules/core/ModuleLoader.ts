@@ -1,5 +1,8 @@
 import { DomInjector } from "./DOMInjector";
 import { VismaModule } from "./VismaModule";
+import { createLogger } from "../../utils/logger";
+
+const logger = createLogger("ModuleLoader");
 
 export class ModuleLoader {
   private injector = new DomInjector();
@@ -13,7 +16,7 @@ export class ModuleLoader {
           try {
             this.injector.inject(mod);
           } catch (e) {
-            console.error(`[inskewl] Error injecting ${mod.name}:`, e);
+            logger.error(`Error injecting ${mod.name}:`, e);
           }
         }
       }
@@ -27,7 +30,7 @@ export class ModuleLoader {
             try {
               mod.onMutation?.();
             } catch (e) {
-              console.error(`[inskewl] Error in ${mod.name}.onMutation:`, e);
+              logger.error(`Error in ${mod.name}.onMutation:`, e);
             }
           }
         }
@@ -46,18 +49,18 @@ export class ModuleLoader {
           mod.onLoad?.();
           this.injector.inject(mod);
           mod._loaded = true;
-          console.log(`inskewl: ${mod.name} loaded.`);
+          logger.info(`${mod.name} loaded.`);
         } catch (e) {
-          console.error(`[inskewl] Error loading ${mod.name}:`, e);
+          logger.error(`Error loading ${mod.name}:`, e);
         }
       } else if (!should && mod._loaded) {
         try {
           this.injector.eject(mod);
           mod.onUnload?.();
           mod._loaded = false;
-          console.log(`inskewl: ${mod.name} unloaded.`);
+          logger.info(`${mod.name} unloaded.`);
         } catch (e) {
-          console.error(`[inskewl] Error unloading ${mod.name}:`, e);
+          logger.error(`Error unloading ${mod.name}:`, e);
         }
       }
     }

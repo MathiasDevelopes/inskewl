@@ -1,4 +1,7 @@
 import { ZodType } from "zod";
+import { createLogger } from "../utils/logger";
+
+const logger = createLogger("ApiClient");
 
 export enum Method {
   GET = "GET",
@@ -60,7 +63,7 @@ export class ApiClient {
     const json = await this.get(path, opts);
     const result = schema.safeParse(json);
     if (!result.success) {
-      console.error(`[inskewl] Schema mismatch for GET ${path}:`, result.error);
+      logger.error(`Schema mismatch for GET ${path}:`, result.error);
       throw new Error(`API Schema mismatch for ${path}`);
     }
     return result.data;
@@ -75,7 +78,7 @@ export class ApiClient {
     const json = await this.post(path, body, opts);
     const result = schema.safeParse(json);
     if (!result.success) {
-      console.error(`[inskewl] Schema mismatch for POST ${path}:`, result.error);
+      logger.error(`Schema mismatch for POST ${path}:`, result.error);
       throw new Error(`API Schema mismatch for POST ${path}`);
     }
     return result.data;

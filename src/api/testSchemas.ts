@@ -1,5 +1,8 @@
 import { api } from "./api";
 import { ZodError } from "zod";
+import { createLogger } from "../utils/logger";
+
+const logger = createLogger("ApiSchemas");
 
 interface TestResult {
   name: string;
@@ -15,7 +18,7 @@ interface TestResult {
  */
 export async function testAllApiSchemas(): Promise<void> {
   console.group("🧪 API Schema Validation Tests");
-  console.log("Starting API schema validation tests...");
+  logger.info("Starting API schema validation tests...");
 
   const results: TestResult[] = [];
 
@@ -27,15 +30,15 @@ export async function testAllApiSchemas(): Promise<void> {
     try {
       const result = await fn();
       results.push({ name, status: "passed" });
-      console.log(`✅ ${name}`);
+      logger.info(`✅ ${name}`);
       return result;
     } catch (error) {
       results.push({ name, status: "failed", error });
-      console.error(`❌ ${name}`);
+      logger.error(`❌ ${name}`);
       if (error instanceof ZodError) {
-        console.error("Zod validation error:", error);
+        logger.error("Zod validation error:", error);
       } else {
-        console.error("Unexpected error:", error);
+        logger.error("Unexpected error:", error);
       }
       return null;
     }
@@ -44,7 +47,7 @@ export async function testAllApiSchemas(): Promise<void> {
   // Helper function to record a skipped test
   const skipTest = (name: string, reason: string): void => {
     results.push({ name, status: "skipped", reason });
-    console.log(`⏭️  ${name} (skipped: ${reason})`);
+    logger.warn(`⏭️  ${name} (skipped: ${reason})`);
   };
 
   // Test UserApi methods
@@ -131,10 +134,10 @@ export async function testAllApiSchemas(): Promise<void> {
 
   console.groupEnd();
   console.group("📊 Test Summary");
-  console.log(`Total: ${results.length}`);
-  console.log(`✅ Passed: ${passed}`);
-  console.log(`❌ Failed: ${failed}`);
-  console.log(`⏭️  Skipped: ${skipped}`);
+  logger.info(`Total: ${results.length}`);
+  logger.info(`✅ Passed: ${passed}`);
+  logger.info(`❌ Failed: ${failed}`);
+  logger.info(`⏭️  Skipped: ${skipped}`);
 
   if (failed > 0) {
     console.group("❌ Failed Tests");
@@ -143,9 +146,9 @@ export async function testAllApiSchemas(): Promise<void> {
       .forEach((r) => {
         console.group(r.name);
         if (r.error instanceof ZodError) {
-          console.error("Zod Error Details:", r.error);
+          logger.error("Zod Error Details:", r.error);
         } else if (r.error) {
-          console.error("Error Details:", r.error);
+          logger.error("Error Details:", r.error);
         }
         console.groupEnd();
       });
@@ -157,7 +160,7 @@ export async function testAllApiSchemas(): Promise<void> {
     results
       .filter((r) => r.status === "skipped")
       .forEach((r) => {
-        console.log(`${r.name}: ${r.reason}`);
+        logger.warn(`${r.name}: ${r.reason}`);
       });
     console.groupEnd();
   }
