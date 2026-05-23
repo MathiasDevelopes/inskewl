@@ -31,6 +31,16 @@ function lessonDurationHours(item: TimetableItem): number {
   return (timeToMinutes(item.endTime) - timeToMinutes(item.startTime)) / 60;
 }
 
+function extractSubjectCodeFromLabel(label: string | null | undefined): string | null {
+  if (!label) return null;
+  const match = label.match(/([A-ZÆØÅ]{2,6}\d{4})/i);
+  return match?.[1]?.toUpperCase() ?? null;
+}
+
+function isLessonLike(item: TimetableItem): boolean {
+  return item.type === "LESSON" || (item.type === "SUBSTITUTION" && item.originalType === "LESSON");
+}
+
 function computeAbsenceInfo(
   group: AttendanceSubjectGroup,
   extraHours = 0,
@@ -252,10 +262,15 @@ export class AttendanceCalculator extends VismaModule {
 
       const subjectCodes = new Set(this.groups.map((g) => g.subjectCode));
       this.lessons = timetable.timetableItems
-        .filter(
-          (item) =>
-            item.type === "LESSON" && item.subjectCode && subjectCodes.has(item.subjectCode),
-        )
+        .map((item) => {
+          if (item.subjectCode) return item;
+          const inferred = extractSubjectCodeFromLabel(item.label);
+          return inferred ? { ...item, subjectCode: inferred } : item;
+        })
+        .filter((item) => {
+          if (!isLessonLike(item)) return false;
+          return !!item.subjectCode && subjectCodes.has(item.subjectCode);
+        })
         .sort((a, b) => {
           const dateCmp = a.date.getTime() - b.date.getTime();
           return dateCmp !== 0 ? dateCmp : a.startTime.localeCompare(b.startTime);
