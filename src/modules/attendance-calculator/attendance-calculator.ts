@@ -407,7 +407,7 @@ export class AttendanceCalculator extends VismaModule {
       dayGroups.get(day)!.push(lesson);
     }
 
-    const days = [...dayGroups.keys()].sort();
+    const days = [...dayGroups.keys()].sort((a, b) => a - b);
     if (days.length === 0) {
       const empty = document.createElement("p");
       empty.style.cssText = "color:#999;font-size:13px";
