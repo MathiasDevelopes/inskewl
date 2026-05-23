@@ -10,7 +10,11 @@ export class ModuleLoader {
     this.observer = new MutationObserver(() => {
       for (const mod of this.modules) {
         if (mod._loaded) {
-          this.injector.inject(mod);
+          try {
+            this.injector.inject(mod);
+          } catch (e) {
+            console.error(`[inskewl] Error injecting ${mod.name}:`, e);
+          }
         }
       }
 
@@ -20,7 +24,11 @@ export class ModuleLoader {
       this.mutationTimeout = window.setTimeout(() => {
         for (const mod of this.modules) {
           if (mod._loaded) {
-            mod.onMutation?.();
+            try {
+              mod.onMutation?.();
+            } catch (e) {
+              console.error(`[inskewl] Error in ${mod.name}.onMutation:`, e);
+            }
           }
         }
       }, 100);
@@ -34,15 +42,23 @@ export class ModuleLoader {
       const should = mod.shouldLoad(url);
 
       if (should && !mod._loaded) {
-        mod.onLoad?.();
-        this.injector.inject(mod);
-        mod._loaded = true;
-        console.log(`inskewl: ${mod.name} loaded.`);
+        try {
+          mod.onLoad?.();
+          this.injector.inject(mod);
+          mod._loaded = true;
+          console.log(`inskewl: ${mod.name} loaded.`);
+        } catch (e) {
+          console.error(`[inskewl] Error loading ${mod.name}:`, e);
+        }
       } else if (!should && mod._loaded) {
-        this.injector.eject(mod);
-        mod.onUnload?.();
-        mod._loaded = false;
-        console.log(`inskewl: ${mod.name} unloaded.`);
+        try {
+          this.injector.eject(mod);
+          mod.onUnload?.();
+          mod._loaded = false;
+          console.log(`inskewl: ${mod.name} unloaded.`);
+        } catch (e) {
+          console.error(`[inskewl] Error unloading ${mod.name}:`, e);
+        }
       }
     }
   }

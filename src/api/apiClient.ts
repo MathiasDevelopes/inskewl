@@ -60,8 +60,8 @@ export class ApiClient {
     const json = await this.get(path, opts);
     const result = schema.safeParse(json);
     if (!result.success) {
-      console.warn(`[inskewl] Schema mismatch for GET ${path}:`, result.error);
-      return json as T;
+      console.error(`[inskewl] Schema mismatch for GET ${path}:`, result.error);
+      throw new Error(`API Schema mismatch for ${path}`);
     }
     return result.data;
   }
@@ -75,8 +75,8 @@ export class ApiClient {
     const json = await this.post(path, body, opts);
     const result = schema.safeParse(json);
     if (!result.success) {
-      console.warn(`[inskewl] Schema mismatch for POST ${path}:`, result.error);
-      return json as T;
+      console.error(`[inskewl] Schema mismatch for POST ${path}:`, result.error);
+      throw new Error(`API Schema mismatch for POST ${path}`);
     }
     return result.data;
   }

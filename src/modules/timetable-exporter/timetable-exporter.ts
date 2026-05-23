@@ -24,7 +24,14 @@ export class TimetableExporter extends VismaModule {
         render: () => createDropdownItem(
           "timetabletoics",
           "Eksporter timeplan",
-          () => this.exportToICS(),
+          async () => {
+            try {
+              await this.exportToICS();
+            } catch (error) {
+              console.error("[inskewl]", error);
+              alert("Kunne ikke eksportere timeplanen. VIS kan ha endret systemene sine, eller du er logget ut.");
+            }
+          },
         ),
       },
     ];
