@@ -377,7 +377,7 @@ export class AttendanceCalculatorView {
       const dayLabel = document.createElement("button");
       dayLabel.setAttribute("type", "button");
       dayLabel.style.cssText = `position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;text-transform:capitalize;cursor:pointer;user-select:none;border-radius:3px;padding:1px 0;border:none;outline:none;font:inherit;${allSelected ? "background:#e65100;color:#fff;" : "background:transparent;color:#555;"}`;
-      dayLabel.textContent = WEEKDAYS_SHORT[day];
+      dayLabel.textContent = WEEKDAYS_SHORT[day] ?? "";
       dayLabel.onclick = () => {
         const newState = !allSelected;
         lessonsForDay.forEach((l) => (l.selected = newState));

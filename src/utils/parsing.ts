@@ -7,6 +7,12 @@
 export function makeDate(date: string, time: string): Date {
   const [d, m, y] = date.split("/");
   const [h, min] = time.split(":");
+  if (d === undefined || m === undefined || y === undefined) {
+    throw new Error(`Invalid date format: ${date}. Expected dd/mm/yyyy`);
+  }
+  if (h === undefined || min === undefined) {
+    throw new Error(`Invalid time format: ${time}. Expected HH:mm`);
+  }
 
   return new Date(
     Number(y),
@@ -29,6 +35,9 @@ export function transformDDMMYYYY(dateStr: string): Date {
     throw new Error(`Invalid date format: ${dateStr}. Expected dd/mm/yyyy`);
   }
   const [d, m, y] = parts.map(Number);
+  if (d === undefined || m === undefined || y === undefined) {
+    throw new Error(`Invalid date values: ${dateStr}`);
+  }
   if (isNaN(d) || isNaN(m) || isNaN(y)) {
     throw new Error(`Invalid date values: ${dateStr}`);
   }
@@ -80,6 +89,9 @@ export function combineDateWithTime(date: Date, time: string): Date {
     throw new Error(`Invalid time format: ${time}. Expected HH:mm`);
   }
   const [h, min] = parts.map(Number);
+  if (h === undefined || min === undefined) {
+    throw new Error(`Invalid time format: ${time}. Expected HH:mm`);
+  }
   if (isNaN(h) || isNaN(min) || h < 0 || h > 23 || min < 0 || min > 59) {
     throw new Error(`Invalid time values: ${time}`);
   }

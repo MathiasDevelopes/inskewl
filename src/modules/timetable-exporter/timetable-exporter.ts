@@ -14,11 +14,11 @@ export class TimetableExporter extends VismaModule {
   name: string = "TimetableExporter";
   description: string = "Export your calendar to local calendar formats.";
 
-  shouldLoad(url: string): boolean {
+  override shouldLoad(url: string): boolean {
     return url.includes("dashboard");
   }
 
-  injectables(): Injectable[] {
+  override injectables(): Injectable[] {
     return [
       {
         id: "export-ics-btn",
@@ -67,9 +67,12 @@ export class TimetableExporter extends VismaModule {
   /* Entrypoint for the button. */
   private async exportToICS(): Promise<void> {
     const academicYears = await api.calendar.getAcademicYears();
-    const currentAcademicYear: AcademicYear = academicYears.filter(
+    const currentAcademicYear = academicYears.find(
       (academicYear) => academicYear.currentYear,
-    )[0];
+    );
+    if (!currentAcademicYear) {
+      throw new Error("No current academic year available.");
+    }
 
     const currentTerm: Term = currentAcademicYear.terms.find((t) => t.current)!;
 

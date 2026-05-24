@@ -5,11 +5,11 @@ export class TestModule extends VismaModule {
   name = "testmodule";
   description = "Test the module system works.";
 
-  shouldLoad(url: string): boolean {
+  override shouldLoad(url: string): boolean {
     return url.endsWith("dashboard/"); // for now
   }
 
-  injectables(): Injectable[] {
+  override injectables(): Injectable[] {
     return [
       {
         id: "testing-div",

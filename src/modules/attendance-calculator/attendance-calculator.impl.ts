@@ -19,11 +19,11 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
 
   private readonly view = new AttendanceCalculatorView(this);
 
-  shouldLoad(url: string): boolean {
+  override shouldLoad(url: string): boolean {
     return url.includes("dashboard");
   }
 
-  injectables(): Injectable[] {
+  override injectables(): Injectable[] {
     return [
       {
         id: "attendance-calc-btn",
@@ -39,7 +39,7 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
     ];
   }
 
-  async onLoad(): Promise<void> {
+  override async onLoad(): Promise<void> {
     try {
       const academicYears = await api.calendar.getAcademicYears();
       const currentYear = academicYears.find((y) => y.currentYear);
@@ -54,7 +54,7 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
     }
   }
 
-  onMutation(): void {
+  override onMutation(): void {
     this.view.injectBadgesOnVisma();
   }
 
@@ -62,7 +62,7 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
     this.view.render();
   }
 
-  onUnload(): void {
+  override onUnload(): void {
     this.view.destroy();
   }
 }

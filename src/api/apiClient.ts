@@ -31,12 +31,16 @@ export class ApiClient {
       }
     }
 
-    const res = await fetch(url, {
+    const init: RequestInit = {
       method,
       headers,
       credentials: "include",
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    };
+    if (body !== undefined) {
+      init.body = JSON.stringify(body);
+    }
+
+    const res = await fetch(url, init);
 
     if (!res.ok) {
       throw new Error(

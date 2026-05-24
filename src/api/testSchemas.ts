@@ -76,18 +76,31 @@ export async function testAllApiSchemas(): Promise<void> {
 
   // Test getDayCount with the first academic year if available
   if (academicYears && academicYears.length > 0) {
+    const firstAcademicYear = academicYears[0];
+    if (!firstAcademicYear) {
+      skipTest("CalendarApi.getDayCount()", "no academic years available");
+    } else {
     await testApiCall("CalendarApi.getDayCount()", () =>
-      api.calendar.getDayCount(academicYears[0]),
+      api.calendar.getDayCount(firstAcademicYear),
     );
+    }
   } else {
     skipTest("CalendarApi.getDayCount()", "no academic years available");
   }
 
   // Test AttendanceApi methods
   if (academicYears && academicYears.length > 0) {
+    const firstAcademicYear = academicYears[0];
+    if (!firstAcademicYear) {
+      skipTest(
+        "AttendanceApi.getAttendanceForSubjectGroups()",
+        "no academic years available",
+      );
+    } else {
     await testApiCall("AttendanceApi.getAttendanceForSubjectGroups()", () =>
-      api.attendance.getAttendanceForSubjectGroups(academicYears[0]),
+      api.attendance.getAttendanceForSubjectGroups(firstAcademicYear),
     );
+    }
   } else {
     skipTest(
       "AttendanceApi.getAttendanceForSubjectGroups()",
@@ -120,9 +133,14 @@ export async function testAllApiSchemas(): Promise<void> {
 
   // Also test getEvent with the first event if available
   if (events && events.length > 0) {
-    await testApiCall(`EventsApi.getEvent(${events[0].id})`, () =>
-      api.events.getEvent(events[0].id),
-    );
+    const firstEvent = events[0];
+    if (!firstEvent) {
+      skipTest("EventsApi.getEvent(id)", "no events available");
+    } else {
+      await testApiCall(`EventsApi.getEvent(${firstEvent.id})`, () =>
+        api.events.getEvent(firstEvent.id),
+      );
+    }
   } else {
     skipTest("EventsApi.getEvent(id)", "no events available");
   }
