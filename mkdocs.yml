@@ -1,0 +1,10 @@
+site_name: inskewl
+site_description: Dokumentasjon for inskewl
+site_url: https://mathiasdevelopes.github.io/inskewl/
+repo_url: https://github.com/MathiasDevelopes/inskewl
+
+theme:
+  name: mkdocs
+
+nav:
+  - Hjem: index.md

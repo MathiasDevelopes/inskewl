@@ -81,6 +81,8 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+site/
+docs/assets/attendance-calculator-demo.js
 
 # Gatsby files
 .cache/
