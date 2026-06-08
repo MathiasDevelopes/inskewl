@@ -33,6 +33,9 @@ Det hele startet fordi VIS InSchool kun lar deg eksportere timeplanen din som en
 * *Slipp å taste inn timene dine manuelt!*
 
 ### 🧮 Fraværskalkulator (takk til Kari Nessa Nordtun)
+
+<img src="docs/images/fravaerskalkulator.png" alt="Fraværskalkulator" width="800" />
+
 * **Hva gjør den?** Lar deg simulere fravær direkte i den interaktive timeplanen din.
 * **Simulering:** Klikk på vilkårlige timer for å lynraskt bytte status mellom tilstede og simulert fravær.
 * **Statistikk:** Beregner nøyaktig fraværsprosent og timer i sanntid.
