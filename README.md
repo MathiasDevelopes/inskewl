@@ -106,6 +106,22 @@ npm run build
 ```
 Den ferdige, komprimerte userscript-filen vil legge seg under `dist/inskewl.user.js`.
 
+#### Metadata for CI-builds
+Builden kan overstyre deler av userscript-metablocken med miljøvariabler. Dette brukes for å gi CI egne versjoner og update-lenker uten å endre `meta.json`.
+
+| Variabel | Brukes til | Standardverdi |
+|----------|------------|---------------|
+| `BUILD_VERSION` | Setter `@version` i userscriptet | `version` fra `package.json` |
+| `UPDATE_URL` | Setter `@updateURL` i userscriptet | Verdien fra `meta.json` |
+| `DOWNLOAD_URL` | Setter `@downloadURL` i userscriptet | Verdien fra `UPDATE_URL`, ellers `meta.json` |
+
+Eksempel:
+```bash
+BUILD_VERSION=1.1.3-dev.abc1234 \
+UPDATE_URL=https://mathiasdevelopes.github.io/inskewl/dev/inskewl.user.js \
+npm run build
+```
+
 #### Utviklingsmodus (Hot-rebuild)
 ```bash
 npm run dev
