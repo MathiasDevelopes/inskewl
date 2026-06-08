@@ -80,15 +80,22 @@ export async function testAllApiSchemas(): Promise<void> {
     if (!firstAcademicYear) {
       skipTest("CalendarApi.getDayCount()", "no academic years available");
     } else {
-    await testApiCall("CalendarApi.getDayCount()", () =>
-      api.calendar.getDayCount(firstAcademicYear),
-    );
+      await testApiCall("CalendarApi.getDayCount()", () =>
+        api.calendar.getDayCount(firstAcademicYear),
+      );
     }
   } else {
     skipTest("CalendarApi.getDayCount()", "no academic years available");
   }
 
   // Test AttendanceApi methods
+  await testApiCall("AttendanceApi.getAbsenceOverview()", () =>
+    api.attendance.getAbsenceOverview(),
+  );
+  await testApiCall("AttendanceApi.getAbsenceCodesByTeachingGroups()", () =>
+    api.attendance.getAbsenceCodesByTeachingGroups(),
+  );
+
   if (academicYears && academicYears.length > 0) {
     const firstAcademicYear = academicYears[0];
     if (!firstAcademicYear) {
@@ -96,14 +103,36 @@ export async function testAllApiSchemas(): Promise<void> {
         "AttendanceApi.getAttendanceForSubjectGroups()",
         "no academic years available",
       );
+      skipTest(
+        "AttendanceApi.getDiplomaAbsences()",
+        "no academic years available",
+      );
+      skipTest(
+        "AttendanceApi.getDiplomaAbsencesForTerm()",
+        "no academic years available",
+      );
     } else {
-    await testApiCall("AttendanceApi.getAttendanceForSubjectGroups()", () =>
-      api.attendance.getAttendanceForSubjectGroups(firstAcademicYear),
-    );
+      await testApiCall("AttendanceApi.getAttendanceForSubjectGroups()", () =>
+        api.attendance.getAttendanceForSubjectGroups(firstAcademicYear),
+      );
+      await testApiCall("AttendanceApi.getDiplomaAbsences()", () =>
+        api.attendance.getDiplomaAbsences(firstAcademicYear),
+      );
+      await testApiCall("AttendanceApi.getDiplomaAbsencesForTerm(1)", () =>
+        api.attendance.getDiplomaAbsencesForTerm(firstAcademicYear, 1),
+      );
     }
   } else {
     skipTest(
       "AttendanceApi.getAttendanceForSubjectGroups()",
+      "no academic years available",
+    );
+    skipTest(
+      "AttendanceApi.getDiplomaAbsences()",
+      "no academic years available",
+    );
+    skipTest(
+      "AttendanceApi.getDiplomaAbsencesForTerm()",
       "no academic years available",
     );
   }
