@@ -104,6 +104,10 @@ export async function testAllApiSchemas(): Promise<void> {
         "no academic years available",
       );
       skipTest(
+        "AttendanceApi.getLessonAttendancesForTeachingGroups()",
+        "no academic years available",
+      );
+      skipTest(
         "AttendanceApi.getDiplomaAbsences()",
         "no academic years available",
       );
@@ -112,9 +116,23 @@ export async function testAllApiSchemas(): Promise<void> {
         "no academic years available",
       );
     } else {
-      await testApiCall("AttendanceApi.getAttendanceForSubjectGroups()", () =>
-        api.attendance.getAttendanceForSubjectGroups(firstAcademicYear),
+      const attendanceGroups = await testApiCall(
+        "AttendanceApi.getAttendanceForSubjectGroups()",
+        () => api.attendance.getAttendanceForSubjectGroups(firstAcademicYear),
       );
+      if (attendanceGroups && attendanceGroups.length > 0) {
+        await testApiCall("AttendanceApi.getLessonAttendancesForTeachingGroups()", () =>
+          api.attendance.getLessonAttendancesForTeachingGroups(
+            firstAcademicYear,
+            attendanceGroups.map((g) => g.subjectGroupId),
+          ),
+        );
+      } else {
+        skipTest(
+          "AttendanceApi.getLessonAttendancesForTeachingGroups()",
+          "no attendance subject groups available",
+        );
+      }
       await testApiCall("AttendanceApi.getDiplomaAbsences()", () =>
         api.attendance.getDiplomaAbsences(firstAcademicYear),
       );
@@ -125,6 +143,10 @@ export async function testAllApiSchemas(): Promise<void> {
   } else {
     skipTest(
       "AttendanceApi.getAttendanceForSubjectGroups()",
+      "no academic years available",
+    );
+    skipTest(
+      "AttendanceApi.getLessonAttendancesForTeachingGroups()",
       "no academic years available",
     );
     skipTest(

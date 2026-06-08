@@ -8,6 +8,8 @@ import {
   DiplomaAbsencesSchema,
   DiplomaTermAbsences,
   DiplomaTermAbsencesSchema,
+  LessonAttendance,
+  LessonAttendancesSchema,
   MembershipFilter,
   AbsenceOverviewSchema,
 } from "../types/attendance";
@@ -89,6 +91,25 @@ export class AttendanceApi extends Endpoint {
       {
         query: {
           membershipFilter,
+        },
+      },
+    );
+  }
+
+  async getLessonAttendancesForTeachingGroups(
+    academicYear: AcademicYear,
+    subjectGroupIds: number[],
+  ): Promise<LessonAttendance[]> {
+    if (subjectGroupIds.length === 0) return [];
+
+    const learnerId = await this.session.getLearnerId();
+
+    return this.client.getWithSchema(
+      `attendance/v2/lesson/learner/${learnerId}/academic-year/${academicYear.id}/teaching-groups`,
+      LessonAttendancesSchema,
+      {
+        query: {
+          teachingGroupIds: subjectGroupIds.join(","),
         },
       },
     );

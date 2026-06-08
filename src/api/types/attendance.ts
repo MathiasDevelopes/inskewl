@@ -75,6 +75,9 @@ export type AttendanceSubjectGroup = z.infer<
 export const MembershipFilterSchema = z.enum(["MEMBER", "ALL"]);
 export type MembershipFilter = z.infer<typeof MembershipFilterSchema>;
 
+export const AttendanceCodeSchema = z.enum(["!", "D", "M", "R", "X", "§"]);
+export type AttendanceCode = z.infer<typeof AttendanceCodeSchema>;
+
 export const AbsenceTimeSchema = z.object({
   startTime: z.iso.time().nullable().meta({
     description: "Start time in HH:mm format",
@@ -104,7 +107,7 @@ export const TeachingGroupSchema = z.object({
 });
 
 export const CodeSchema = z.object({
-  value: z.string().meta({
+  value: AttendanceCodeSchema.meta({
     description:
       "Absence code value, e.g. X or M. See https://inschool.zendesk.com/hc/no/articles/360023264091-4b-09-Forklaring-p%C3%A5-frav%C3%A6rskoder",
   }),
@@ -268,6 +271,59 @@ export const DiplomaTermAbsencesSchema = DiplomaAbsencesSchema.extend({
   }),
 });
 
+export const LessonAttendanceSchema = z.object({
+  timetableItemId: z.number().meta({
+    description: "Id of the timetable item",
+  }),
+  timetableItemType: TimetableTypeSchema.meta({
+    description: "Type of timetable item",
+  }),
+  learnerPersonalId: z.number().meta({
+    description: "The personal id of the learner",
+  }),
+  date: z.iso.date().transform(transformISODate).meta({
+    description: "ISO date of the lesson attendance",
+  }),
+  startTime: z.iso.time().meta({
+    description: "Start time in HH:mm format",
+  }),
+  endTime: z.iso.time().meta({
+    description: "End time in HH:mm format",
+  }),
+  duration: z.number().meta({
+    description: "Duration in minutes",
+  }),
+  attendanceCode: AttendanceCodeSchema.meta({
+    description: "The registered attendance code",
+  }),
+  attendanceSubcategory: z.string().nullable(),
+  attendanceCodeDescription: z.string().nullable().meta({
+    description: "Human readable attendance code description",
+  }),
+  attendanceTakenById: z.number().nullable().meta({
+    description: "Id of the person who registered attendance",
+  }),
+  attendanceTakenByName: z.string().nullable().meta({
+    description: "Name of the person who registered attendance",
+  }),
+  academicYearId: z.number().meta({
+    description: "Academic year id",
+  }),
+  tenant: z.number().meta({
+    description: "Tenant id",
+  }),
+  teachingGroupId: z.number().meta({
+    description: "Internal teaching group id",
+  }),
+  teachingGroupName: z.string().meta({
+    description: "Display name for the teaching group",
+  }),
+  note: z.string().nullable(),
+  minutesAbsent: z.number().nullable(),
+});
+
+export const LessonAttendancesSchema = z.array(LessonAttendanceSchema);
+
 export type AbsenceTime = z.infer<typeof AbsenceTimeSchema>;
 export type PersonRef = z.infer<typeof PersonRefSchema>;
 export type TeachingGroup = z.infer<typeof TeachingGroupSchema>;
@@ -287,3 +343,4 @@ export type AbsenceCodesByTeachingGroups = z.infer<
 >;
 export type DiplomaAbsences = z.infer<typeof DiplomaAbsencesSchema>;
 export type DiplomaTermAbsences = z.infer<typeof DiplomaTermAbsencesSchema>;
+export type LessonAttendance = z.infer<typeof LessonAttendanceSchema>;
