@@ -1,11 +1,17 @@
-import { api } from "../../api/api";
-import { AcademicYear } from "../../api/types/calendar";
-import { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type { AcademicYear } from "../../api/types/calendar";
+import type { AttendanceSubjectGroup } from "../../api/types/attendance";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
 import { createDropdownItem } from "../../utils/dom";
+import { createLogger } from "../../utils/logger";
+import {
+  loadAttendanceCalculatorState,
+  loadCurrentAttendanceGroups,
+} from "./attendance-calculator.data";
 import { AttendanceCalculatorView, type AttendanceCalculatorController } from "./attendance-calculator.view";
-import { SelectableLesson } from "./attendance-calculator.helpers";
+import type { SelectableLesson } from "./attendance-calculator.helpers";
+
+const logger = createLogger("AttendanceCalculator");
 
 export class AttendanceCalculator extends VismaModule implements AttendanceCalculatorController {
   name: string = "AttendanceCalculator";
@@ -33,7 +39,7 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
           createDropdownItem(
             "attendance-calc-trigger",
             "Fraværskalkulator",
-            () => this.view.showPanel(),
+            () => this.showCalculator(),
           ),
       },
     ];
@@ -41,13 +47,9 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
 
   override async onLoad(): Promise<void> {
     try {
-      const academicYears = await api.calendar.getAcademicYears();
-      const currentYear = academicYears.find((y) => y.currentYear);
-      if (!currentYear) return;
-
-      const groups = await api.attendance.getAttendanceForSubjectGroups(currentYear);
-      this.groups = groups.filter((g) => g.totalScheduledHours > 0);
-
+      const { currentYear, groups } = await loadCurrentAttendanceGroups();
+      this.currentYear = currentYear;
+      this.groups = groups;
       this.view.injectBadgesOnVisma();
     } catch {
       // silent — badges are a nice-to-have
@@ -56,6 +58,24 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
 
   override onMutation(): void {
     this.view.injectBadgesOnVisma();
+  }
+
+  private async showCalculator(): Promise<void> {
+    if (!this.view.togglePanel()) return;
+
+    try {
+      const state = await loadAttendanceCalculatorState();
+      if (state.groups.length === 0) {
+        this.view.showError("Ingen fraværsdata funnet.");
+        return;
+      }
+
+      this.view.setState(state);
+      this.view.render();
+    } catch (err) {
+      logger.error("Failed to load calculator data:", err);
+      this.view.showError("Kunne ikke hente data.");
+    }
   }
 
   render(): void {

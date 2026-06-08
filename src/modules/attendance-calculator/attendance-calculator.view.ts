@@ -1,26 +1,20 @@
-import { api } from "../../api/api";
-import { AttendanceSubjectGroup } from "../../api/types/attendance";
-import { AcademicYear } from "../../api/types/calendar";
+import type { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type { AcademicYear } from "../../api/types/calendar";
 import { normHex, textColorForBg } from "../../utils/color";
 import { escapeHtml } from "../../utils/dom";
 import { fmt, fmtPct, round } from "../../utils/format";
 import { timeToMinutes } from "../../utils/time";
-import { createLogger } from "../../utils/logger";
 import {
+  type AttendanceCalculatorState,
   BADGE_ATTR,
   canSkipLesson,
   computeAbsenceInfo,
-  lessonDurationHours,
-  SelectableLesson,
+  type SelectableLesson,
   STATUS_COLORS,
   STATUS_LABELS,
-  SubjectAbsenceInfo,
+  type SubjectAbsenceInfo,
   WEEKDAYS_SHORT,
-  resolveTimetableSubjectCode,
-  isLessonLike,
 } from "./attendance-calculator.helpers";
-
-const logger = createLogger("AttendanceCalculator");
 
 export interface AttendanceCalculatorController {
   panel: HTMLElement | null;
@@ -33,6 +27,28 @@ export interface AttendanceCalculatorController {
 
 export class AttendanceCalculatorView {
   constructor(private readonly controller: AttendanceCalculatorController) {}
+
+  setState(state: AttendanceCalculatorState): void {
+    this.controller.currentYear = state.currentYear;
+    this.controller.groups = state.groups;
+    this.controller.lessons = state.lessons;
+  }
+
+  mountInline(container: HTMLElement, state: AttendanceCalculatorState): void {
+    this.controller.panel = null;
+    this.controller.contentEl = container;
+    this.setState(state);
+    Object.assign(container.style, {
+      background: "#fff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "8px",
+      padding: "16px",
+      overflow: "auto",
+      boxSizing: "border-box",
+      fontFamily: "system-ui, sans-serif",
+    });
+    this.render();
+  }
 
   injectBadgesOnVisma(): void {
     if (this.controller.groups.length === 0) return;
@@ -78,12 +94,10 @@ export class AttendanceCalculatorView {
     }
   }
 
-  async showPanel(): Promise<void> {
+  togglePanel(): boolean {
     if (this.controller.panel) {
-      this.controller.panel.remove();
-      this.controller.panel = null;
-      this.controller.contentEl = null;
-      return;
+      this.closePanel();
+      return false;
     }
 
     const overlay = document.createElement("div");
@@ -125,61 +139,20 @@ export class AttendanceCalculatorView {
     document.body.appendChild(overlay);
     this.controller.panel = overlay;
     this.controller.contentEl = panel;
+    this.showLoading("Laster data...");
 
-    try {
-      const [academicYears, timetable] = await Promise.all([
-        api.calendar.getAcademicYears(),
-        api.timetable.getTimetable(new Date()),
-      ]);
+    return true;
+  }
 
-      const currentYear = academicYears.find((y) => y.currentYear);
-      if (!currentYear) {
-        panel.innerHTML = `<p style="color:#f44336">Fant ikke gjeldende skoleår.</p>`;
-        return;
-      }
-      this.controller.currentYear = currentYear;
+  showLoading(message: string): void {
+    if (!this.controller.contentEl) return;
+    this.controller.contentEl.innerHTML = `<h2 style="margin:0 0 8px;font-size:20px">Fraværskalkulator</h2>
+      <p style="margin:0 0 16px;color:#666;font-size:14px">${escapeHtml(message)}</p>`;
+  }
 
-      if (this.controller.groups.length === 0) {
-        const groups = await api.attendance.getAttendanceForSubjectGroups(
-          currentYear,
-        );
-        this.controller.groups = groups.filter((g) => g.totalScheduledHours > 0);
-      }
-
-      if (this.controller.groups.length === 0) {
-        panel.innerHTML = `<p>Ingen fraværsdata funnet.</p>`;
-        return;
-      }
-
-      const subjectCodes = new Set(
-        this.controller.groups.map((g) => g.subjectCode),
-      );
-      this.controller.lessons = timetable.timetableItems
-        .map((item) => {
-          const subjectCode = resolveTimetableSubjectCode(item);
-          return subjectCode && subjectCode !== item.subjectCode
-            ? { ...item, subjectCode }
-            : item;
-        })
-        .filter((item) => {
-          if (!isLessonLike(item)) return false;
-          return !!item.subjectCode && subjectCodes.has(item.subjectCode);
-        })
-        .sort((a, b) => {
-          const dateCmp = a.date.getTime() - b.date.getTime();
-          return dateCmp !== 0 ? dateCmp : a.startTime.localeCompare(b.startTime);
-        })
-        .map((item) => ({
-          item,
-          durationHours: lessonDurationHours(item),
-          selected: false,
-        }));
-
-      this.controller.render();
-    } catch (err) {
-      logger.error("Failed to load calculator data:", err);
-      panel.innerHTML = `<p style="color:#f44336">Kunne ikke hente data.</p>`;
-    }
+  showError(message: string): void {
+    if (!this.controller.contentEl) return;
+    this.controller.contentEl.innerHTML = `<p style="color:#f44336;margin:0">${escapeHtml(message)}</p>`;
   }
 
   render(): void {
@@ -247,14 +220,14 @@ export class AttendanceCalculatorView {
     }
 
     const layout = document.createElement("div");
-    layout.style.cssText = "display:flex;gap:20px;align-items:start";
+    layout.style.cssText = "display:flex;gap:20px;align-items:start;flex-wrap:wrap";
 
     const sidebar = document.createElement("div");
-    sidebar.style.cssText = "flex-shrink:0;width:320px;max-height:600px;overflow-y:auto";
+    sidebar.style.cssText = "flex:0 1 320px;width:min(320px,100%);max-height:600px;overflow-y:auto";
     sidebar.innerHTML = this.renderSubjectList(subjects, extra);
 
     const center = document.createElement("div");
-    center.style.cssText = "flex:1;min-width:0";
+    center.style.cssText = "flex:1 1 360px;min-width:280px;overflow-x:auto";
     center.appendChild(this.buildTimetableGrid());
 
     layout.appendChild(sidebar);
@@ -265,12 +238,16 @@ export class AttendanceCalculatorView {
   }
 
   destroy(): void {
+    this.closePanel();
+    document.querySelectorAll(`[${BADGE_ATTR}]`).forEach((el) => el.remove());
+  }
+
+  private closePanel(): void {
     if (this.controller.panel) {
       this.controller.panel.remove();
       this.controller.panel = null;
     }
     this.controller.contentEl = null;
-    document.querySelectorAll(`[${BADGE_ATTR}]`).forEach((el) => el.remove());
   }
 
   private getSimulatedExtra(): Map<string, number> {

@@ -1,5 +1,6 @@
-import { TimetableItem, TimetableTypeSchema } from "../../api/types/timetable";
-import { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type { TimetableItem } from "../../api/types/timetable";
+import type { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type { AcademicYear } from "../../api/types/calendar";
 import { timeToMinutes } from "../../utils/time";
 
 export interface SubjectAbsenceInfo {
@@ -20,7 +21,11 @@ export interface SelectableLesson {
   selected: boolean;
 }
 
-const TIMETABLE_TYPE = TimetableTypeSchema.enum;
+export interface AttendanceCalculatorState {
+  currentYear: AcademicYear;
+  groups: AttendanceSubjectGroup[];
+  lessons: SelectableLesson[];
+}
 
 export function lessonDurationHours(item: TimetableItem): number {
   return (timeToMinutes(item.endTime) - timeToMinutes(item.startTime)) / 60;
@@ -35,9 +40,9 @@ export function extractSubjectCodeFromLabel(
 }
 
 export function isLessonLike(item: TimetableItem): boolean {
-  return item.type === TIMETABLE_TYPE.LESSON || (
-    item.type === TIMETABLE_TYPE.SUBSTITUTION &&
-    item.originalType === TIMETABLE_TYPE.LESSON
+  return item.type === "LESSON" || (
+    item.type === "SUBSTITUTION" &&
+    item.originalType === "LESSON"
   );
 }
 
