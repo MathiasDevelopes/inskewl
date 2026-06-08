@@ -1,5 +1,8 @@
 import type { TimetableItem } from "../../api/types/timetable";
-import type { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type {
+  AttendanceCode,
+  AttendanceSubjectGroup,
+} from "../../api/types/attendance";
 import type { AcademicYear } from "../../api/types/calendar";
 import { timeToMinutes } from "../../utils/time";
 
@@ -19,6 +22,10 @@ export interface SelectableLesson {
   item: TimetableItem;
   durationHours: number;
   selected: boolean;
+  attendanceCode: AttendanceCode | null;
+  attendanceCodeDescription: string | null;
+  registeredAttendance: boolean;
+  countsTowardsLimit: boolean;
 }
 
 export interface AttendanceCalculatorState {
@@ -48,6 +55,17 @@ export function isLessonLike(item: TimetableItem): boolean {
 
 export function resolveTimetableSubjectCode(item: TimetableItem): string | null {
   return item.subjectCode ?? extractSubjectCodeFromLabel(item.label);
+}
+
+export function attendanceCodeCountsTowardsLimit(
+  code: AttendanceCode | string | null | undefined,
+): boolean {
+  if (!code) return true;
+  return code !== "D" && code !== "!" && code !== "R" && code !== "§";
+}
+
+export function canSimulateLessonAbsence(lesson: SelectableLesson): boolean {
+  return !lesson.registeredAttendance;
 }
 
 export function computeAbsenceInfo(

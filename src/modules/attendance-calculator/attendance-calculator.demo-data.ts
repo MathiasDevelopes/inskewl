@@ -1,8 +1,12 @@
-import type { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type {
+  AttendanceCode,
+  AttendanceSubjectGroup,
+} from "../../api/types/attendance";
 import type { AcademicYear } from "../../api/types/calendar";
 import type { TimetableItem } from "../../api/types/timetable";
 import {
   type AttendanceCalculatorState,
+  attendanceCodeCountsTowardsLimit,
   lessonDurationHours,
   type SelectableLesson,
 } from "./attendance-calculator.helpers";
@@ -58,13 +62,19 @@ export function createAttendanceCalculatorDemoState(): AttendanceCalculatorState
     groups,
     lessons: [
       lesson(1, 0, "08:15", "09:45", "MAT1023", "Matematikk", "#d7ecff"),
-      lesson(2, 0, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7"),
+      lesson(2, 0, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7", {
+        code: "D",
+        description: "Dokumentert fravær",
+      }),
       lesson(3, 0, "12:15", "13:45", "ITK2002", "IT", "#dff7e8"),
       lesson(4, 1, "08:15", "09:45", "ENG1007", "Engelsk", "#fff1c2"),
       lesson(5, 1, "10:00", "11:30", "KRO1006", "Gym", "#e8ddff"),
       lesson(6, 1, "12:15", "13:45", "MAT1023", "Matematikk", "#d7ecff"),
       lesson(7, 2, "08:15", "10:00", "ITK2002", "IT", "#dff7e8"),
-      lesson(8, 2, "10:15", "11:45", "NOR1267", "Norsk", "#ffe0e7"),
+      lesson(8, 2, "10:15", "11:45", "NOR1267", "Norsk", "#ffe0e7", {
+        code: "X",
+        description: "Udokumentert fravær",
+      }),
       lesson(9, 2, "12:15", "13:45", "ENG1007", "Engelsk", "#fff1c2"),
       lesson(10, 3, "08:15", "09:45", "MAT1023", "Matematikk", "#d7ecff"),
       lesson(11, 3, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7"),
@@ -120,6 +130,10 @@ function lesson(
   subjectCode: string,
   subject: string,
   colour: string,
+  attendance?: {
+    code: AttendanceCode;
+    description: string;
+  },
 ): SelectableLesson {
   const item: TimetableItem = {
     id,
@@ -154,6 +168,10 @@ function lesson(
     item,
     durationHours: lessonDurationHours(item),
     selected: false,
+    attendanceCode: attendance?.code ?? null,
+    attendanceCodeDescription: attendance?.description ?? null,
+    registeredAttendance: attendance != null,
+    countsTowardsLimit: attendanceCodeCountsTowardsLimit(attendance?.code),
   };
 }
 

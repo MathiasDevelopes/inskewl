@@ -8,6 +8,7 @@ import {
   type AttendanceCalculatorState,
   BADGE_ATTR,
   canSkipLesson,
+  canSimulateLessonAbsence,
   computeAbsenceInfo,
   type SelectableLesson,
   STATUS_COLORS,
@@ -173,7 +174,7 @@ export class AttendanceCalculatorView {
     const warned = subjects.filter((s) => s.status === "warning").length;
 
     const selectedHours = this.controller.lessons
-      .filter((l) => l.selected)
+      .filter((l) => l.selected && canSimulateLessonAbsence(l))
       .reduce((s, l) => s + l.durationHours, 0);
 
     this.controller.contentEl.innerHTML = "";
@@ -254,6 +255,7 @@ export class AttendanceCalculatorView {
     const extra = new Map<string, number>();
     for (const l of this.controller.lessons) {
       if (!l.selected || !l.item.subjectCode) continue;
+      if (!canSimulateLessonAbsence(l)) continue;
       extra.set(
         l.item.subjectCode,
         (extra.get(l.item.subjectCode) ?? 0) + l.durationHours,
@@ -349,15 +351,18 @@ export class AttendanceCalculatorView {
       col.style.cssText = "position:relative";
 
       const lessonsForDay = dayGroups.get(day) ?? [];
-      const allSelected = lessonsForDay.length > 0 && lessonsForDay.every((l) => l.selected);
+      const simulatableLessons = lessonsForDay.filter(canSimulateLessonAbsence);
+      const allSelected = simulatableLessons.length > 0 &&
+        simulatableLessons.every((l) => l.selected);
 
       const dayLabel = document.createElement("button");
       dayLabel.setAttribute("type", "button");
       dayLabel.style.cssText = `position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;text-transform:capitalize;cursor:pointer;user-select:none;border-radius:3px;padding:1px 0;border:none;outline:none;font:inherit;${allSelected ? "background:#e65100;color:#fff;" : "background:transparent;color:#555;"}`;
       dayLabel.textContent = WEEKDAYS_SHORT[day] ?? "";
       dayLabel.onclick = () => {
+        if (simulatableLessons.length === 0) return;
         const newState = !allSelected;
-        lessonsForDay.forEach((l) => (l.selected = newState));
+        simulatableLessons.forEach((l) => (l.selected = newState));
         this.controller.render();
       };
       col.appendChild(dayLabel);
@@ -400,6 +405,8 @@ export class AttendanceCalculatorView {
 
     const group = groupByCode.get(lesson.item.subjectCode ?? "");
     const { safe, newPct } = canSkipLesson(group, lesson.durationHours);
+    const canSimulate = canSimulateLessonAbsence(lesson);
+    const attendanceStatus = this.getAttendanceStatusText(lesson);
     const impactPct =
       group && group.totalScheduledHours > 0
         ? (lesson.durationHours / group.totalScheduledHours) * 100
@@ -414,10 +421,17 @@ export class AttendanceCalculatorView {
       font-size:11px;line-height:1.2;user-select:none;
       background:${bg};color:${fg};
       border:none;outline:none;font:inherit;text-align:left;
-      ${lesson.selected
+      ${canSimulate ? "cursor:pointer;" : "cursor:not-allowed;opacity:0.78;"}
+      ${lesson.selected && canSimulate
         ? `outline:2.5px solid #222;outline-offset:-1px;filter:brightness(0.75);`
         : ``}
     `;
+    el.setAttribute("aria-disabled", String(!canSimulate));
+    if (attendanceStatus) {
+      el.title = lesson.attendanceCodeDescription
+        ? `${attendanceStatus} - ${lesson.attendanceCodeDescription}`
+        : attendanceStatus;
+    }
 
     const topRow = document.createElement("div");
     topRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;gap:2px";
@@ -428,20 +442,26 @@ export class AttendanceCalculatorView {
     topRow.appendChild(nameEl);
 
     const dot = document.createElement("span");
-    dot.style.cssText = `flex-shrink:0;width:8px;height:8px;border-radius:50%;${safe ? "background:#4caf50;" : "background:#f44336;"}`;
-    dot.title = safe ? `Kan skulkes (${fmtPct(newPct)}%)` : `Over grensen! (${fmtPct(newPct)}%)`;
+    const dotColor = canSimulate
+      ? safe ? "#4caf50" : "#f44336"
+      : lesson.countsTowardsLimit ? "#ff9800" : "#607d8b";
+    dot.style.cssText = `flex-shrink:0;width:8px;height:8px;border-radius:50%;background:${dotColor};`;
+    dot.title = attendanceStatus ??
+      (safe ? `Kan skulkes (${fmtPct(newPct)}%)` : `Over grensen! (${fmtPct(newPct)}%)`);
     topRow.appendChild(dot);
 
     el.appendChild(topRow);
 
     if (height > 26) {
       const sub = document.createElement("div");
-      sub.style.cssText = "font-size:9px;opacity:0.85;white-space:nowrap";
-      sub.textContent = `${fmt(lesson.durationHours)}t · +${fmtPct(impactPct)}%`;
+      sub.style.cssText = "font-size:9px;opacity:0.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      sub.textContent = attendanceStatus ??
+        `${fmt(lesson.durationHours)}t · +${fmtPct(impactPct)}%`;
       el.appendChild(sub);
     }
 
     el.onclick = () => {
+      if (!canSimulate) return;
       lesson.selected = !lesson.selected;
       this.controller.render();
     };
@@ -454,5 +474,12 @@ export class AttendanceCalculatorView {
       (g) => g.subjectCode === lesson.item.subjectCode,
     );
     return group?.subjectShortName ?? lesson.item.subject ?? "?";
+  }
+
+  private getAttendanceStatusText(lesson: SelectableLesson): string | null {
+    if (!lesson.registeredAttendance || !lesson.attendanceCode) return null;
+    return lesson.countsTowardsLimit
+      ? `${lesson.attendanceCode} · Allerede registrert`
+      : `${lesson.attendanceCode} · Teller ikke`;
   }
 }

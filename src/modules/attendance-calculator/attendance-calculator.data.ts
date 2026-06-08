@@ -1,9 +1,13 @@
 import { api } from "../../api/api";
 import type { AcademicYear } from "../../api/types/calendar";
-import type { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type {
+  AttendanceSubjectGroup,
+  LessonAttendance,
+} from "../../api/types/attendance";
 import type { TimetableItem } from "../../api/types/timetable";
 import {
   AttendanceCalculatorState,
+  attendanceCodeCountsTowardsLimit,
   isLessonLike,
   lessonDurationHours,
   resolveTimetableSubjectCode,
@@ -35,18 +39,36 @@ export async function loadAttendanceCalculatorState(): Promise<AttendanceCalcula
     return { ...base, lessons: [] };
   }
 
-  const timetable = await api.timetable.getTimetable(new Date());
+  const [timetable, lessonAttendances] = await Promise.all([
+    api.timetable.getTimetable(new Date()),
+    api.attendance.getLessonAttendancesForTeachingGroups(
+      base.currentYear,
+      base.groups.map((g) => g.subjectGroupId),
+    ),
+  ]);
+
   return {
     ...base,
-    lessons: createSelectableLessons(timetable.timetableItems, base.groups),
+    lessons: createSelectableLessons(
+      timetable.timetableItems,
+      base.groups,
+      lessonAttendances,
+    ),
   };
 }
 
 export function createSelectableLessons(
   timetableItems: TimetableItem[],
   groups: AttendanceSubjectGroup[],
+  lessonAttendances: LessonAttendance[] = [],
 ): SelectableLesson[] {
   const subjectCodes = new Set(groups.map((g) => g.subjectCode));
+  const attendanceByTimetableItemId = new Map(
+    lessonAttendances.map((attendance) => [
+      String(attendance.timetableItemId),
+      attendance,
+    ]),
+  );
 
   return timetableItems
     .map((item) => {
@@ -67,5 +89,36 @@ export function createSelectableLessons(
       item,
       durationHours: lessonDurationHours(item),
       selected: false,
+      ...lessonAttendanceStatusForItem(item, attendanceByTimetableItemId),
     }));
+}
+
+function lessonAttendanceStatusForItem(
+  item: TimetableItem,
+  attendanceByTimetableItemId: Map<string, LessonAttendance>,
+): Pick<
+  SelectableLesson,
+  | "attendanceCode"
+  | "attendanceCodeDescription"
+  | "registeredAttendance"
+  | "countsTowardsLimit"
+> {
+  const attendance = attendanceByTimetableItemId.get(String(item.id));
+  if (!attendance) {
+    return {
+      attendanceCode: null,
+      attendanceCodeDescription: null,
+      registeredAttendance: false,
+      countsTowardsLimit: true,
+    };
+  }
+
+  return {
+    attendanceCode: attendance.attendanceCode,
+    attendanceCodeDescription: attendance.attendanceCodeDescription,
+    registeredAttendance: true,
+    countsTowardsLimit: attendanceCodeCountsTowardsLimit(
+      attendance.attendanceCode,
+    ),
+  };
 }
