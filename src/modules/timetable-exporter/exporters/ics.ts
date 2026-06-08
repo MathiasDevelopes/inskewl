@@ -1,7 +1,12 @@
-import { CalendarEvent } from "../model/event";
+import type { CalendarEvent } from "../model/event";
 import { Exporter } from "../model/exporter";
 
 export class ICSExporter extends Exporter {
+  readonly id = "ics";
+  readonly label = "Eksporter timeplan (.ics)";
+  readonly extension = "ics";
+  readonly mimeType = "text/calendar";
+
   private readonly textEncoder = new TextEncoder();
 
   private formatDateToICS(date: Date): string {
@@ -71,6 +76,6 @@ export class ICSExporter extends Exporter {
 
     const foldedLines = lines.flatMap((line) => this.foldLine(line));
 
-    return this.stringToBlob(foldedLines.join("\r\n"), "text/calendar");
+    return this.stringToBlob(foldedLines.join("\r\n"));
   }
 }

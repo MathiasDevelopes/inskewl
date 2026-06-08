@@ -5,7 +5,9 @@ import { VismaModule } from "../core/VismaModule";
 import { createDropdownItem } from "../../utils/dom";
 import { createLogger } from "../../utils/logger";
 import { ICSExporter } from "./exporters/ics";
-import { CalendarEvent, fromTimetableItem } from "./model/event";
+import { fromTimetableItem } from "./model/event";
+import type { CalendarEvent } from "./model/event";
+import type { Exporter } from "./model/exporter";
 
 const logger = createLogger("TimetableExporter");
 
@@ -13,30 +15,31 @@ export class TimetableExporter extends VismaModule {
   name: string = "TimetableExporter";
   description: string = "Export your calendar to local calendar formats.";
 
+  private readonly exporters: Exporter[] = [new ICSExporter()];
+
   override shouldLoad(url: string): boolean {
     return url.includes("dashboard");
   }
 
   override injectables(): Injectable[] {
-    return [
-      {
-        id: "export-ics-btn",
-        target: "ul.dropdown-menu",
-        placement: "append",
-        render: () => createDropdownItem(
-          "timetabletoics",
-          "Eksporter timeplan",
+    return this.exporters.map((exporter) => ({
+      id: `export-${exporter.id}-btn`,
+      target: "ul.dropdown-menu",
+      placement: "append",
+      render: () =>
+        createDropdownItem(
+          `timetable-to-${exporter.id}`,
+          exporter.label,
           async () => {
             try {
-              await this.exportToICS();
+              await this.exportCalendar(exporter);
             } catch (error) {
               logger.error("Export failed:", error);
               alert("Kunne ikke eksportere timeplanen. VIS kan ha endret systemene sine, eller du er logget ut.");
             }
           },
         ),
-      },
-    ];
+    }));
   }
 
   getWeekStartDates(startDate: Date, endDate: Date): Date[] {
@@ -64,8 +67,7 @@ export class TimetableExporter extends VismaModule {
     return weekStarts;
   }
 
-  /* Entrypoint for the button. */
-  private async exportToICS(): Promise<void> {
+  private async loadEvents(): Promise<CalendarEvent[]> {
     const academicYears = await api.calendar.getAcademicYears();
     const currentAcademicYear = academicYears.find(
       (academicYear) => academicYear.currentYear,
@@ -88,19 +90,22 @@ export class TimetableExporter extends VismaModule {
       weeks.map((week) => api.timetable.getTimetable(week)),
     );
 
-    // Mapping of TimetableItem to generic CalendarEvent
-    const events: CalendarEvent[] = timetables.flatMap((t) =>
+    return timetables.flatMap((t) =>
       t.timetableItems.map(fromTimetableItem),
     );
+  }
 
-    const exporter = new ICSExporter();
+  private async exportCalendar(exporter: Exporter): Promise<void> {
+    const events = await this.loadEvents();
     const blob = exporter.exportToBlob(events);
+    this.downloadBlob(blob, `timetable.${exporter.extension}`);
+  }
 
-    // Here we make a small exception to stray away from the Injectable standard.
+  private downloadBlob(blob: Blob, filename: string): void {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "timetable.ics";
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
   }

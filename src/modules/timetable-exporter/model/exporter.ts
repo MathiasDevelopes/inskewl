@@ -1,8 +1,12 @@
-import { CalendarEvent } from "./event";
+import type { CalendarEvent } from "./event";
 
 export abstract class Exporter {
-  // Helper function to convert a string to blob. To be used in conjunction with the abstract function exportToBlob
-  stringToBlob(content: string, mime = "text/plain"): Blob {
+  abstract readonly id: string;
+  abstract readonly label: string;
+  abstract readonly extension: string;
+  abstract readonly mimeType: string;
+
+  stringToBlob(content: string, mime = this.mimeType): Blob {
     return new Blob([content], { type: mime });
   }
 
