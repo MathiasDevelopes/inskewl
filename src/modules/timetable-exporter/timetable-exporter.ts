@@ -1,6 +1,5 @@
 import { api } from "../../api/api";
-import { AcademicYear, Term } from "../../api/types/calendar";
-import { Timetable } from "../../api/types/timetable";
+import type { Timetable } from "../../api/types/timetable";
 import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
 import { createDropdownItem } from "../../utils/dom";
@@ -40,25 +39,26 @@ export class TimetableExporter extends VismaModule {
     ];
   }
 
-  // ja dette er ai ikke døm jeg er trøtt
   getWeekStartDates(startDate: Date, endDate: Date): Date[] {
     const weekStarts: Date[] = [];
-    const currentDate = new Date(startDate.getTime()); // Use a copy to avoid modifying the original date
+    const currentDate = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+    );
+    const lastDate = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+    );
 
-    // Set the initial date to the first Monday on or after the original start date
     const startDay = currentDate.getDay();
-    const daysUntilMonday = startDay === 0 ? 1 : 1 - startDay; // Handle Sunday (0) as needing +1 day to reach Monday
-    currentDate.setDate(currentDate.getDate() + daysUntilMonday);
+    const daysSinceMonday = startDay === 0 ? 6 : startDay - 1;
+    currentDate.setDate(currentDate.getDate() - daysSinceMonday);
 
-    // Ensure the initial date is not before the original start date (this could happen if the start date was Sunday)
-    if (currentDate < startDate) {
+    while (currentDate <= lastDate) {
+      weekStarts.push(new Date(currentDate.getTime()));
       currentDate.setDate(currentDate.getDate() + 7);
-    }
-
-    // Loop through the dates, adding 7 days in each iteration until the date exceeds the end date
-    while (currentDate <= endDate) {
-      weekStarts.push(new Date(currentDate.getTime())); // Push a new Date object to the array
-      currentDate.setDate(currentDate.getDate() + 7); // Increment by a week
     }
 
     return weekStarts;
@@ -74,7 +74,10 @@ export class TimetableExporter extends VismaModule {
       throw new Error("No current academic year available.");
     }
 
-    const currentTerm: Term = currentAcademicYear.terms.find((t) => t.current)!;
+    const currentTerm = currentAcademicYear.terms.find((t) => t.current);
+    if (!currentTerm) {
+      throw new Error("No current term available.");
+    }
 
     const weeks: Date[] = this.getWeekStartDates(
       new Date(),
