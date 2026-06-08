@@ -8,3 +8,7 @@ theme:
 
 nav:
   - Hjem: index.md
+  - Fraværskalkulator: fravaerskalkulator/demo.md
+
+extra_javascript:
+  - assets/attendance-calculator-demo.js

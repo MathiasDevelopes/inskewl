@@ -8,7 +8,13 @@ on:
       - ".github/workflows/docs.yml"
       - "docs/**"
       - "mkdocs.yml"
+      - "package-lock.json"
+      - "package.json"
       - "requirements.txt"
+      - "rollup.docs.config.js"
+      - "src/api/types/**"
+      - "src/modules/attendance-calculator/**"
+      - "src/utils/**"
   workflow_dispatch:
 
 permissions:
@@ -33,10 +39,20 @@ jobs:
           python-version: "3.13"
           cache: pip
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
+          npm ci
+
+      - name: Build docs assets
+        run: npm run build:docs-assets
 
       - name: Build docs
         run: mkdocs build --strict

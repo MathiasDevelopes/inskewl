@@ -5,6 +5,9 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "rollup -c",
+    "build:docs-assets": "rollup -c rollup.docs.config.js",
+    "docs:build": "npm run build:docs-assets && mkdocs build --strict",
+    "docs:serve": "npm run build:docs-assets && mkdocs serve",
     "dev": "rollup -c -w"
   },
   "repository": {
