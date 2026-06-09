@@ -65,10 +65,6 @@ export function attendanceCodeCountsTowardsLimit(
   return code !== "D" && code !== "!" && code !== "R" && code !== "§";
 }
 
-export function canSimulateLessonAbsence(lesson: SelectableLesson): boolean {
-  return !lesson.registeredAttendance && isLessonInFuture(lesson, new Date());
-}
-
 export function isLessonInFuture(
   lesson: SelectableLesson,
   now: Date,
