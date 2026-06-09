@@ -4,6 +4,7 @@ import { Injectable } from "../core/Injectable";
 import { VismaModule } from "../core/VismaModule";
 import { createDropdownItem } from "../../utils/dom";
 import { createLogger } from "../../utils/logger";
+import { getWeekStartDates } from "../../utils/time";
 import { ICSExporter } from "./exporters/ics";
 import { fromTimetableItem } from "./model/event";
 import type { CalendarEvent } from "./model/event";
@@ -42,46 +43,11 @@ export class TimetableExporter extends VismaModule {
     }));
   }
 
-  getWeekStartDates(startDate: Date, endDate: Date): Date[] {
-    const weekStarts: Date[] = [];
-    const currentDate = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate(),
-    );
-    const lastDate = new Date(
-      endDate.getFullYear(),
-      endDate.getMonth(),
-      endDate.getDate(),
-    );
-
-    const startDay = currentDate.getDay();
-    const daysSinceMonday = startDay === 0 ? 6 : startDay - 1;
-    currentDate.setDate(currentDate.getDate() - daysSinceMonday);
-
-    while (currentDate <= lastDate) {
-      weekStarts.push(new Date(currentDate.getTime()));
-      currentDate.setDate(currentDate.getDate() + 7);
-    }
-
-    return weekStarts;
-  }
-
   private async loadEvents(): Promise<CalendarEvent[]> {
-    const academicYears = await api.calendar.getAcademicYears();
-    const currentAcademicYear = academicYears.find(
-      (academicYear) => academicYear.currentYear,
-    );
-    if (!currentAcademicYear) {
-      throw new Error("No current academic year available.");
-    }
+    const currentAcademicYear = await api.calendar.getCurrentAcademicYear();
+    const currentTerm = api.calendar.getCurrentTerm(currentAcademicYear);
 
-    const currentTerm = currentAcademicYear.terms.find((t) => t.current);
-    if (!currentTerm) {
-      throw new Error("No current term available.");
-    }
-
-    const weeks: Date[] = this.getWeekStartDates(
+    const weeks: Date[] = getWeekStartDates(
       new Date(),
       currentTerm.endDate,
     );

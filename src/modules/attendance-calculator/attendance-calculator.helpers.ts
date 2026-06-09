@@ -32,6 +32,7 @@ export interface AttendanceCalculatorState {
   currentYear: AcademicYear;
   groups: AttendanceSubjectGroup[];
   lessons: SelectableLesson[];
+  selectedWeek: Date;
 }
 
 export function lessonDurationHours(item: TimetableItem): number {
@@ -65,7 +66,30 @@ export function attendanceCodeCountsTowardsLimit(
 }
 
 export function canSimulateLessonAbsence(lesson: SelectableLesson): boolean {
-  return !lesson.registeredAttendance;
+  return !lesson.registeredAttendance && isLessonInFuture(lesson, new Date());
+}
+
+export function isLessonInFuture(
+  lesson: SelectableLesson,
+  now: Date,
+): boolean {
+  const startMinutes = timeToMinutes(lesson.item.startTime);
+  const lessonStart = new Date(
+    lesson.item.date.getFullYear(),
+    lesson.item.date.getMonth(),
+    lesson.item.date.getDate(),
+    Math.floor(startMinutes / 60),
+    startMinutes % 60,
+  );
+
+  return lessonStart.getTime() > now.getTime();
+}
+
+export function canSimulateLessonAbsenceAt(
+  lesson: SelectableLesson,
+  now: Date,
+): boolean {
+  return !lesson.registeredAttendance && isLessonInFuture(lesson, now);
 }
 
 export function computeAbsenceInfo(
