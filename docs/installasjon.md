@@ -5,9 +5,7 @@ Først må du installere en nettleserutvidelse som kan kjøre inskewl.
 ## Slik gjør du
 
 1. Installer [Violentmonkey](https://violentmonkey.github.io/) i nettleseren.
-2. Åpne installasjonslenken:
-
-   <https://github.com/MathiasDevelopes/inskewl/releases/latest/download/inskewl.user.js>
+2. Åpne installasjonslenken [her](https://github.com/MathiasDevelopes/inskewl/releases/latest/download/inskewl.user.js).
 3. Trykk **Installer** når Violentmonkey åpner scriptet.
 4. Gå til VIS InSchool.
 5. Refresh siden.
