@@ -7,8 +7,14 @@ theme:
   name: mkdocs
 
 nav:
-  - Hjem: index.md
-  - Fraværskalkulator: fravaerskalkulator/demo.md
+  - Start her: index.md
+  - 1. Installer: installasjon.md
+  - 2. Fraværskalkulator: moduler/fravaerskalkulator.md
+  - 3. Kalendereksport: moduler/kalendereksport.md
+  - Hjelp: hjelp.md
+  - For utviklere:
+      - Utvikling: utvikling.md
+      - Arkitektur: arkitektur.md
 
 extra_javascript:
   - assets/attendance-calculator-demo.js
