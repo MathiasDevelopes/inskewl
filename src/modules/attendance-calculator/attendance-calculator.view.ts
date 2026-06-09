@@ -2,7 +2,7 @@ import type { AttendanceSubjectGroup } from "../../api/types/attendance";
 import type { AcademicYear } from "../../api/types/calendar";
 import { normHex, textColorForBg } from "../../utils/color";
 import { escapeHtml } from "../../utils/dom";
-import { fmt, fmtPct, round } from "../../utils/format";
+import { fmt, fmtPct } from "../../utils/format";
 import {
   formatWeekRange,
   getISOWeekNumber,
@@ -10,6 +10,7 @@ import {
   timeToMinutes,
 } from "../../utils/time";
 import {
+  absenceBasisHours,
   type AttendanceCalculatorState,
   BADGE_ATTR,
   canSkipLesson,
@@ -78,9 +79,10 @@ export class AttendanceCalculatorView {
       const code = el.getAttribute("subjectcode");
       if (!code) continue;
       const group = groupByCode.get(code);
-      if (!group || group.totalScheduledHours <= 0) continue;
+      const basisHours = group ? absenceBasisHours(group) : 0;
+      if (!group || basisHours <= 0) continue;
 
-      const pct = (group.totalAbsence / group.totalScheduledHours) * 100;
+      const pct = (group.totalAbsence / basisHours) * 100;
       const safe = pct < group.defaultLimit;
       const nearLimit = pct >= group.warningLimit;
 
@@ -179,8 +181,8 @@ export class AttendanceCalculatorView {
       .sort((a, b) => b.absencePercentage - a.absencePercentage);
 
     const totalAbsence = subjects.reduce((s, g) => s + g.totalAbsence, 0);
-    const totalScheduled = subjects.reduce((s, g) => s + g.totalScheduledHours, 0);
-    const overallPct = totalScheduled > 0 ? round((totalAbsence / totalScheduled) * 100) : 0;
+    const totalBasisHours = subjects.reduce((s, g) => s + g.absenceBasisHours, 0);
+    const overallPct = totalBasisHours > 0 ? (totalAbsence / totalBasisHours) * 100 : 0;
     const exceeded = subjects.filter((s) => s.status === "exceeded").length;
     const warned = subjects.filter((s) => s.status === "warning").length;
 
@@ -195,7 +197,7 @@ export class AttendanceCalculatorView {
     const title = document.createElement("div");
     title.innerHTML = `
       <h2 style="margin:0 0 4px;font-size:20px">Fraværskalkulator</h2>
-      <span style="color:#666;font-size:13px">${escapeHtml(this.controller.currentYear.name)} · Totalt fravær: <strong>${fmt(totalAbsence)}t</strong> av ${fmt(totalScheduled)}t (${fmtPct(overallPct)}%)</span>`;
+      <span style="color:#666;font-size:13px">${escapeHtml(this.controller.currentYear.name)} · Totalt fravær: <strong>${fmt(totalAbsence)}t</strong> av ${fmt(totalBasisHours)} årstimer (${fmtPct(overallPct)}%)</span>`;
     header.appendChild(title);
 
     const headerRight = document.createElement("div");
@@ -220,8 +222,9 @@ export class AttendanceCalculatorView {
       const affectedSubjects = [...extra.entries()].map(([code, hours]) => {
         const group = this.controller.groups.find((g) => g.subjectCode === code);
         const name = group?.subjectShortName ?? code;
-        const pct = group && group.totalScheduledHours > 0
-          ? (hours / group.totalScheduledHours) * 100
+        const basisHours = group ? absenceBasisHours(group) : 0;
+        const pct = basisHours > 0
+          ? (hours / basisHours) * 100
           : 0;
         return `${escapeHtml(name)} +${fmtPct(pct)}%`;
       });
@@ -347,7 +350,7 @@ export class AttendanceCalculatorView {
             <span style="display:inline-block;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:${color}20;color:${color};flex-shrink:0;margin-left:6px">${label}</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#666">
-            <span>${fmt(s.totalAbsence)}t / ${fmt(s.totalScheduledHours)}t · <span style="font-weight:600;color:${color}">${fmtPct(s.absencePercentage)}%</span></span>
+            <span>${fmt(s.totalAbsence)}t / ${fmt(s.absenceBasisHours)}t · <span style="font-weight:600;color:${color}">${fmtPct(s.absencePercentage)}%</span></span>
             <span style="color:#888">${fmt(s.remainingHours)}t igjen</span>
           </div>
           <div style="width:100%;height:4px;background:#e0e0e0;border-radius:2px;margin-top:4px">
@@ -373,7 +376,7 @@ export class AttendanceCalculatorView {
     if (days.length === 0) {
       const empty = document.createElement("p");
       empty.style.cssText = "color:#999;font-size:13px";
-      empty.textContent = "Ingen timer denne uken.";
+      empty.textContent = "Ingen fag-timer for fraværssimulering denne uken.";
       return empty;
     }
 
@@ -486,8 +489,8 @@ export class AttendanceCalculatorView {
     const attendanceStatus = this.getAttendanceStatusText(lesson);
     const blockedStatus = this.getBlockedSimulationText(lesson, now);
     const impactPct =
-      group && group.totalScheduledHours > 0
-        ? (lesson.durationHours / group.totalScheduledHours) * 100
+      group && absenceBasisHours(group) > 0
+        ? (lesson.durationHours / absenceBasisHours(group)) * 100
         : 0;
 
     const el = document.createElement("button");

@@ -50,11 +50,11 @@ const demoYear: AcademicYear = {
 };
 
 const groups: AttendanceSubjectGroup[] = [
-  subjectGroup("MAT1023", "Matematikk 2P", "Matematikk", 112, 4.5),
-  subjectGroup("NOR1267", "Norsk hovedmål", "Norsk", 112, 9.5),
-  subjectGroup("ITK2002", "Informasjonsteknologi 1", "IT", 84, 2),
-  subjectGroup("ENG1007", "Engelsk", "Engelsk", 84, 5),
-  subjectGroup("KRO1006", "Kroppsøving", "Gym", 56, 5),
+  subjectGroup("MAT1023", "Matematikk 2P", "Matematikk", 112, 112.7, 4.5),
+  subjectGroup("NOR1267", "Norsk hovedmål", "Norsk", 112, 112.7, 9.5),
+  subjectGroup("ITK2002", "Informasjonsteknologi 1", "IT", 84, 84.5, 2),
+  subjectGroup("ENG1007", "Engelsk", "Engelsk", 84, 84.3, 5),
+  subjectGroup("KRO1006", "Kroppsøving", "Gym", 56, 56.4, 5),
 ];
 
 export function createAttendanceCalculatorDemoState(
@@ -119,10 +119,11 @@ function subjectGroup(
   subjectCode: string,
   subjectName: string,
   subjectShortName: string,
+  yearlyHours: number,
   totalScheduledHours: number,
   totalAbsence: number,
 ): AttendanceSubjectGroup {
-  const absencePercentage = (totalAbsence / totalScheduledHours) * 100;
+  const absencePercentage = (totalAbsence / yearlyHours) * 100;
 
   return {
     subjectGroupId: Number(subjectCode.replace(/\D/g, "")),
@@ -137,7 +138,7 @@ function subjectGroup(
     mainSchool: true,
     learnerInTeachingGroup: true,
     externalSchool: false,
-    yearlyHours: totalScheduledHours,
+    yearlyHours,
     scheduledHoursTermOne: totalScheduledHours / 2,
     totalScheduledHours,
     totalAbsenceTermOne: totalAbsence / 2,

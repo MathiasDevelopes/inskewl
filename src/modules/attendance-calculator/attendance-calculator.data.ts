@@ -7,6 +7,7 @@ import type {
 import type { TimetableItem } from "../../api/types/timetable";
 import { startOfWeek } from "../../utils/time";
 import {
+  absenceBasisHours,
   attendanceCodeCountsTowardsLimit,
   isLessonLike,
   lessonDurationHours,
@@ -25,7 +26,7 @@ export async function loadCurrentAttendanceGroups(): Promise<AttendanceCalculato
   const groups = await api.attendance.getAttendanceForSubjectGroups(currentYear);
   return {
     currentYear,
-    groups: groups.filter((g) => g.totalScheduledHours > 0),
+    groups: groups.filter((g) => absenceBasisHours(g) > 0),
   };
 }
 
@@ -76,7 +77,8 @@ export function createSelectableLessons(
   groups: AttendanceSubjectGroup[],
   lessonAttendances: LessonAttendance[] = [],
 ): SelectableLesson[] {
-  const subjectCodes = new Set(groups.map((g) => g.subjectCode));
+  const groupBySubjectCode = new Map(groups.map((g) => [g.subjectCode, g]));
+  const groupById = new Map(groups.map((g) => [g.subjectGroupId, g]));
   const attendanceByTimetableItemId = new Map(
     lessonAttendances.map((attendance) => [
       String(attendance.timetableItemId),
@@ -87,13 +89,20 @@ export function createSelectableLessons(
   return timetableItems
     .map((item) => {
       const subjectCode = resolveTimetableSubjectCode(item);
-      return subjectCode && subjectCode !== item.subjectCode
-        ? { ...item, subjectCode }
+      const group = subjectCode
+        ? groupBySubjectCode.get(subjectCode)
+        : item.teachingGroupId != null
+          ? groupById.get(item.teachingGroupId)
+          : undefined;
+      const resolvedSubjectCode = group?.subjectCode ?? subjectCode;
+
+      return resolvedSubjectCode && resolvedSubjectCode !== item.subjectCode
+        ? { ...item, subjectCode: resolvedSubjectCode }
         : item;
     })
     .filter((item) => {
       if (!isLessonLike(item)) return false;
-      return !!item.subjectCode && subjectCodes.has(item.subjectCode);
+      return !!item.subjectCode && groupBySubjectCode.has(item.subjectCode);
     })
     .sort((a, b) => {
       const dateCmp = a.date.getTime() - b.date.getTime();

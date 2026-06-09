@@ -9,7 +9,7 @@ import { timeToMinutes } from "../../utils/time";
 export interface SubjectAbsenceInfo {
   subjectCode: string;
   subjectName: string;
-  totalScheduledHours: number;
+  absenceBasisHours: number;
   totalAbsence: number;
   absencePercentage: number;
   warningLimit: number;
@@ -65,6 +65,10 @@ export function attendanceCodeCountsTowardsLimit(
   return code !== "D" && code !== "!" && code !== "R" && code !== "§";
 }
 
+export function absenceBasisHours(group: AttendanceSubjectGroup): number {
+  return group.yearlyHours > 0 ? group.yearlyHours : group.totalScheduledHours;
+}
+
 export function isLessonInFuture(
   lesson: SelectableLesson,
   now: Date,
@@ -92,13 +96,14 @@ export function computeAbsenceInfo(
   group: AttendanceSubjectGroup,
   extraHours = 0,
 ): SubjectAbsenceInfo {
+  const basisHours = absenceBasisHours(group);
   const totalAbsence = group.totalAbsence + extraHours;
   const absencePercentage =
-    group.totalScheduledHours > 0
-      ? (totalAbsence / group.totalScheduledHours) * 100
+    basisHours > 0
+      ? (totalAbsence / basisHours) * 100
       : 0;
   const maxAbsenceHours =
-    (group.defaultLimit / 100) * group.totalScheduledHours;
+    (group.defaultLimit / 100) * basisHours;
   const remainingHours = Math.max(0, maxAbsenceHours - totalAbsence);
 
   let status: SubjectAbsenceInfo["status"] = "ok";
@@ -111,7 +116,7 @@ export function computeAbsenceInfo(
   return {
     subjectCode: group.subjectCode,
     subjectName: group.subjectName,
-    totalScheduledHours: group.totalScheduledHours,
+    absenceBasisHours: basisHours,
     totalAbsence,
     absencePercentage,
     warningLimit: group.warningLimit,
@@ -125,12 +130,15 @@ export function canSkipLesson(
   group: AttendanceSubjectGroup | undefined,
   lessonHours: number,
 ): { safe: boolean; newPct: number } {
-  if (!group || group.totalScheduledHours <= 0) {
+  if (!group) {
     return { safe: true, newPct: 0 };
   }
 
+  const basisHours = absenceBasisHours(group);
+  if (basisHours <= 0) return { safe: true, newPct: 0 };
+
   const newAbsence = group.totalAbsence + lessonHours;
-  const newPct = (newAbsence / group.totalScheduledHours) * 100;
+  const newPct = (newAbsence / basisHours) * 100;
   return { safe: newPct < group.defaultLimit, newPct };
 }
 
