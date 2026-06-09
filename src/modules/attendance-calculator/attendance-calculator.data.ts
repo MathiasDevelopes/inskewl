@@ -5,12 +5,13 @@ import type {
   LessonAttendance,
 } from "../../api/types/attendance";
 import type { TimetableItem } from "../../api/types/timetable";
+import { startOfWeek } from "../../utils/time";
 import {
-  AttendanceCalculatorState,
   attendanceCodeCountsTowardsLimit,
   isLessonLike,
   lessonDurationHours,
   resolveTimetableSubjectCode,
+  type AttendanceCalculatorState,
   type SelectableLesson,
 } from "./attendance-calculator.helpers";
 
@@ -20,12 +21,7 @@ export interface AttendanceCalculatorBaseData {
 }
 
 export async function loadCurrentAttendanceGroups(): Promise<AttendanceCalculatorBaseData> {
-  const academicYears = await api.calendar.getAcademicYears();
-  const currentYear = academicYears.find((y) => y.currentYear);
-  if (!currentYear) {
-    throw new Error("Fant ikke gjeldende skoleår.");
-  }
-
+  const currentYear = await api.calendar.getCurrentAcademicYear();
   const groups = await api.attendance.getAttendanceForSubjectGroups(currentYear);
   return {
     currentYear,
@@ -33,28 +29,46 @@ export async function loadCurrentAttendanceGroups(): Promise<AttendanceCalculato
   };
 }
 
-export async function loadAttendanceCalculatorState(): Promise<AttendanceCalculatorState> {
+export async function loadAttendanceCalculatorState(
+  week: Date = new Date(),
+): Promise<AttendanceCalculatorState> {
+  const selectedWeek = startOfWeek(week);
   const base = await loadCurrentAttendanceGroups();
   if (base.groups.length === 0) {
-    return { ...base, lessons: [] };
+    return { ...base, selectedWeek, lessons: [] };
   }
 
-  const [timetable, lessonAttendances] = await Promise.all([
-    api.timetable.getTimetable(new Date()),
-    api.attendance.getLessonAttendancesForTeachingGroups(
-      base.currentYear,
-      base.groups.map((g) => g.subjectGroupId),
-    ),
-  ]);
+  const lessons = await loadAttendanceCalculatorLessons(
+    selectedWeek,
+    base.currentYear,
+    base.groups,
+  );
 
   return {
     ...base,
-    lessons: createSelectableLessons(
-      timetable.timetableItems,
-      base.groups,
-      lessonAttendances,
-    ),
+    selectedWeek,
+    lessons,
   };
+}
+
+export async function loadAttendanceCalculatorLessons(
+  week: Date,
+  currentYear: AcademicYear,
+  groups: AttendanceSubjectGroup[],
+): Promise<SelectableLesson[]> {
+  const [timetable, lessonAttendances] = await Promise.all([
+    api.timetable.getTimetable(week),
+    api.attendance.getLessonAttendancesForTeachingGroups(
+      currentYear,
+      groups.map((g) => g.subjectGroupId),
+    ),
+  ]);
+
+  return createSelectableLessons(
+    timetable.timetableItems,
+    groups,
+    lessonAttendances,
+  );
 }
 
 export function createSelectableLessons(

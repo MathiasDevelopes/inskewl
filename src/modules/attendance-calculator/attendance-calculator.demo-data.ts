@@ -4,6 +4,7 @@ import type {
 } from "../../api/types/attendance";
 import type { AcademicYear } from "../../api/types/calendar";
 import type { TimetableItem } from "../../api/types/timetable";
+import { startOfWeek } from "../../utils/time";
 import {
   type AttendanceCalculatorState,
   attendanceCodeCountsTowardsLimit,
@@ -56,31 +57,60 @@ const groups: AttendanceSubjectGroup[] = [
   subjectGroup("KRO1006", "Kroppsøving", "Gym", 56, 5),
 ];
 
-export function createAttendanceCalculatorDemoState(): AttendanceCalculatorState {
+export function createAttendanceCalculatorDemoState(
+  week: Date = new Date(),
+): AttendanceCalculatorState {
+  const selectedWeek = startOfWeek(week);
+  const demoLesson = (
+    id: number,
+    dayOffset: number,
+    startTime: string,
+    endTime: string,
+    subjectCode: string,
+    subject: string,
+    colour: string,
+    attendance?: {
+      code: AttendanceCode;
+      description: string;
+    },
+  ) =>
+    lesson(
+      id,
+      selectedWeek,
+      dayOffset,
+      startTime,
+      endTime,
+      subjectCode,
+      subject,
+      colour,
+      attendance,
+    );
+
   return {
     currentYear: demoYear,
     groups,
+    selectedWeek,
     lessons: [
-      lesson(1, 0, "08:15", "09:45", "MAT1023", "Matematikk", "#d7ecff"),
-      lesson(2, 0, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7", {
+      demoLesson(1, 0, "08:15", "09:45", "MAT1023", "Matematikk", "#d7ecff"),
+      demoLesson(2, 0, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7", {
         code: "D",
         description: "Dokumentert fravær",
       }),
-      lesson(3, 0, "12:15", "13:45", "ITK2002", "IT", "#dff7e8"),
-      lesson(4, 1, "08:15", "09:45", "ENG1007", "Engelsk", "#fff1c2"),
-      lesson(5, 1, "10:00", "11:30", "KRO1006", "Gym", "#e8ddff"),
-      lesson(6, 1, "12:15", "13:45", "MAT1023", "Matematikk", "#d7ecff"),
-      lesson(7, 2, "08:15", "10:00", "ITK2002", "IT", "#dff7e8"),
-      lesson(8, 2, "10:15", "11:45", "NOR1267", "Norsk", "#ffe0e7", {
+      demoLesson(3, 0, "12:15", "13:45", "ITK2002", "IT", "#dff7e8"),
+      demoLesson(4, 1, "08:15", "09:45", "ENG1007", "Engelsk", "#fff1c2"),
+      demoLesson(5, 1, "10:00", "11:30", "KRO1006", "Gym", "#e8ddff"),
+      demoLesson(6, 1, "12:15", "13:45", "MAT1023", "Matematikk", "#d7ecff"),
+      demoLesson(7, 2, "08:15", "10:00", "ITK2002", "IT", "#dff7e8"),
+      demoLesson(8, 2, "10:15", "11:45", "NOR1267", "Norsk", "#ffe0e7", {
         code: "X",
         description: "Udokumentert fravær",
       }),
-      lesson(9, 2, "12:15", "13:45", "ENG1007", "Engelsk", "#fff1c2"),
-      lesson(10, 3, "08:15", "09:45", "MAT1023", "Matematikk", "#d7ecff"),
-      lesson(11, 3, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7"),
-      lesson(12, 3, "12:15", "13:45", "KRO1006", "Gym", "#e8ddff"),
-      lesson(13, 4, "08:15", "09:45", "ITK2002", "IT", "#dff7e8"),
-      lesson(14, 4, "10:00", "11:30", "ENG1007", "Engelsk", "#fff1c2"),
+      demoLesson(9, 2, "12:15", "13:45", "ENG1007", "Engelsk", "#fff1c2"),
+      demoLesson(10, 3, "08:15", "09:45", "MAT1023", "Matematikk", "#d7ecff"),
+      demoLesson(11, 3, "10:00", "11:30", "NOR1267", "Norsk", "#ffe0e7"),
+      demoLesson(12, 3, "12:15", "13:45", "KRO1006", "Gym", "#e8ddff"),
+      demoLesson(13, 4, "08:15", "09:45", "ITK2002", "IT", "#dff7e8"),
+      demoLesson(14, 4, "10:00", "11:30", "ENG1007", "Engelsk", "#fff1c2"),
     ],
   };
 }
@@ -124,6 +154,7 @@ function subjectGroup(
 
 function lesson(
   id: number,
+  weekStart: Date,
   dayOffset: number,
   startTime: string,
   endTime: string,
@@ -139,7 +170,7 @@ function lesson(
     id,
     startTime,
     endTime,
-    date: demoWeekday(dayOffset),
+    date: demoWeekday(weekStart, dayOffset),
     tenant: 1,
     academicYearId: demoYear.id,
     entityId: 1000 + id,
@@ -175,6 +206,10 @@ function lesson(
   };
 }
 
-function demoWeekday(dayOffset: number): Date {
-  return new Date(2026, 3, 20 + dayOffset);
+function demoWeekday(weekStart: Date, dayOffset: number): Date {
+  return new Date(
+    weekStart.getFullYear(),
+    weekStart.getMonth(),
+    weekStart.getDate() + dayOffset,
+  );
 }
