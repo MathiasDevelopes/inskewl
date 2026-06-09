@@ -173,6 +173,9 @@ export async function testAllApiSchemas(): Promise<void> {
     api.assessment.getRemarkLimit(),
   );
 
+  // Test ExamsApi methods
+  await testApiCall("ExamsApi.getGroups()", () => api.exams.getGroups());
+
   // Test InboxApi methods
   await testApiCall("InboxApi.getMessages()", () => api.inbox.getMessages());
   await testApiCall("InboxApi.getNewCount()", () => api.inbox.getNewCount());
