@@ -1,0 +1,49 @@
+name: Build main artifact
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: main-artifact
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build userscript artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set dev metadata
+        run: |
+          base_version="$(node -e "const fs = require('fs'); console.log(JSON.parse(fs.readFileSync('package.json', 'utf8')).version)")"
+
+          echo "BUILD_VERSION=${base_version}-dev.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
+          echo "UPDATE_URL=" >> "$GITHUB_ENV"
+          echo "DOWNLOAD_URL=" >> "$GITHUB_ENV"
+
+      - name: Build userscript
+        run: npm run build
+
+      - name: Upload userscript artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: inskewl-main-${{ github.run_number }}-${{ github.sha }}
+          path: dist/inskewl.user.js
