@@ -83,6 +83,7 @@ out
 dist
 site/
 docs/assets/attendance-calculator-demo.js
+docs/dev/
 
 # Gatsby files
 .cache/
