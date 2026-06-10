@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/MathiasDevelopes/inskewl#readme",
   "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^25.9.2",

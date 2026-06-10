@@ -1,7 +1,8 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import metablock from "rollup-plugin-userscript-metablock";
 import typescript from "@rollup/plugin-typescript";
-import pkg from "./package.json" with { type: 'json' };
+import json from "@rollup/plugin-json";
+import pkg from "./package.json" with { type: "json" };
 
 const buildVersion = process.env.BUILD_VERSION ?? pkg.version;
 const updateURL = process.env.UPDATE_URL;
@@ -16,12 +17,17 @@ export default {
     format: "iife", // userscripts må bruke IIFE
     sourcemap: false,
   },
-  plugins: [nodeResolve(), typescript(), metablock({
-    file: "./meta.json",
-    override: {
-      version: buildVersion,
-      ...(hasUpdateURL ? { updateURL } : {}),
-      ...(hasDownloadURL ? { downloadURL } : {}),
-    },
-  })],
+  plugins: [
+    json(),
+    nodeResolve(),
+    typescript(),
+    metablock({
+      file: "./meta.json",
+      override: {
+        version: buildVersion,
+        ...(hasUpdateURL ? { updateURL } : {}),
+        ...(hasDownloadURL ? { downloadURL } : {}),
+      },
+    }),
+  ],
 };
