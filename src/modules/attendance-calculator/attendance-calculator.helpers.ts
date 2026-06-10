@@ -142,18 +142,4 @@ export function canSkipLesson(
   return { safe: newPct < group.defaultLimit, newPct };
 }
 
-export const STATUS_COLORS = {
-  ok: "#4caf50",
-  warning: "#ff9800",
-  exceeded: "#f44336",
-} as const;
-
-export const STATUS_LABELS = {
-  ok: "OK",
-  warning: "Advarsel",
-  exceeded: "Over grensen",
-} as const;
-
 export const WEEKDAYS_SHORT = ["søn", "man", "tir", "ons", "tor", "fre", "lør"];
-
-export const BADGE_ATTR = "data-inskewl-badge";

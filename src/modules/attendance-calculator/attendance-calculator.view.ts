@@ -1,5 +1,8 @@
 import type { AttendanceSubjectGroup } from "../../api/types/attendance";
 import type { AcademicYear } from "../../api/types/calendar";
+import { cx } from "../core/ui/classes";
+import { installInskewlUi } from "../core/ui/install";
+import { pct as cssPct, px, setCssVars } from "../core/ui/styleVars";
 import { normHex, textColorForBg } from "../../utils/color";
 import { escapeHtml } from "../../utils/dom";
 import { fmt, fmtPct } from "../../utils/format";
@@ -12,17 +15,22 @@ import {
 import {
   absenceBasisHours,
   type AttendanceCalculatorState,
-  BADGE_ATTR,
   canSkipLesson,
   canSimulateLessonAbsenceAt,
   computeAbsenceInfo,
   isLessonInFuture,
   type SelectableLesson,
-  STATUS_COLORS,
-  STATUS_LABELS,
   type SubjectAbsenceInfo,
   WEEKDAYS_SHORT,
 } from "./attendance-calculator.helpers";
+import {
+  ATTENDANCE_STATUS_LABELS,
+  BADGE_ATTR,
+  lessonDotColor,
+  statusBadgeClass,
+  statusColor,
+  vismaBadgeColor,
+} from "./attendance-calculator.ui";
 
 export interface AttendanceCalculatorController {
   panel: HTMLElement | null;
@@ -46,23 +54,22 @@ export class AttendanceCalculatorView {
   }
 
   mountInline(container: HTMLElement, state: AttendanceCalculatorState): void {
+    installInskewlUi();
     this.controller.panel = null;
     this.controller.contentEl = container;
     this.setState(state);
-    Object.assign(container.style, {
-      background: "#fff",
-      border: "1px solid #e5e7eb",
-      borderRadius: "8px",
-      padding: "16px",
-      overflow: "auto",
-      boxSizing: "border-box",
-      fontFamily: "system-ui, sans-serif",
-    });
+    container.classList.add(
+      "inskewl-root",
+      "inskewl-panel",
+      "inskewl-panel-inline",
+      "attendance-calculator-root",
+    );
     this.render();
   }
 
   injectBadgesOnVisma(): void {
     if (this.controller.groups.length === 0) return;
+    installInskewlUi();
 
     const groupByCode = new Map(
       this.controller.groups.map((g) => [g.subjectCode, g]),
@@ -88,16 +95,10 @@ export class AttendanceCalculatorView {
 
       const badge = document.createElement("span");
       badge.setAttribute(BADGE_ATTR, "");
-      badge.style.cssText = `
-        position:absolute;top:2px;right:2px;
-        font-size:9px;font-weight:700;padding:1px 4px;border-radius:4px;
-        line-height:1.2;pointer-events:none;z-index:1;
-        ${!safe
-          ? "background:#f44336;color:#fff;"
-          : nearLimit
-            ? "background:#ff9800;color:#fff;"
-            : "background:#4caf50;color:#fff;"}
-      `;
+      badge.className = "attendance-visma-badge";
+      setCssVars(badge, {
+        "--attendance-badge-bg": vismaBadgeColor({ safe, nearLimit }),
+      });
       badge.textContent = `${fmtPct(pct)}%`;
 
       const pos = getComputedStyle(el).position;
@@ -112,17 +113,11 @@ export class AttendanceCalculatorView {
       return false;
     }
 
+    installInskewlUi();
+
     const overlay = document.createElement("div");
     overlay.id = "attendance-calc-overlay";
-    Object.assign(overlay.style, {
-      position: "fixed",
-      inset: "0",
-      background: "rgba(0,0,0,0.5)",
-      zIndex: "99999",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    });
+    overlay.className = "inskewl-root inskewl-overlay attendance-calculator-root";
     overlay.onclick = (e) => {
       if (e.target === overlay) {
         overlay.remove();
@@ -132,20 +127,7 @@ export class AttendanceCalculatorView {
     };
 
     const panel = document.createElement("div");
-    Object.assign(panel.style, {
-      background: "#fff",
-      borderRadius: "12px",
-      padding: "24px",
-      maxWidth: "1200px",
-      width: "95vw",
-      maxHeight: "90vh",
-      overflow: "auto",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-      fontFamily: "system-ui, sans-serif",
-    });
-
-    panel.innerHTML = `<h2 style="margin:0 0 8px;font-size:20px">Fraværskalkulator</h2>
-      <p style="margin:0 0 16px;color:#666;font-size:14px">Laster data…</p>`;
+    panel.className = "inskewl-panel";
 
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
@@ -158,13 +140,16 @@ export class AttendanceCalculatorView {
 
   showLoading(message: string): void {
     if (!this.controller.contentEl) return;
-    this.controller.contentEl.innerHTML = `<h2 style="margin:0 0 8px;font-size:20px">Fraværskalkulator</h2>
-      <p style="margin:0 0 16px;color:#666;font-size:14px">${escapeHtml(message)}</p>`;
+    this.controller.contentEl.innerHTML = `
+      <h2 class="inskewl-title">Fraværskalkulator</h2>
+      <p class="inskewl-muted">${escapeHtml(message)}</p>
+    `;
   }
 
   showError(message: string): void {
     if (!this.controller.contentEl) return;
-    this.controller.contentEl.innerHTML = `<p style="color:#f44336;margin:0">${escapeHtml(message)}</p>`;
+    this.controller.contentEl.innerHTML =
+      `<p class="inskewl-error-text">${escapeHtml(message)}</p>`;
   }
 
   render(): void {
@@ -193,29 +178,38 @@ export class AttendanceCalculatorView {
     this.controller.contentEl.innerHTML = "";
 
     const header = document.createElement("div");
-    header.style.cssText = "display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;flex-wrap:wrap;gap:8px";
+    header.className = "inskewl-header";
     const title = document.createElement("div");
     title.innerHTML = `
-      <h2 style="margin:0 0 4px;font-size:20px">Fraværskalkulator</h2>
-      <span style="color:#666;font-size:13px">${escapeHtml(this.controller.currentYear.name)} · Totalt fravær: <strong>${fmt(totalAbsence)}t</strong> av ${fmt(totalBasisHours)} årstimer (${fmtPct(overallPct)}%)</span>`;
+      <h2 class="inskewl-title">Fraværskalkulator</h2>
+      <span class="inskewl-muted">${escapeHtml(this.controller.currentYear.name)} · Totalt fravær: <strong>${fmt(totalAbsence)}t</strong> av ${fmt(totalBasisHours)} årstimer (${fmtPct(overallPct)}%)</span>`;
     header.appendChild(title);
 
     const headerRight = document.createElement("div");
-    headerRight.style.cssText = "display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:13px";
+    headerRight.className = "inskewl-stack attendance-week-selector";
     headerRight.appendChild(this.buildWeekSelector(selectedWeek, now));
 
     const status = document.createElement("div");
-    status.style.cssText = "text-align:right;min-height:18px";
-    status.innerHTML = `
-      ${exceeded > 0 ? `<div style="color:${STATUS_COLORS.exceeded}">⚠ ${exceeded} fag over grensen</div>` : ""}
-      ${warned > 0 ? `<div style="color:${STATUS_COLORS.warning}">${warned} fag nær grensen</div>` : ""}`;
+    status.className = "attendance-summary";
+    if (exceeded > 0) {
+      const exceededLine = document.createElement("div");
+      exceededLine.className = "attendance-status-line attendance-status-danger";
+      exceededLine.textContent = `⚠ ${exceeded} fag over grensen`;
+      status.appendChild(exceededLine);
+    }
+    if (warned > 0) {
+      const warnedLine = document.createElement("div");
+      warnedLine.className = "attendance-status-line attendance-status-warning";
+      warnedLine.textContent = `${warned} fag nær grensen`;
+      status.appendChild(warnedLine);
+    }
     headerRight.appendChild(status);
 
     header.appendChild(headerRight);
     this.controller.contentEl.appendChild(header);
 
     const bannerContainer = document.createElement("div");
-    bannerContainer.style.cssText = "min-height:36px;margin-bottom:12px;display:flex;align-items:center";
+    bannerContainer.className = "attendance-banner-slot";
     this.controller.contentEl.appendChild(bannerContainer);
 
     if (hasSimulation) {
@@ -230,11 +224,12 @@ export class AttendanceCalculatorView {
       });
 
       const banner = document.createElement("div");
-      banner.style.cssText = "background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;padding:8px 12px;font-size:13px;color:#e65100;display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;box-sizing:border-box;min-height:36px";
+      banner.className = "inskewl-banner inskewl-banner-warning";
       banner.innerHTML = `<span>Simulering: <strong>+${fmt(selectedHours)}t</strong> · ${affectedSubjects.join(", ")}</span>`;
       const resetBtn = document.createElement("button");
       resetBtn.textContent = "Nullstill";
-      resetBtn.style.cssText = "padding:2px 10px;font-size:12px;border:1px solid #ffcc80;border-radius:4px;background:#fff;cursor:pointer;color:#e65100;flex-shrink:0";
+      resetBtn.className =
+        "inskewl-button inskewl-button-small inskewl-button-warning";
       resetBtn.onclick = () => {
         this.controller.lessons.forEach((l) => (l.selected = false));
         this.controller.render();
@@ -244,14 +239,14 @@ export class AttendanceCalculatorView {
     }
 
     const layout = document.createElement("div");
-    layout.style.cssText = "display:flex;gap:20px;align-items:start;flex-wrap:wrap";
+    layout.className = "inskewl-layout";
 
     const sidebar = document.createElement("div");
-    sidebar.style.cssText = "flex:0 1 320px;width:min(320px,100%);max-height:600px;overflow-y:auto";
-    sidebar.innerHTML = this.renderSubjectList(subjects, extra);
+    sidebar.className = "inskewl-scroll-area attendance-subject-list";
+    sidebar.appendChild(this.buildSubjectList(subjects, extra));
 
     const center = document.createElement("div");
-    center.style.cssText = "flex:1 1 360px;min-width:280px;overflow-x:auto";
+    center.className = "inskewl-scroll-area attendance-timetable";
     center.appendChild(this.buildTimetableGrid(now));
 
     layout.appendChild(sidebar);
@@ -292,7 +287,7 @@ export class AttendanceCalculatorView {
     const isCurrentWeek = selectedWeek.getTime() <= currentWeek.getTime();
 
     const wrapper = document.createElement("div");
-    wrapper.style.cssText = "display:flex;align-items:center;gap:6px;white-space:nowrap";
+    wrapper.className = "inskewl-row attendance-week-controls";
 
     const prev = this.buildWeekButton("<", "Forrige uke", isCurrentWeek);
     prev.onclick = () => {
@@ -301,7 +296,7 @@ export class AttendanceCalculatorView {
     wrapper.appendChild(prev);
 
     const label = document.createElement("span");
-    label.style.cssText = "font-size:12px;color:#555;min-width:132px;text-align:center";
+    label.className = "attendance-week-label";
     label.textContent = `Uke ${getISOWeekNumber(selectedWeek)} · ${formatWeekRange(selectedWeek)}`;
     wrapper.appendChild(label);
 
@@ -324,40 +319,77 @@ export class AttendanceCalculatorView {
     button.textContent = label;
     button.title = title;
     button.disabled = disabled;
-    button.style.cssText = `
-      width:28px;height:26px;border-radius:4px;border:1px solid #d1d5db;
-      background:${disabled ? "#f3f4f6" : "#fff"};color:${disabled ? "#9ca3af" : "#374151"};
-      cursor:${disabled ? "not-allowed" : "pointer"};font-size:13px;font-weight:700;
-      line-height:1;display:inline-flex;align-items:center;justify-content:center;
-    `;
+    button.className = "inskewl-button attendance-week-button";
     return button;
   }
 
-  private renderSubjectList(
+  private buildSubjectList(
     subjects: SubjectAbsenceInfo[],
     extra: Map<string, number>,
-  ): string {
-    return subjects.map((s) => {
-      const color = STATUS_COLORS[s.status];
-      const label = STATUS_LABELS[s.status];
+  ): HTMLElement {
+    const wrapper = document.createElement("div");
+
+    for (const s of subjects) {
+      const label = ATTENDANCE_STATUS_LABELS[s.status];
       const barWidth = Math.min(100, (s.absencePercentage / s.defaultLimit) * 100);
       const sim = extra.has(s.subjectCode);
+      const color = statusColor(s.status);
 
-      return `
-        <div style="padding:8px 10px;border-bottom:1px solid #f0f0f0;${sim ? "background:#fff8e1;" : ""}">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
-            <span style="font-weight:600;font-size:13px">${escapeHtml(s.subjectName)}</span>
-            <span style="display:inline-block;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:600;background:${color}20;color:${color};flex-shrink:0;margin-left:6px">${label}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#666">
-            <span>${fmt(s.totalAbsence)}t / ${fmt(s.absenceBasisHours)}t · <span style="font-weight:600;color:${color}">${fmtPct(s.absencePercentage)}%</span></span>
-            <span style="color:#888">${fmt(s.remainingHours)}t igjen</span>
-          </div>
-          <div style="width:100%;height:4px;background:#e0e0e0;border-radius:2px;margin-top:4px">
-            <div style="width:${barWidth}%;height:100%;background:${color};border-radius:2px"></div>
-          </div>
-        </div>`;
-    }).join("");
+      const row = document.createElement("div");
+      row.className = cx(
+        "attendance-subject-row",
+        sim && "attendance-subject-row-simulated",
+      );
+      setCssVars(row, { "--attendance-status-color": color });
+
+      const main = document.createElement("div");
+      main.className = "attendance-subject-main";
+
+      const name = document.createElement("span");
+      name.className = "attendance-subject-name";
+      name.textContent = s.subjectName;
+      main.appendChild(name);
+
+      const badge = document.createElement("span");
+      badge.className = cx("inskewl-badge", statusBadgeClass(s.status));
+      badge.textContent = label;
+      main.appendChild(badge);
+      row.appendChild(main);
+
+      const meta = document.createElement("div");
+      meta.className = "attendance-subject-meta";
+
+      const absence = document.createElement("span");
+      absence.append(
+        `${fmt(s.totalAbsence)}t / ${fmt(s.absenceBasisHours)}t · `,
+      );
+      const pct = document.createElement("span");
+      pct.className = "attendance-subject-percent";
+      pct.textContent = `${fmtPct(s.absencePercentage)}%`;
+      absence.appendChild(pct);
+      meta.appendChild(absence);
+
+      const remaining = document.createElement("span");
+      remaining.className = "attendance-subject-remaining";
+      remaining.textContent = `${fmt(s.remainingHours)}t igjen`;
+      meta.appendChild(remaining);
+      row.appendChild(meta);
+
+      const progress = document.createElement("div");
+      progress.className = "inskewl-progress";
+      const fill = document.createElement("div");
+      fill.className = "inskewl-progress-fill";
+      setCssVars(fill, {
+        "--inskewl-progress": cssPct(barWidth),
+        "--inskewl-progress-color": color,
+      });
+      progress.appendChild(fill);
+      row.appendChild(progress);
+
+      wrapper.appendChild(row);
+    }
+
+    return wrapper;
   }
 
   private buildTimetableGrid(now: Date): HTMLElement {
@@ -375,7 +407,7 @@ export class AttendanceCalculatorView {
     const days = [...dayGroups.keys()].sort();
     if (days.length === 0) {
       const empty = document.createElement("p");
-      empty.style.cssText = "color:#999;font-size:13px";
+      empty.className = "inskewl-muted";
       empty.textContent = "Ingen fag-timer for fraværssimulering denne uken.";
       return empty;
     }
@@ -397,19 +429,24 @@ export class AttendanceCalculatorView {
     const wrapper = document.createElement("div");
 
     const label = document.createElement("div");
-    label.style.cssText = "font-size:12px;color:#999;margin-bottom:8px";
+    label.className = "inskewl-label attendance-timetable-label";
     label.textContent = "Trykk på en fremtidig time for å simulere fravær";
     wrapper.appendChild(label);
 
     const grid = document.createElement("div");
-    grid.style.cssText = `display:grid;grid-template-columns:40px repeat(${days.length},1fr);gap:0 3px;height:${gridHeight}px;position:relative;margin-top:24px`;
+    grid.className = "attendance-timetable-grid";
+    setCssVars(grid, {
+      "--attendance-day-count": String(days.length),
+      "--attendance-grid-height": px(gridHeight),
+    });
 
     const timeCol = document.createElement("div");
-    timeCol.style.cssText = "position:relative";
+    timeCol.className = "attendance-time-column";
     for (let m = globalStart; m <= globalEnd; m += 60) {
       const top = ((m - globalStart) / totalMinutes) * gridHeight;
       const tick = document.createElement("div");
-      tick.style.cssText = `position:absolute;top:${top}px;right:4px;font-size:10px;color:#bbb;transform:translateY(-50%);line-height:1`;
+      tick.className = "attendance-time-tick";
+      setCssVars(tick, { "--attendance-top": px(top) });
       tick.textContent = `${String(Math.floor(m / 60)).padStart(2, "0")}:00`;
       timeCol.appendChild(tick);
     }
@@ -417,7 +454,7 @@ export class AttendanceCalculatorView {
 
     for (const day of days) {
       const col = document.createElement("div");
-      col.style.cssText = "position:relative";
+      col.className = "attendance-day-column";
 
       const lessonsForDay = dayGroups.get(day) ?? [];
       const simulatableLessons = lessonsForDay.filter((lesson) =>
@@ -429,7 +466,10 @@ export class AttendanceCalculatorView {
       const dayLabel = document.createElement("button");
       dayLabel.setAttribute("type", "button");
       dayLabel.disabled = simulatableLessons.length === 0;
-      dayLabel.style.cssText = `position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;text-transform:capitalize;cursor:${dayLabel.disabled ? "not-allowed" : "pointer"};user-select:none;border-radius:3px;padding:1px 0;border:none;outline:none;font:inherit;${allSelected ? "background:#e65100;color:#fff;" : `background:transparent;color:${dayLabel.disabled ? "#aaa" : "#555"};`}`;
+      dayLabel.className = cx(
+        "attendance-day-label",
+        allSelected && "attendance-day-label-selected",
+      );
       dayLabel.textContent = WEEKDAYS_SHORT[day] ?? "";
       dayLabel.onclick = () => {
         if (simulatableLessons.length === 0) return;
@@ -442,7 +482,8 @@ export class AttendanceCalculatorView {
       for (let m = globalStart; m <= globalEnd; m += 60) {
         const top = ((m - globalStart) / totalMinutes) * gridHeight;
         const line = document.createElement("div");
-        line.style.cssText = `position:absolute;top:${top}px;left:0;right:0;border-top:1px solid #f0f0f0`;
+        line.className = "attendance-hour-line";
+        setCssVars(line, { "--attendance-top": px(top) });
         col.appendChild(line);
       }
 
@@ -495,18 +536,17 @@ export class AttendanceCalculatorView {
 
     const el = document.createElement("button");
     el.setAttribute("type", "button");
-    el.style.cssText = `
-      position:absolute;top:${top + 1}px;left:1px;right:1px;height:${Math.max(height - 2, 18)}px;
-      border-radius:5px;cursor:pointer;overflow:hidden;box-sizing:border-box;
-      display:flex;flex-direction:column;justify-content:center;padding:1px 5px;
-      font-size:11px;line-height:1.2;user-select:none;
-      background:${bg};color:${fg};
-      border:none;outline:none;font:inherit;text-align:left;
-      ${canSimulate ? "cursor:pointer;" : "cursor:not-allowed;opacity:0.78;"}
-      ${lesson.selected && canSimulate
-        ? `outline:2.5px solid #222;outline-offset:-1px;filter:brightness(0.75);`
-        : ``}
-    `;
+    el.className = cx(
+      "attendance-lesson-block",
+      !canSimulate && "attendance-lesson-block-disabled",
+      lesson.selected && canSimulate && "attendance-lesson-block-selected",
+    );
+    setCssVars(el, {
+      "--attendance-top": px(top + 1),
+      "--attendance-height": px(Math.max(height - 2, 18)),
+      "--attendance-bg": bg,
+      "--attendance-fg": fg,
+    });
     el.setAttribute("aria-disabled", String(!canSimulate));
     if (attendanceStatus || blockedStatus) {
       el.title = attendanceStatus && lesson.attendanceCodeDescription
@@ -515,18 +555,23 @@ export class AttendanceCalculatorView {
     }
 
     const topRow = document.createElement("div");
-    topRow.style.cssText = "display:flex;justify-content:space-between;align-items:center;gap:2px";
+    topRow.className = "attendance-lesson-top-row";
 
     const nameEl = document.createElement("span");
-    nameEl.style.cssText = "font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+    nameEl.className = "attendance-lesson-title";
     nameEl.textContent = shortName;
     topRow.appendChild(nameEl);
 
     const dot = document.createElement("span");
-    const dotColor = canSimulate
-      ? safe ? "#4caf50" : "#f44336"
-      : blockedStatus ? "#9ca3af" : lesson.countsTowardsLimit ? "#ff9800" : "#607d8b";
-    dot.style.cssText = `flex-shrink:0;width:8px;height:8px;border-radius:50%;background:${dotColor};`;
+    dot.className = "attendance-lesson-dot";
+    setCssVars(dot, {
+      "--attendance-dot": lessonDotColor({
+        canSimulate,
+        safe,
+        blocked: blockedStatus != null,
+        countsTowardsLimit: lesson.countsTowardsLimit,
+      }),
+    });
     dot.title = attendanceStatus ?? blockedStatus ??
       (safe ? `Kan skulkes (${fmtPct(newPct)}%)` : `Over grensen! (${fmtPct(newPct)}%)`);
     topRow.appendChild(dot);
@@ -535,7 +580,7 @@ export class AttendanceCalculatorView {
 
     if (height > 26) {
       const sub = document.createElement("div");
-      sub.style.cssText = "font-size:9px;opacity:0.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      sub.className = "attendance-lesson-subtitle";
       sub.textContent = attendanceStatus ?? blockedStatus ??
         `${fmt(lesson.durationHours)}t · +${fmtPct(impactPct)}%`;
       el.appendChild(sub);
