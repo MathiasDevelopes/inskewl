@@ -71,6 +71,25 @@ testAllApiSchemas()
 
 Kommandoen tester kjente API-endepunkter og skriver resultatet i konsollen.
 
+## Runtime debug-info
+
+Prosjektet eksponerer også en enkel diagnosefunksjon i nettleseren. Den kan
+brukes ved teknisk feilsøking for å kontrollere hvilken versjon av userscriptet
+som kjører, om siden er en gyldig VIS-tenant, og hvilken skole-/innloggingsinfo
+`login-page`-endepunktet returnerer.
+
+1. Logg inn på VIS InSchool.
+2. Åpne utviklerverktøyet i nettleseren.
+3. Gå til **Console**.
+4. Kjør:
+
+```javascript
+debugInfo()
+```
+
+Funksjonen skriver resultatet i konsollen. Hvis `login-page`-kallet feiler,
+logges feilen sammen med resten av diagnoseinformasjonen.
+
 ## Metadata for CI-builds
 
 Builden kan overstyre deler av userscript-metablocken med miljøvariabler. Dette brukes for CI og release-builds uten å endre `meta.json`.
