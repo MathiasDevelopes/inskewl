@@ -22,25 +22,38 @@ Klikk på en time i ukevisningen og se hva som skjer med fraværsprosenten.
 
 ## Slik bruker du den i VIS
 
-TODO: Skriv en kort brukerveiledning for fraværskalkulatoren:
+Gå til startsiden eller timeplanen i VIS InSchool.
 
-- hvor brukeren finner fraværskalkulatoren i VIS
-- hvordan ukevelgeren brukes
-- hvordan brukeren simulerer fravær
-- hvordan brukeren nullstiller simuleringen
-- hva status/farger betyr
+Klikk på menyknappen med tre prikker oppe til høyre i timeplanen:
+
+![Bilde av dropdown meny, med tydelig pil](../images/pildropdown.jpg)
+
+Velg **Fraværskalkulator** i menyen:
+
+![Bilde av dropdown meny, med pil som peker på fraværskalkulator](../images/pilfravaerskalkulator.jpg)
+
+Fraværskalkulatoren åpnes i VIS. Bruk ukevelgeren for å se kommende uker.
+Klikk på fremtidige timer for å simulere fravær i de timene. Klikk på en valgt
+time en gang til for å fjerne den fra simuleringen.
+
+Statusene viser om simuleringen fortsatt er under fraværsgrensen:
+
+- **OK** betyr at simuleringen er under grensen.
+- **Advarsel** betyr at du nærmer deg grensen.
+- **Over grensen** betyr at simuleringen går over grensen.
 
 ## Eksempel
 
-TODO: Lag ett konkret eksempel på bruk, for eksempel:
-
-- Eleven har 7,5 prosent fravær i et fag.
-- Eleven vurderer å være borte fra en dobbelttime.
-- Kalkulatoren viser hva prosentgrensen blir etter simuleringen.
+Hvis du har 7,5 prosent fravær i et fag og vurderer å være borte fra en
+dobbelttime, kan du klikke på de to fremtidige timene. Kalkulatoren viser den
+nye simulerte prosenten før du tar en avgjørelse.
 
 ## Hvis det ikke fungerer
 
-TODO: Skriv kort hva brukeren bør sjekke hvis kalkulatoren ikke vises, eller hvis timeplanen/fraværsdata ikke lastes.
+Sjekk at userscriptet er aktivert, at du er logget inn i VIS InSchool, og at du
+står på en side med timeplan. Last siden på nytt hvis kalkulatoren ikke vises.
+Hvis timeplanen eller fraværsdata ikke lastes, kan VIS InSchool ha endret dataene
+modulen bruker.
 
 Se også [hjelp og feilsøking](../hjelp.md).
 
