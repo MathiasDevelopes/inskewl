@@ -1,19 +1,32 @@
-import { Injectable } from "./Injectable";
-import { VismaModule } from "./VismaModule";
+import type { Injectable } from "./Injectable";
+import type { VismaModule } from "./VismaModule";
+
+interface InjectedElement {
+  el: HTMLElement;
+  inj: Injectable;
+}
 
 export class DomInjector {
-  private injected = new Map<string, HTMLElement>();
+  private injected = new Map<string, InjectedElement>();
 
   inject(module: VismaModule) {
     for (const inj of module.injectables()) {
       const key = `${module.name}:${inj.id}`;
 
       if (this.injected.has(key)) {
-        const el = this.injected.get(key);
-        if (el && document.contains(el)) {
+        const injected = this.injected.get(key);
+        if (injected && document.contains(injected.el)) {
           continue;
         } else {
-          this.injected.delete(key);
+          if (injected) {
+            try {
+              this.destroyInjected(injected);
+            } finally {
+              this.injected.delete(key);
+            }
+          } else {
+            this.injected.delete(key);
+          }
         }
       }
 
@@ -39,15 +52,26 @@ export class DomInjector {
           break;
       }
 
-      this.injected.set(key, el);
+      this.injected.set(key, { el, inj });
     }
   }
 
   eject(module: VismaModule) {
-    for (const [key, el] of this.injected) {
+    for (const [key, injected] of this.injected) {
       if (!key.startsWith(module.name + ":")) continue;
-      el.remove();
-      this.injected.delete(key);
+      try {
+        this.destroyInjected(injected);
+      } finally {
+        this.injected.delete(key);
+      }
+    }
+  }
+
+  private destroyInjected(injected: InjectedElement): void {
+    try {
+      injected.inj.destroy?.(injected.el);
+    } finally {
+      injected.el.remove();
     }
   }
 }

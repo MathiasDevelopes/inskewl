@@ -1,5 +1,5 @@
 import { DomInjector } from "./DOMInjector";
-import { VismaModule } from "./VismaModule";
+import type { VismaModule } from "./VismaModule";
 import { createLogger } from "../../utils/logger";
 
 const logger = createLogger("ModuleLoader");
@@ -40,29 +40,46 @@ export class ModuleLoader {
     this.observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  public handleUrlChange(url: string) {
+  public async handleUrlChange(url: string): Promise<void> {
     for (const mod of this.modules) {
       const should = mod.shouldLoad(url);
 
       if (should && !mod._loaded) {
-        try {
-          mod.onLoad?.();
-          this.injector.inject(mod);
-          mod._loaded = true;
-          logger.info(`${mod.name} loaded.`);
-        } catch (e) {
-          logger.error(`Error loading ${mod.name}:`, e);
-        }
+        await this.loadModule(mod);
       } else if (!should && mod._loaded) {
-        try {
-          this.injector.eject(mod);
-          mod.onUnload?.();
-          mod._loaded = false;
-          logger.info(`${mod.name} unloaded.`);
-        } catch (e) {
-          logger.error(`Error unloading ${mod.name}:`, e);
-        }
+        await this.unloadModule(mod);
       }
+    }
+  }
+
+  private async loadModule(mod: VismaModule): Promise<void> {
+    try {
+      mod._loaded = true;
+      this.injector.inject(mod);
+    } catch (e) {
+      mod._loaded = false;
+      logger.error(`Error injecting ${mod.name}:`, e);
+      return;
+    }
+
+    try {
+      await mod.onLoad?.();
+    } catch (e) {
+      logger.error(`Error loading ${mod.name}:`, e);
+    }
+
+    logger.info(`${mod.name} loaded.`);
+  }
+
+  private async unloadModule(mod: VismaModule): Promise<void> {
+    try {
+      this.injector.eject(mod);
+      await mod.onUnload?.();
+      logger.info(`${mod.name} unloaded.`);
+    } catch (e) {
+      logger.error(`Error unloading ${mod.name}:`, e);
+    } finally {
+      mod._loaded = false;
     }
   }
 

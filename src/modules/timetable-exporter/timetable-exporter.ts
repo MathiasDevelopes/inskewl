@@ -1,8 +1,8 @@
 import { api } from "../../api/api";
 import type { Timetable } from "../../api/types/timetable";
-import { Injectable } from "../core/Injectable";
+import type { Injectable } from "../core/Injectable";
+import { dropdownAction } from "../core/injectables";
 import { VismaModule } from "../core/VismaModule";
-import { createDropdownItem } from "../../utils/dom";
 import { createLogger } from "../../utils/logger";
 import { getWeekStartDates } from "../../utils/time";
 import { ICSExporter } from "./exporters/ics";
@@ -23,24 +23,21 @@ export class TimetableExporter extends VismaModule {
   }
 
   override injectables(): Injectable[] {
-    return this.exporters.map((exporter) => ({
-      id: `export-${exporter.id}-btn`,
-      target: "ul.dropdown-menu",
-      placement: "append",
-      render: () =>
-        createDropdownItem(
-          `timetable-to-${exporter.id}`,
-          exporter.label,
-          async () => {
-            try {
-              await this.exportCalendar(exporter);
-            } catch (error) {
-              logger.error("Export failed:", error);
-              alert("Kunne ikke eksportere timeplanen. VIS kan ha endret systemene sine, eller du er logget ut.");
-            }
-          },
-        ),
-    }));
+    return this.exporters.map((exporter) =>
+      dropdownAction({
+        id: `export-${exporter.id}-btn`,
+        buttonId: `timetable-to-${exporter.id}`,
+        label: exporter.label,
+        onClick: async () => {
+          try {
+            await this.exportCalendar(exporter);
+          } catch (error) {
+            logger.error("Export failed:", error);
+            alert("Kunne ikke eksportere timeplanen. VIS kan ha endret systemene sine, eller du er logget ut.");
+          }
+        },
+      }),
+    );
   }
 
   private async loadEvents(): Promise<CalendarEvent[]> {

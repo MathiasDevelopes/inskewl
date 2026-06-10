@@ -1,8 +1,8 @@
 import type { AcademicYear } from "../../api/types/calendar";
 import type { AttendanceSubjectGroup } from "../../api/types/attendance";
-import { Injectable } from "../core/Injectable";
+import type { Injectable } from "../core/Injectable";
+import { dropdownAction } from "../core/injectables";
 import { VismaModule } from "../core/VismaModule";
-import { createDropdownItem } from "../../utils/dom";
 import { createLogger } from "../../utils/logger";
 import { addWeeks, getISOWeekNumber, startOfWeek } from "../../utils/time";
 import {
@@ -34,17 +34,12 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
 
   override injectables(): Injectable[] {
     return [
-      {
+      dropdownAction({
         id: "attendance-calc-btn",
-        target: "ul.dropdown-menu",
-        placement: "append",
-        render: () =>
-          createDropdownItem(
-            "attendance-calc-trigger",
-            "Fraværskalkulator",
-            () => this.showCalculator(),
-          ),
-      },
+        buttonId: "attendance-calc-trigger",
+        label: "Fraværskalkulator",
+        onClick: () => this.showCalculator(),
+      }),
     ];
   }
 

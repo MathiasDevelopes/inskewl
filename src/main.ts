@@ -36,10 +36,10 @@ if (typeof window !== "undefined" && !("debugInfo" in window)) {
   ]);
 
   const watcher = new UrlWatcher((url: string) => {
-    moduleLoader.handleUrlChange(url);
+    void moduleLoader.handleUrlChange(url);
   });
 
   watcher.start();
 
-  moduleLoader.handleUrlChange(window.location.href);
+  void moduleLoader.handleUrlChange(window.location.href);
 })();
