@@ -20,7 +20,7 @@ Klikk på menyknappen med tre prikker oppe til høyre i timeplanen:
 
 Velg **Eksporter timeplan (.ics)** i menyen:
 
-![Bilde av dropdown meny, med pil som peker på kalendereksport](../images/pilfravaerskalkulator.jpg)
+![Bilde av dropdown meny, med pil som peker på kalendereksport](../images/pileksportertimeplan.jpg)
 
 Nettleseren laster ned en fil som heter `timetable.ics`. Filen havner vanligvis
 i Nedlastinger-mappen, men plasseringen kan avhenge av nettleserinnstillingene
