@@ -185,6 +185,10 @@ export async function testAllApiSchemas(): Promise<void> {
     api.events.getEvents(),
   );
 
+  await testApiCall("LoginPageApi.getLoginPage()", () =>
+    api.loginPage.getLoginPage(),
+  );
+
   // Also test getEvent with the first event if available
   if (events && events.length > 0) {
     const firstEvent = events[0];
