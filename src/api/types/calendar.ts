@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { transformISODate } from "../../utils/parsing";
 
+const ApiIntegerSchema = z.union([
+  z.number(),
+  z.string().regex(/^-?\d+$/).transform(Number),
+]);
+
 export const TermSchema = z.object({
   id: z.number().meta({
     description: "ID of the term",
@@ -66,13 +71,13 @@ export const AcademicYearSchema = z.object({
 export type AcademicYear = z.infer<typeof AcademicYearSchema>;
 
 export const DayCountSchema = z.object({
-  learningDays: z.number().meta({
+  learningDays: ApiIntegerSchema.meta({
     description: "Total number of learning days in the academic year",
   }),
-  planningDays: z.number().meta({
+  planningDays: ApiIntegerSchema.meta({
     description: "Total number of planning days in the academic year",
   }),
-  vacationDays: z.number().meta({
+  vacationDays: ApiIntegerSchema.meta({
     description: "Total number of vacation days in the academic year",
   }),
 });

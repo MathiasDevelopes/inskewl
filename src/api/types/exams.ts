@@ -61,7 +61,7 @@ export const ExamGroupSchema = z.object({
   startTime: z.iso.time().meta({
     description: "Time the exam starts",
   }),
-  duration: z.number().meta({
+  duration: z.number().nullable().optional().meta({
     description: "Exam duration in minutes",
   }),
   schoolName: z.string().meta({

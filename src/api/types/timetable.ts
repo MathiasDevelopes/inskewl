@@ -107,8 +107,8 @@ export const ActivityDetailSchema = z.object({
   activityTimeslotId: z.number(),
   subjects: z.array(
     z.object({ subjectName: z.string(), minutesDeliverable: z.number() }),
-  ),
-  baseClasses: z.array(z.unknown()),
+  ).optional(),
+  baseClasses: z.array(z.unknown()).optional(),
 });
 
 export type ActivityDetail = z.infer<typeof ActivityDetailSchema>;

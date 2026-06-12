@@ -7,23 +7,27 @@ export const UserRole = z.enum([
   "ROLE_LEARNER",
   "ROLE_CONTACT",
   "ROLE_ADMIN",
+  "ROLE_BASIC",
   "ROLE_SCHOOL_OWNER",
 ]);
 
 export const LearnerSchema = z.object({
-  className: z.any(),
+  className: z.any().optional(),
+  preferredGivenName: z.string().optional().nullable().meta({
+    description: "The nickname of the learner",
+  }),
   givenName: z.string(),
   familyName: z.string(),
   id: z.number(),
-  identifier: z.number(),
+  identifier: z.number().optional(),
 });
 
 export const WorkForceSchema = z.object({
-  userRole: UserRole,
-  workforcePersonalId: z.number().meta({
+  userRole: UserRole.optional(),
+  workforcePersonalId: z.number().optional().meta({
     description: "The personal id of the employee",
   }),
-  displayCode: z.any(),
+  displayCode: z.any().optional(),
   preferredGivenName: z.string().optional().nullable().meta({
     description: "The nickname of the employee",
   }),
@@ -36,7 +40,7 @@ export const WorkForceSchema = z.object({
   id: z.number().meta({
     description: "The id of the employee",
   }),
-  identifier: z.number().meta({
+  identifier: z.number().optional().meta({
     description: "The id of the employee",
   }),
 });
@@ -48,14 +52,14 @@ export const RoomSchema = z.object({
   name: z.string().meta({
     description: "Name of the room",
   }),
-  location: z.string().meta({
+  location: z.string().optional().meta({
     description: "Location of the room",
   }),
   capacity: z.number().meta({
     description: "How many people the room can hold",
   }),
-  available: z.boolean(),
-  facilities: z.array(z.any()).meta({
+  available: z.boolean().optional(),
+  facilities: z.array(z.any()).optional().meta({
     description: "A array of the facilities the room has",
   }),
 });

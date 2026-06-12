@@ -11,9 +11,12 @@ export const SchoolInfoSchema = z.object({
   external: z.boolean(),
 });
 
-export const RemarksCountByTypeSchema = z.object({});
+export const RemarkTypeSchema = z.enum(["ORDERLINESS", "CONDUCT"]);
 
-export const RemarkTypeSchema = z.union([z.literal("CONDUCT")]);
+export const RemarksCountByTypeSchema = z.partialRecord(
+  RemarkTypeSchema,
+  z.number(),
+);
 
 export const RemarkSchema = z.object({
   id: z.number(),
@@ -55,7 +58,7 @@ export const BehaviourSchema = z.object({
   remarks: z.array(RemarkSchema),
   remarksCountByType: RemarksCountByTypeSchema,
   results: z.array(z.any()),
-  currentSchoolIsMain: z.any(),
+  currentSchoolIsMain: z.boolean(),
 });
 
 export type Behaviour = z.infer<typeof BehaviourSchema>;
