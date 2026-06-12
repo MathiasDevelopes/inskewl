@@ -1,19 +1,8 @@
 import { z } from "zod";
+import { Tenant, TenantSchema } from "./tenant";
 
 export const IdentityProviderSchema = z.enum(["FEIDE", "ID_PORTEN"]).meta({
   description: "An identity provider",
-});
-
-export const SchoolInfoSchema = z.object({
-  tenant: z.number().meta({
-    description: "The id of the tenant",
-  }),
-  subDomain: z.string().meta({
-    description: "The subdomain of the URL",
-  }),
-  description: z.string().meta({
-    description: "The school's full name",
-  }),
 });
 
 export const LoginPageSchema = z.object({
@@ -27,9 +16,9 @@ export const LoginPageSchema = z.object({
       }),
     })
     .nullable(),
-  schoolInfo: SchoolInfoSchema.nullable(),
+  schoolInfo: TenantSchema.nullable(),
 });
 
 export type IdentityProvider = z.infer<typeof IdentityProviderSchema>;
-export type SchoolInfo = z.infer<typeof SchoolInfoSchema>;
+export type SchoolInfo = Tenant;
 export type LoginPage = z.infer<typeof LoginPageSchema>;
