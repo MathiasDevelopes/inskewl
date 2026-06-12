@@ -58,7 +58,7 @@ export const BehaviourSchema = z.object({
   remarks: z.array(RemarkSchema),
   remarksCountByType: RemarksCountByTypeSchema,
   results: z.array(z.any()),
-  currentSchoolIsMain: z.boolean(),
+  currentSchoolIsMain: z.boolean().nullable(),
 });
 
 export type Behaviour = z.infer<typeof BehaviourSchema>;
