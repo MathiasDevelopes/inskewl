@@ -14,6 +14,7 @@ nav:
   - Hjelp: hjelp.md
   - For utviklere:
       - Utvikling: utvikling.md
+      - Lage en modul: modul-eksempel.md
       - Arkitektur: arkitektur.md
 
 extra_javascript:

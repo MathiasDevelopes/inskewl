@@ -36,6 +36,12 @@ npm run dev
 
 Dette starter Rollup i watch-modus, slik at userscriptet bygges på nytt når kildekoden endres.
 
+## Lage en modul
+
+Se [Lage en enkel modul](modul-eksempel.md) for et komplett eksempel på en
+liten modul med TypeScript, DOM-injisering, registrering i `main.ts` og et
+valgfritt API-kall.
+
 ## Dokumentasjon
 
 Installer Python-avhengigheter først:
