@@ -11,7 +11,11 @@ export class UserApi extends Endpoint {
     return this.client.getWithSchema("permissions/user", UserSchema);
   }
 
-  async getPersonalInfo(): Promise<PersonalInfo> {
+  async getPersonalInfo(
+    filterType: string = "ALL",
+    filterId: number = 0,
+    action: string = "current",
+  ): Promise<PersonalInfo> {
     const learnerId = await this.session.getLearnerId();
     // ?filterType=ALL&filterId=0&action=current
 
@@ -20,9 +24,9 @@ export class UserApi extends Endpoint {
       PersonalInfoSchema,
       {
         query: {
-          filterType: "ALL",
-          filterId: 0,
-          action: "current",
+          filterType,
+          filterId,
+          action,
         },
       },
     );

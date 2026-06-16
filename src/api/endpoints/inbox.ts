@@ -1,14 +1,16 @@
 import { Endpoint } from "../endpoint";
-import { FilterType, FilterTypeSchema, Messages, MessagesSchema } from "../types/inbox";
+import { FilterType, Messages, MessagesSchema } from "../types/inbox";
 
 export class InboxApi extends Endpoint {
   async getMessages(
-    filterType: FilterType = FilterTypeSchema.enum.ALL,
+    page: number = 0,
+    pageSize: number = 1000,
+    filterType: FilterType = "ALL",
   ): Promise<Messages> {
     return this.client.getWithSchema("inbox/messages", MessagesSchema, {
       query: {
-        page: 0,
-        pageSize: 1000,
+        page,
+        pageSize,
         filterType,
       },
     });
