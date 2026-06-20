@@ -92,6 +92,30 @@ export const SchoolEnrolmentSchema = z.object({
 
 export type SchoolEnrolment = z.infer<typeof SchoolEnrolmentSchema>;
 
+/**
+ * UDIR/VIGO completion code ("fullfortkode") for a programme area.
+ * Reference: https://regbok.udir.no/35004/3344/35042-1045040.html
+ *
+ * B: Completed and passed.
+ * I: Completed but not passed.
+ * M: Not completed because assessment basis is missing.
+ * A: Basic competence / IOP-related completion.
+ * H: Still in training or part-time learner.
+ * S: Discontinued training during the school year.
+ * L: Completed apprenticeship or school-based vocational training; trade/journeyman exam not taken.
+ * K: Completed training for competence certificate candidate; competence test not taken.
+ */
+export const CompletionCodeSchema = z.enum([
+  "B",
+  "I",
+  "M",
+  "A",
+  "H",
+  "S",
+  "L",
+  "K",
+]);
+
 export const PersonalInfoSchema = z.object({
   vsware_type: z.string(),
   displayName: z.null(),
@@ -216,7 +240,7 @@ export const PersonalInfoSchema = z.object({
   }),
   immutableUserId: z.string(),
   endCause: z.null(),
-  completionCode: z.null(),
+  completionCode: CompletionCodeSchema.nullable(),
   isSecondSchool: z.boolean(),
   vocationalProgrammeArea: z.boolean().nullable().meta({
     description: "Whether the learner is in a vocational programme area.",
