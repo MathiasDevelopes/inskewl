@@ -3,7 +3,6 @@ import type { AttendanceSubjectGroup } from "../../api/types/attendance";
 import type { Injectable } from "../core/Injectable";
 import { dropdownAction } from "../core/injectables";
 import { VismaModule } from "../core/VismaModule";
-import { createLogger } from "../../utils/logger";
 import { addWeeks, getISOWeekNumber, startOfWeek } from "../../utils/time";
 import {
   loadAttendanceCalculatorLessons,
@@ -12,8 +11,6 @@ import {
 } from "./attendance-calculator.data";
 import { AttendanceCalculatorView, type AttendanceCalculatorController } from "./attendance-calculator.view";
 import type { SelectableLesson } from "./attendance-calculator.helpers";
-
-const logger = createLogger("AttendanceCalculator");
 
 export class AttendanceCalculator extends VismaModule implements AttendanceCalculatorController {
   name: string = "AttendanceCalculator";
@@ -71,7 +68,7 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
       this.view.setState(state);
       this.view.render();
     } catch (err) {
-      logger.error("Failed to load calculator data:", err);
+      this.logger.error("Failed to load calculator data:", err);
       this.view.showError("Kunne ikke hente data.");
     }
   }
@@ -106,7 +103,7 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
       );
       this.render();
     } catch (err) {
-      logger.error("Failed to load calculator week:", err);
+      this.logger.error("Failed to load calculator week:", err);
       this.selectedWeek = previousWeek;
       this.lessons = previousLessons;
       this.view.showError("Kunne ikke hente timeplanen for valgt uke.");

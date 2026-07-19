@@ -3,14 +3,11 @@ import type { Timetable } from "../../api/types/timetable";
 import type { Injectable } from "../core/Injectable";
 import { dropdownAction } from "../core/injectables";
 import { VismaModule } from "../core/VismaModule";
-import { createLogger } from "../../utils/logger";
 import { getWeekStartDates } from "../../utils/time";
 import { ICSExporter } from "./exporters/ics";
 import { fromTimetableItem } from "./model/event";
 import type { CalendarEvent } from "./model/event";
 import type { Exporter } from "./model/exporter";
-
-const logger = createLogger("TimetableExporter");
 
 export class TimetableExporter extends VismaModule {
   name: string = "TimetableExporter";
@@ -32,7 +29,7 @@ export class TimetableExporter extends VismaModule {
           try {
             await this.exportCalendar(exporter);
           } catch (error) {
-            logger.error("Export failed:", error);
+            this.logger.error("Export failed:", error);
             alert("Kunne ikke eksportere timeplanen. VIS kan ha endret systemene sine, eller du er logget ut.");
           }
         },
