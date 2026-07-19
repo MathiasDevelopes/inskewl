@@ -245,7 +245,7 @@ export const PersonalInfoSchema = z.object({
   vocationalProgrammeArea: z.boolean().nullable().meta({
     description: "Whether the learner is in a vocational programme area.",
   }),
-  exchangeDetails: ExchangeDetailsSchema,
+  exchangeDetails: ExchangeDetailsSchema.nullable(),
   campusId: z.null(),
   duf: z.null(),
   leftEarly: z.boolean(),
