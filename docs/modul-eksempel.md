@@ -155,13 +155,6 @@ Legg til disse importene øverst i samme modulfil:
 
 ```typescript
 import { api } from "../../api/api";
-import { createLogger } from "../../utils/logger";
-```
-
-Opprett loggeren utenfor klassen:
-
-```typescript
-const logger = createLogger("SimpleDashboardNote");
 ```
 
 Legg deretter `onLoad` inn i `SimpleDashboardNote`-klassen:
@@ -169,7 +162,7 @@ Legg deretter `onLoad` inn i `SimpleDashboardNote`-klassen:
 ```typescript
   override async onLoad(): Promise<void> {
     const academicYear = await api.calendar.getCurrentAcademicYear();
-    logger.info("Aktivt skoleår:", academicYear.name);
+    this.logger.info("Aktivt skoleår:", academicYear.name);
   }
 ```
 
