@@ -1,5 +1,6 @@
 import { ZodType } from "zod";
 import { createLogger } from "../utils/logger";
+import { AuthProvider } from "./authProvider";
 
 const logger = createLogger("ApiClient");
 
@@ -14,7 +15,7 @@ type RequestOptions = {
 };
 
 export class ApiClient {
-  constructor(private baseUrl: URL) {}
+  constructor(private readonly baseUrl: URL, private readonly authProvider: AuthProvider) {}
 
   private async request<T>(
     method: Method,
@@ -33,12 +34,14 @@ export class ApiClient {
 
     const init: RequestInit = {
       method,
-      headers,
-      credentials: "include",
+      headers: { ...headers },
     };
     if (body !== undefined) {
       init.body = JSON.stringify(body);
+      (init.headers as Record<string, string>)["Content-Type"] = "application/json";
     }
+
+    await this.authProvider.authorize(init);
 
     const res = await fetch(url, init);
 

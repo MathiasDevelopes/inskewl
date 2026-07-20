@@ -11,10 +11,12 @@ import { EventsApi } from "./endpoints/events";
 import { TenantApi } from "./endpoints/tenant";
 import { ExamsApi } from "./endpoints/exams";
 import { LoginPageApi } from "./endpoints/login-page";
+import { IncludeAuthProvider } from "./providers/includeAuthProvider";
 
 // fungerer kun i fanen med visma...
 const client: ApiClient = new ApiClient(
   new URL(`${window.location.origin}/control/`),
+  new IncludeAuthProvider(),
 );
 
 export class Session {
