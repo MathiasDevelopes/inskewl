@@ -1,13 +1,15 @@
-import z from "zod";
-import { Event, EventSchema } from "../types/events";
+import type { z, ZodType } from "zod";
 import { Endpoint } from "../endpoint";
 
 export class EventsApi extends Endpoint {
-  async getEvents(): Promise<Event[]> {
-    return this.client.getWithSchema("events", z.array(EventSchema));
+  async getEvents<S extends ZodType>(schema: S): Promise<z.output<S>> {
+    return this.client.getWithSchema("events", schema);
   }
 
-  async getEvent(eventId: number): Promise<Event> {
-    return this.client.getWithSchema(`events/${eventId}`, EventSchema);
+  async getEvent<S extends ZodType>(
+    eventId: number,
+    schema: S,
+  ): Promise<z.output<S>> {
+    return this.client.getWithSchema(`events/${eventId}`, schema);
   }
 }

@@ -1,31 +1,26 @@
-import {
-  ActivityDetail,
-  ActivityDetailSchema,
-  Timetable,
-  TimetableSchema,
-  TimetableType,
-  TimetableTypeSchema,
-} from "../types/timetable";
-import z from "zod";
+import { TimetableType, TimetableTypeSchema } from "../types/timetable";
+import type { z, ZodType } from "zod";
 import { Endpoint } from "../endpoint";
 
 export class TimetableApi extends Endpoint {
   /**
    *
    * @param week A date which is in the week you want to get the timetable for.
+   * @param schema Feature-driven Zod schema; only the fields the caller needs are validated.
    * @param types Types of info to get from the timetable endpoint.
    * @param extraInfo
    */
-  async getTimetable(
+  async getTimetable<S extends ZodType>(
     week: Date,
+    schema: S,
     types: TimetableType[] = [
-      TimetableTypeSchema.enum.LESSON, 
-      TimetableTypeSchema.enum.EVENT, 
-      TimetableTypeSchema.enum.ACTIVITY, 
+      TimetableTypeSchema.enum.LESSON,
+      TimetableTypeSchema.enum.EVENT,
+      TimetableTypeSchema.enum.ACTIVITY,
       TimetableTypeSchema.enum.SUBSTITUTION
     ],
     extraInfo = true, // Purpose currently unknown, returns same json.
-  ): Promise<Timetable> {
+  ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     // dd/mm/yyyy
@@ -33,7 +28,7 @@ export class TimetableApi extends Endpoint {
 
     return this.client.getWithSchema(
       `timetablev2/learner/${learnerId}/fetch/ALL/0/current`,
-      TimetableSchema,
+      schema,
       {
         query: {
           forWeek: dateStr,
@@ -47,14 +42,16 @@ export class TimetableApi extends Endpoint {
   /**
    * Posts a list of activityTimeslotIds to get additional activity details.
    * @param activityTimeslotIds - Array of activity timeslot IDs to get details for
+   * @param schema Feature-driven Zod schema; only the fields the caller needs are validated.
    */
-  async postAdditionalActivityDetails(
+  async postAdditionalActivityDetails<S extends ZodType>(
     activityTimeslotIds: number[],
-  ): Promise<ActivityDetail[]> {
+    schema: S,
+  ): Promise<z.output<S>> {
     return this.client.postWithSchema(
       "timetablev2/additional-activity-details",
       activityTimeslotIds,
-      z.array(ActivityDetailSchema),
+      schema,
     );
   }
 }

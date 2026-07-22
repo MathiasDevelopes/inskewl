@@ -1,5 +1,7 @@
-import type { AcademicYear } from "../../api/types/calendar";
-import type { AttendanceSubjectGroup } from "../../api/types/attendance";
+import type {
+  CalcAcademicYear,
+  CalcSubjectGroup,
+} from "./attendance-calculator.schemas";
 import type { Injectable } from "../core/Injectable";
 import { dropdownAction } from "../core/injectables";
 import { VismaModule } from "../core/VismaModule";
@@ -17,10 +19,10 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
   description: string = "Beregn gjenstående fravær per fag.";
 
   panel: HTMLElement | null = null;
-  groups: AttendanceSubjectGroup[] = [];
+  groups: CalcSubjectGroup[] = [];
   lessons: SelectableLesson[] = [];
   contentEl: HTMLElement | null = null;
-  currentYear: AcademicYear | null = null;
+  currentYear: CalcAcademicYear | null = null;
   selectedWeek: Date | null = null;
 
   private readonly view = new AttendanceCalculatorView(this);

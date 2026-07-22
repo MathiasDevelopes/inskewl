@@ -1,25 +1,17 @@
 import { Endpoint } from "../endpoint";
-import {
-  Behaviour,
-  BehaviourSchema,
-  RemarkLimit,
-  RemarkLimitSchema,
-} from "../types/assessment";
+import type { z, ZodType } from "zod";
 
 export class AssessmentApi extends Endpoint {
-  async getBehaviour(): Promise<Behaviour> {
+  async getBehaviour<S extends ZodType>(schema: S): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `assessment/behaviour/${learnerId}`,
-      BehaviourSchema,
+      schema,
     );
   }
 
-  async getRemarkLimit(): Promise<RemarkLimit> {
-    return this.client.getWithSchema(
-      `assessment/remark/limit`,
-      RemarkLimitSchema,
-    );
+  async getRemarkLimit<S extends ZodType>(schema: S): Promise<z.output<S>> {
+    return this.client.getWithSchema(`assessment/remark/limit`, schema);
   }
 }

@@ -1,13 +1,13 @@
 import { Endpoint } from "../endpoint";
-import { ExamGroups, ExamGroupsSchema } from "../types/exams";
+import type { z, ZodType } from "zod";
 
 export class ExamsApi extends Endpoint {
-  async getGroups(): Promise<ExamGroups> {
+  async getGroups<S extends ZodType>(schema: S): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `norway/exams/learner/${learnerId}/groups`,
-      ExamGroupsSchema,
+      schema,
     );
   }
 }

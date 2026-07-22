@@ -1,9 +1,4 @@
-import type {
-  AttendanceCode,
-  AttendanceSubjectGroup,
-} from "../../api/types/attendance";
-import type { AcademicYear } from "../../api/types/calendar";
-import type { TimetableItem } from "../../api/types/timetable";
+import type { AttendanceCode } from "../../api/types/attendance";
 import { startOfWeek } from "../../utils/time";
 import {
   type AttendanceCalculatorState,
@@ -11,45 +6,19 @@ import {
   lessonDurationHours,
   type SelectableLesson,
 } from "./attendance-calculator.helpers";
+import type {
+  CalcAcademicYear,
+  CalcSubjectGroup,
+  CalcTimetableItem,
+} from "./attendance-calculator.schemas";
 
-const demoYear: AcademicYear = {
+const demoYear: CalcAcademicYear = {
   id: 20252026,
-  version: 1,
-  tenant: 1,
-  code: "20252026",
   name: "Skoleåret 2025/2026",
-  studentStartDate: new Date(2025, 7, 18),
   currentYear: true,
-  terms: [
-    {
-      id: 1,
-      version: 1,
-      startDate: new Date(2025, 7, 18),
-      endDate: new Date(2026, 0, 16),
-      code: "H1",
-      name: "Termin 1",
-      term: "TERM1",
-      current: false,
-    },
-    {
-      id: 2,
-      version: 1,
-      startDate: new Date(2026, 0, 19),
-      endDate: new Date(2026, 5, 19),
-      code: "H2",
-      name: "Termin 2",
-      term: "TERM2",
-      current: true,
-    },
-  ],
-  year: 2026,
-  daysInCycle: 5,
-  editable: false,
-  startDate: new Date(2025, 7, 18),
-  endDate: new Date(2026, 5, 19),
 };
 
-const groups: AttendanceSubjectGroup[] = [
+const groups: CalcSubjectGroup[] = [
   subjectGroup("MAT1023", "Matematikk 2P", "Matematikk", 112, 112.7, 4.5),
   subjectGroup("NOR1267", "Norsk hovedmål", "Norsk", 112, 112.7, 9.5),
   subjectGroup("ITK2002", "Informasjonsteknologi 1", "IT", 84, 84.5, 2),
@@ -122,34 +91,17 @@ function subjectGroup(
   yearlyHours: number,
   totalScheduledHours: number,
   totalAbsence: number,
-): AttendanceSubjectGroup {
-  const absencePercentage = (totalAbsence / yearlyHours) * 100;
-
+): CalcSubjectGroup {
   return {
     subjectGroupId: Number(subjectCode.replace(/\D/g, "")),
-    learnerPersonalId: 1,
-    subjectGroupName: `2ITA/${subjectCode}/1`,
     subjectCode,
     subjectName,
     subjectShortName,
     warningLimit: 8,
     defaultLimit: 10,
-    schoolName: "Inskewl videregående skole",
-    mainSchool: true,
-    learnerInTeachingGroup: true,
-    externalSchool: false,
     yearlyHours,
-    scheduledHoursTermOne: totalScheduledHours / 2,
     totalScheduledHours,
-    totalAbsenceTermOne: totalAbsence / 2,
-    totalAbsenceTermTwo: totalAbsence / 2,
     totalAbsence,
-    absencePercentageTermOne: absencePercentage,
-    absencePercentageTermOneAndTwo: absencePercentage,
-    threshold: {
-      absenceLimitExceededLast: null,
-      remainingPercentage: Math.max(0, 10 - absencePercentage),
-    },
   };
 }
 
@@ -167,33 +119,18 @@ function lesson(
     description: string;
   },
 ): SelectableLesson {
-  const item: TimetableItem = {
+  const item: CalcTimetableItem = {
     id,
     startTime,
     endTime,
     date: demoWeekday(weekStart, dayOffset),
-    tenant: 1,
-    academicYearId: demoYear.id,
-    entityId: 1000 + id,
     label: `2ITA/${subjectCode}/1`,
     type: "LESSON",
     originalType: null,
-    locations: ["Demo"],
-    mainRoom: "D-101",
-    additionalRooms: [],
     colour,
     teachingGroupId: 2000 + id,
-    blockName: null,
-    blockId: null,
-    blockDescription: null,
     subject,
     subjectCode,
-    assessment: null,
-    hasFutureAbsence: false,
-    teacherName: "Demo Lærer",
-    teachers: ["Demo Lærer"],
-    extraInfo: null,
-    periodNumberInDay: null,
   };
 
   return {

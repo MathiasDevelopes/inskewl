@@ -1,13 +1,15 @@
 import { Endpoint } from "../endpoint";
-import { FilterType, Messages, MessagesSchema } from "../types/inbox";
+import type { FilterType } from "../types/inbox";
+import type { z, ZodType } from "zod";
 
 export class InboxApi extends Endpoint {
-  async getMessages(
+  async getMessages<S extends ZodType>(
+    schema: S,
     page: number = 0,
     pageSize: number = 1000,
     filterType: FilterType = "ALL",
-  ): Promise<Messages> {
-    return this.client.getWithSchema("inbox/messages", MessagesSchema, {
+  ): Promise<z.output<S>> {
+    return this.client.getWithSchema("inbox/messages", schema, {
       query: {
         page,
         pageSize,

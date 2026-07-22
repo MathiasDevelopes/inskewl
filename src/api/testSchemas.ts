@@ -1,6 +1,28 @@
 import { api } from "./api";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import { createLogger } from "../utils/logger";
+import { BehaviourSchema, RemarkLimitSchema } from "./types/assessment";
+import {
+  AbsenceCodesByTeachingGroupsSchema,
+  AbsenceOverviewSchema,
+  AttendanceSubjectGroupSchema,
+  DiplomaAbsencesSchema,
+  DiplomaTermAbsencesSchema,
+  LessonAttendancesSchema,
+} from "./types/attendance";
+import { AcademicYearSchema, DayCountSchema } from "./types/calendar";
+import { EventSchema } from "./types/events";
+import { ExamGroupsSchema } from "./types/exams";
+import { MessagesSchema } from "./types/inbox";
+import { LoginPageSchema } from "./types/login-page";
+import { SchoolSchema } from "./types/school";
+import { TenantSchema } from "./types/tenant";
+import { TimetableSchema } from "./types/timetable";
+import { PersonalInfoSchema, UserSchema } from "./types/user";
+
+// Features validate only the fields they need (feature-driven schemas).
+// This suite passes the full catalog schemas to detect upstream API drift
+// in fields no feature consumes yet.
 
 const logger = createLogger("ApiSchemas");
 
@@ -52,16 +74,16 @@ export async function testAllApiSchemas(): Promise<void> {
 
   // Test UserApi methods
   await testApiCall("UserApi.getCurrentUser()", () =>
-    api.user.getCurrentUser(),
+    api.user.getCurrentUser(UserSchema),
   );
   await testApiCall("UserApi.getPersonalInfo()", () =>
-    api.user.getPersonalInfo(),
+    api.user.getPersonalInfo(PersonalInfoSchema),
   );
   await testApiCall("UserApi.getMaturity()", () => api.user.getMaturity());
 
   // Test TimetableApi methods
   await testApiCall("TimetableApi.getTimetable()", () =>
-    api.timetable.getTimetable(new Date()),
+    api.timetable.getTimetable(new Date(), TimetableSchema),
   );
   // Skipping postAdditionalActivityDetails - requires activityTimeslotIds parameter
   skipTest(
@@ -71,7 +93,7 @@ export async function testAllApiSchemas(): Promise<void> {
 
   // Test CalendarApi methods
   const academicYears = await testApiCall("CalendarApi.getAcademicYears()", () =>
-    api.calendar.getAcademicYears(),
+    api.calendar.getAcademicYears(z.array(AcademicYearSchema)),
   );
 
   // Test getDayCount with the first academic year if available
@@ -81,7 +103,7 @@ export async function testAllApiSchemas(): Promise<void> {
       skipTest("CalendarApi.getDayCount()", "no academic years available");
     } else {
       await testApiCall("CalendarApi.getDayCount()", () =>
-        api.calendar.getDayCount(firstAcademicYear),
+        api.calendar.getDayCount(firstAcademicYear, DayCountSchema),
       );
     }
   } else {
@@ -90,10 +112,12 @@ export async function testAllApiSchemas(): Promise<void> {
 
   // Test AttendanceApi methods
   await testApiCall("AttendanceApi.getAbsenceOverview()", () =>
-    api.attendance.getAbsenceOverview(),
+    api.attendance.getAbsenceOverview(AbsenceOverviewSchema),
   );
   await testApiCall("AttendanceApi.getAbsenceCodesByTeachingGroups()", () =>
-    api.attendance.getAbsenceCodesByTeachingGroups(),
+    api.attendance.getAbsenceCodesByTeachingGroups(
+      AbsenceCodesByTeachingGroupsSchema,
+    ),
   );
 
   if (academicYears && academicYears.length > 0) {
@@ -118,13 +142,18 @@ export async function testAllApiSchemas(): Promise<void> {
     } else {
       const attendanceGroups = await testApiCall(
         "AttendanceApi.getAttendanceForSubjectGroups()",
-        () => api.attendance.getAttendanceForSubjectGroups(firstAcademicYear),
+        () =>
+          api.attendance.getAttendanceForSubjectGroups(
+            firstAcademicYear,
+            z.array(AttendanceSubjectGroupSchema),
+          ),
       );
       if (attendanceGroups && attendanceGroups.length > 0) {
         await testApiCall("AttendanceApi.getLessonAttendancesForTeachingGroups()", () =>
           api.attendance.getLessonAttendancesForTeachingGroups(
             firstAcademicYear,
             attendanceGroups.map((g) => g.subjectGroupId),
+            LessonAttendancesSchema,
           ),
         );
       } else {
@@ -134,10 +163,14 @@ export async function testAllApiSchemas(): Promise<void> {
         );
       }
       await testApiCall("AttendanceApi.getDiplomaAbsences()", () =>
-        api.attendance.getDiplomaAbsences(firstAcademicYear),
+        api.attendance.getDiplomaAbsences(firstAcademicYear, DiplomaAbsencesSchema),
       );
       await testApiCall("AttendanceApi.getDiplomaAbsencesForTerm(1)", () =>
-        api.attendance.getDiplomaAbsencesForTerm(firstAcademicYear, 1),
+        api.attendance.getDiplomaAbsencesForTerm(
+          firstAcademicYear,
+          1,
+          DiplomaTermAbsencesSchema,
+        ),
       );
     }
   } else {
@@ -160,33 +193,41 @@ export async function testAllApiSchemas(): Promise<void> {
   }
 
   // Test SchoolApi methods
-  await testApiCall("SchoolApi.getCurrent()", () => api.school.getCurrent());
+  await testApiCall("SchoolApi.getCurrent()", () =>
+    api.school.getCurrent(SchoolSchema),
+  );
 
   // Test TenantApi methods
-  await testApiCall("TenantApi.getTenantlist()", () => api.tenant.getTenantlist());
+  await testApiCall("TenantApi.getTenantlist()", () =>
+    api.tenant.getTenantlist(z.array(TenantSchema)),
+  );
 
   // Test AssessmentApi methods
   await testApiCall("AssessmentApi.getBehaviour()", () =>
-    api.assessment.getBehaviour(),
+    api.assessment.getBehaviour(BehaviourSchema),
   );
   await testApiCall("AssessmentApi.getRemarkLimit()", () =>
-    api.assessment.getRemarkLimit(),
+    api.assessment.getRemarkLimit(RemarkLimitSchema),
   );
 
   // Test ExamsApi methods
-  await testApiCall("ExamsApi.getGroups()", () => api.exams.getGroups());
+  await testApiCall("ExamsApi.getGroups()", () =>
+    api.exams.getGroups(ExamGroupsSchema),
+  );
 
   // Test InboxApi methods
-  await testApiCall("InboxApi.getMessages()", () => api.inbox.getMessages());
+  await testApiCall("InboxApi.getMessages()", () =>
+    api.inbox.getMessages(MessagesSchema),
+  );
   await testApiCall("InboxApi.getNewCount()", () => api.inbox.getNewCount());
 
   // Test EventsApi methods
   const events = await testApiCall("EventsApi.getEvents()", () =>
-    api.events.getEvents(),
+    api.events.getEvents(z.array(EventSchema)),
   );
 
   await testApiCall("LoginPageApi.getLoginPage()", () =>
-    api.loginPage.getLoginPage(),
+    api.loginPage.getLoginPage(LoginPageSchema),
   );
 
   // Also test getEvent with the first event if available
@@ -196,7 +237,7 @@ export async function testAllApiSchemas(): Promise<void> {
       skipTest("EventsApi.getEvent(id)", "no events available");
     } else {
       await testApiCall(`EventsApi.getEvent(${firstEvent.id})`, () =>
-        api.events.getEvent(firstEvent.id),
+        api.events.getEvent(firstEvent.id, EventSchema),
       );
     }
   } else {

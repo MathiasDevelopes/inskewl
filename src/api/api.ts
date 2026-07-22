@@ -1,4 +1,4 @@
-import { User } from "./types/user";
+import { z } from "zod";
 import { ApiClient } from "./apiClient";
 import { AttendanceApi } from "./endpoints/attendance";
 import { CalendarApi } from "./endpoints/calendar";
@@ -50,7 +50,10 @@ export class Session {
 
   async getLearnerId(): Promise<number> {
     if (this.learnerId != null) return this.learnerId;
-    const user: User = await this.user.getCurrentUser();
+    // Every feature funnels through here — validate only what we need.
+    const user = await this.user.getCurrentUser(
+      z.object({ learnerId: z.number() }),
+    );
     this.learnerId = user.learnerId;
     return this.learnerId;
   }

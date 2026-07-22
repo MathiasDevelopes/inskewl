@@ -75,7 +75,10 @@ Hvis VIS endrer API-et sitt, kan Zod-schemaene feile. Prosjektet eksponerer derf
 testAllApiSchemas()
 ```
 
-Kommandoen tester kjente API-endepunkter og skriver resultatet i konsollen.
+Kommandoen tester kjente API-endepunkter mot hele katalog-schemaene i
+`src/api/types` og skriver resultatet i konsollen. Moduler validerer bare
+feltene de selv bruker, så denne testen er nettet som fanger opp endringer i
+resten av API-et før noen trenger feltene.
 
 ## Runtime debug-info
 

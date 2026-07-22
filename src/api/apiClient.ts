@@ -1,4 +1,4 @@
-import { ZodType } from "zod";
+import type { z, ZodType } from "zod";
 import { createLogger } from "../utils/logger";
 import { AuthProvider } from "./authProvider";
 
@@ -62,11 +62,11 @@ export class ApiClient {
     return this.request<T>(Method.POST, path, opts, body);
   }
 
-  async getWithSchema<T>(
+  async getWithSchema<S extends ZodType>(
     path: string,
-    schema: ZodType<T>,
+    schema: S,
     opts?: RequestOptions,
-  ) {
+  ): Promise<z.output<S>> {
     const json = await this.get(path, opts);
     const result = schema.safeParse(json);
     if (!result.success) {
@@ -76,12 +76,12 @@ export class ApiClient {
     return result.data;
   }
 
-  async postWithSchema<T>(
+  async postWithSchema<S extends ZodType>(
     path: string,
     body: unknown,
-    schema: ZodType<T>,
+    schema: S,
     opts?: RequestOptions,
-  ) {
+  ): Promise<z.output<S>> {
     const json = await this.post(path, body, opts);
     const result = schema.safeParse(json);
     if (!result.success) {
