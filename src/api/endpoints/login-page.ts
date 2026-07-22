@@ -1,8 +1,8 @@
 import { Endpoint } from "../endpoint";
-import { LoginPage, LoginPageSchema } from "../types/login-page";
+import type { z, ZodType } from "zod";
 
 export class LoginPageApi extends Endpoint {
-  async getLoginPage(): Promise<LoginPage> {
-    return this.client.getWithSchema("login-page", LoginPageSchema);
+  async getLoginPage<S extends ZodType>(schema: S): Promise<z.output<S>> {
+    return this.client.getWithSchema("login-page", schema);
   }
 }

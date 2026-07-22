@@ -1,11 +1,15 @@
 import { api } from "../../api/api";
-import type { AcademicYear } from "../../api/types/calendar";
-import type {
-  AttendanceSubjectGroup,
-  LessonAttendance,
-} from "../../api/types/attendance";
-import type { TimetableItem } from "../../api/types/timetable";
 import { startOfWeek } from "../../utils/time";
+import {
+  CalcAcademicYearsSchema,
+  CalcLessonAttendancesSchema,
+  CalcSubjectGroupsSchema,
+  CalcTimetableSchema,
+  type CalcAcademicYear,
+  type CalcLessonAttendance,
+  type CalcSubjectGroup,
+  type CalcTimetableItem,
+} from "./attendance-calculator.schemas";
 import {
   absenceBasisHours,
   attendanceCodeCountsTowardsLimit,
@@ -17,13 +21,18 @@ import {
 } from "./attendance-calculator.helpers";
 
 export interface AttendanceCalculatorBaseData {
-  currentYear: AcademicYear;
-  groups: AttendanceSubjectGroup[];
+  currentYear: CalcAcademicYear;
+  groups: CalcSubjectGroup[];
 }
 
 export async function loadCurrentAttendanceGroups(): Promise<AttendanceCalculatorBaseData> {
-  const currentYear = await api.calendar.getCurrentAcademicYear();
-  const groups = await api.attendance.getAttendanceForSubjectGroups(currentYear);
+  const currentYear = await api.calendar.getCurrentAcademicYear(
+    CalcAcademicYearsSchema,
+  );
+  const groups = await api.attendance.getAttendanceForSubjectGroups(
+    currentYear,
+    CalcSubjectGroupsSchema,
+  );
   return {
     currentYear,
     groups: groups.filter((g) => absenceBasisHours(g) > 0),
@@ -54,14 +63,15 @@ export async function loadAttendanceCalculatorState(
 
 export async function loadAttendanceCalculatorLessons(
   week: Date,
-  currentYear: AcademicYear,
-  groups: AttendanceSubjectGroup[],
+  currentYear: CalcAcademicYear,
+  groups: CalcSubjectGroup[],
 ): Promise<SelectableLesson[]> {
   const [timetable, lessonAttendances] = await Promise.all([
-    api.timetable.getTimetable(week),
+    api.timetable.getTimetable(week, CalcTimetableSchema),
     api.attendance.getLessonAttendancesForTeachingGroups(
       currentYear,
       groups.map((g) => g.subjectGroupId),
+      CalcLessonAttendancesSchema,
     ),
   ]);
 
@@ -73,9 +83,9 @@ export async function loadAttendanceCalculatorLessons(
 }
 
 export function createSelectableLessons(
-  timetableItems: TimetableItem[],
-  groups: AttendanceSubjectGroup[],
-  lessonAttendances: LessonAttendance[] = [],
+  timetableItems: CalcTimetableItem[],
+  groups: CalcSubjectGroup[],
+  lessonAttendances: CalcLessonAttendance[] = [],
 ): SelectableLesson[] {
   const groupBySubjectCode = new Map(groups.map((g) => [g.subjectCode, g]));
   const groupById = new Map(groups.map((g) => [g.subjectGroupId, g]));
@@ -117,8 +127,8 @@ export function createSelectableLessons(
 }
 
 function lessonAttendanceStatusForItem(
-  item: TimetableItem,
-  attendanceByTimetableItemId: Map<string, LessonAttendance>,
+  item: CalcTimetableItem,
+  attendanceByTimetableItemId: Map<string, CalcLessonAttendance>,
 ): Pick<
   SelectableLesson,
   | "attendanceCode"

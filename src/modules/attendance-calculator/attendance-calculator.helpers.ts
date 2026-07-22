@@ -1,10 +1,10 @@
-import type { TimetableItem } from "../../api/types/timetable";
-import type {
-  AttendanceCode,
-  AttendanceSubjectGroup,
-} from "../../api/types/attendance";
-import type { AcademicYear } from "../../api/types/calendar";
+import type { AttendanceCode } from "../../api/types/attendance";
 import { timeToMinutes } from "../../utils/time";
+import type {
+  CalcAcademicYear,
+  CalcSubjectGroup,
+  CalcTimetableItem,
+} from "./attendance-calculator.schemas";
 
 export interface SubjectAbsenceInfo {
   subjectCode: string;
@@ -19,7 +19,7 @@ export interface SubjectAbsenceInfo {
 }
 
 export interface SelectableLesson {
-  item: TimetableItem;
+  item: CalcTimetableItem;
   durationHours: number;
   selected: boolean;
   attendanceCode: AttendanceCode | null;
@@ -29,13 +29,13 @@ export interface SelectableLesson {
 }
 
 export interface AttendanceCalculatorState {
-  currentYear: AcademicYear;
-  groups: AttendanceSubjectGroup[];
+  currentYear: CalcAcademicYear;
+  groups: CalcSubjectGroup[];
   lessons: SelectableLesson[];
   selectedWeek: Date;
 }
 
-export function lessonDurationHours(item: TimetableItem): number {
+export function lessonDurationHours(item: CalcTimetableItem): number {
   return (timeToMinutes(item.endTime) - timeToMinutes(item.startTime)) / 60;
 }
 
@@ -47,14 +47,14 @@ export function extractSubjectCodeFromLabel(
   return match?.[1]?.toUpperCase() ?? null;
 }
 
-export function isLessonLike(item: TimetableItem): boolean {
+export function isLessonLike(item: CalcTimetableItem): boolean {
   return item.type === "LESSON" || (
     item.type === "SUBSTITUTION" &&
     item.originalType === "LESSON"
   );
 }
 
-export function resolveTimetableSubjectCode(item: TimetableItem): string | null {
+export function resolveTimetableSubjectCode(item: CalcTimetableItem): string | null {
   return item.subjectCode ?? extractSubjectCodeFromLabel(item.label);
 }
 
@@ -65,7 +65,7 @@ export function attendanceCodeCountsTowardsLimit(
   return code !== "D" && code !== "!" && code !== "R" && code !== "§";
 }
 
-export function absenceBasisHours(group: AttendanceSubjectGroup): number {
+export function absenceBasisHours(group: CalcSubjectGroup): number {
   return group.yearlyHours > 0 ? group.yearlyHours : group.totalScheduledHours;
 }
 
@@ -93,7 +93,7 @@ export function canSimulateLessonAbsenceAt(
 }
 
 export function computeAbsenceInfo(
-  group: AttendanceSubjectGroup,
+  group: CalcSubjectGroup,
   extraHours = 0,
 ): SubjectAbsenceInfo {
   const basisHours = absenceBasisHours(group);
@@ -127,7 +127,7 @@ export function computeAbsenceInfo(
 }
 
 export function canSkipLesson(
-  group: AttendanceSubjectGroup | undefined,
+  group: CalcSubjectGroup | undefined,
   lessonHours: number,
 ): { safe: boolean; newPct: number } {
   if (!group) {

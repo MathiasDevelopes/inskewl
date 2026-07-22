@@ -27,6 +27,14 @@ API-koden ligger i `src/api`. Endepunktene er delt etter fagområde, for eksempe
 
 Prosjektet bruker Zod for runtime-validering av data fra VIS InSchool. Det betyr at dataene ikke bare types i TypeScript, men også sjekkes når de kommer fra API-et.
 
+Siden API-et er udokumentert og ustabilt, er valideringen funksjonsdrevet:
+
+- Endepunktene bygger bare forespørsler (URL, parametere, pålogging). De tar imot et Zod-schema som et påkrevd argument og validerer svaret mot det.
+- Schemaene i `src/api/types` er en katalog over kjente felt i API-et, ikke en kontrakt som håndheves for hele svaret.
+- Hver modul har en egen `schemas.ts` som plukker (`pick`) feltene den faktisk bruker fra katalogen. Transformeringer og feltdokumentasjon følger med.
+
+En endring i et felt ingen moduler bruker, ødelegger derfor ingenting. En endring i et felt en modul bruker, feiler umiddelbart og synlig — bare for den modulen. `testAllApiSchemas()` (se Utvikling) sjekker hele katalogen mot det virkelige API-et og fanger opp endringer i feltene ingen bruker ennå.
+
 ## DOM-injisering
 
 Modulene legger UI inn i eksisterende VIS InSchool-sider. Dette skjer gjennom felles DOM-hjelpere og injectables.

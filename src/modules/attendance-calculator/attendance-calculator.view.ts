@@ -1,5 +1,7 @@
-import type { AttendanceSubjectGroup } from "../../api/types/attendance";
-import type { AcademicYear } from "../../api/types/calendar";
+import type {
+  CalcAcademicYear,
+  CalcSubjectGroup,
+} from "./attendance-calculator.schemas";
 import { cx } from "../core/ui/classes";
 import { installInskewlUi } from "../core/ui/install";
 import { pct as cssPct, px, setCssVars } from "../core/ui/styleVars";
@@ -34,10 +36,10 @@ import {
 
 export interface AttendanceCalculatorController {
   panel: HTMLElement | null;
-  groups: AttendanceSubjectGroup[];
+  groups: CalcSubjectGroup[];
   lessons: SelectableLesson[];
   contentEl: HTMLElement | null;
-  currentYear: AcademicYear | null;
+  currentYear: CalcAcademicYear | null;
   selectedWeek: Date | null;
   render: () => void;
   changeWeek: (offsetWeeks: number) => Promise<void>;
@@ -512,7 +514,7 @@ export class AttendanceCalculatorView {
     gridStart: number,
     totalMinutes: number,
     gridHeight: number,
-    groupByCode: Map<string, AttendanceSubjectGroup>,
+    groupByCode: Map<string, CalcSubjectGroup>,
     now: Date,
   ): HTMLElement {
     const startMin = timeToMinutes(lesson.item.startTime);

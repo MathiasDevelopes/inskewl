@@ -1,4 +1,4 @@
-import type { TimetableItem } from "../../../api/types/timetable";
+import type { ExportTimetableItem } from "./schemas";
 import { combineDateWithTime } from "../../../utils/parsing";
 
 // Calendar formats can extend this interface with features unique to that calendar format.
@@ -45,7 +45,7 @@ function hashString(value: string): string {
   return hash.toString(36);
 }
 
-function createTimetableItemUid(item: TimetableItem): string {
+function createTimetableItemUid(item: ExportTimetableItem): string {
   const fallbackId = [
     item.entityId,
     item.type,
@@ -63,11 +63,11 @@ function createTimetableItemUid(item: TimetableItem): string {
   return `timetable-${hashString(source)}@inskewl`;
 }
 
-export function fromTimetableItem(item: TimetableItem): CalendarEvent {
+export function fromTimetableItem(item: ExportTimetableItem): CalendarEvent {
   const start = combineDateWithTime(item.date, item.startTime);
   const end = combineDateWithTime(item.date, item.endTime);
 
-  const typeLabels: Record<TimetableItem["type"], string> = {
+  const typeLabels: Record<ExportTimetableItem["type"], string> = {
     LESSON: "Undervisning",
     EVENT: "Hendelse",
     ACTIVITY: "Aktivitet",

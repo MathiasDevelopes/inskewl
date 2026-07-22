@@ -1,25 +1,20 @@
-import {
-  AcademicYear,
-  AcademicYearSchema,
-  DayCount,
-  DayCountSchema,
-  type Term,
-} from "../types/calendar";
-import z from "zod";
+import type { z, ZodType } from "zod";
 import { Endpoint } from "../endpoint";
 
 export class CalendarApi extends Endpoint {
-  async getAcademicYears(): Promise<AcademicYear[]> {
+  async getAcademicYears<S extends ZodType>(schema: S): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `calendar/v2/academicyears/learner/${learnerId}`,
-      z.array(AcademicYearSchema),
+      schema,
     );
   }
 
-  async getCurrentAcademicYear(): Promise<AcademicYear> {
-    const academicYears = await this.getAcademicYears();
+  async getCurrentAcademicYear<S extends ZodType<{ currentYear: boolean }[]>>(
+    schema: S,
+  ): Promise<z.output<S>[number]> {
+    const academicYears = await this.getAcademicYears(schema);
     const currentYear = academicYears.find((year) => year.currentYear);
     if (!currentYear) {
       throw new Error("No current academic year available.");
@@ -27,7 +22,9 @@ export class CalendarApi extends Endpoint {
     return currentYear;
   }
 
-  getCurrentTerm(academicYear: AcademicYear): Term {
+  getCurrentTerm<T extends { current: boolean }>(academicYear: {
+    terms: T[];
+  }): T {
     const currentTerm = academicYear.terms.find((term) => term.current);
     if (!currentTerm) {
       throw new Error("No current term available.");
@@ -36,10 +33,13 @@ export class CalendarApi extends Endpoint {
   }
 
   // Get the amount of learning days, vacation days, and planning days.
-  async getDayCount(academicYear: AcademicYear): Promise<DayCount> {
+  async getDayCount<S extends ZodType>(
+    academicYear: { id: number },
+    schema: S,
+  ): Promise<z.output<S>> {
     return this.client.getWithSchema(
       `calendar/v2/academicyears/${academicYear.id}/daycount`,
-      DayCountSchema,
+      schema,
     );
   }
 }

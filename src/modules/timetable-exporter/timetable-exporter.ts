@@ -1,5 +1,9 @@
 import { api } from "../../api/api";
-import type { Timetable } from "../../api/types/timetable";
+import { z } from "zod";
+import {
+  ExportAcademicYearSchema,
+  ExportTimetableSchema,
+} from "./model/schemas";
 import type { Injectable } from "../core/Injectable";
 import { dropdownAction } from "../core/injectables";
 import { VismaModule } from "../core/VismaModule";
@@ -38,7 +42,9 @@ export class TimetableExporter extends VismaModule {
   }
 
   private async loadEvents(): Promise<CalendarEvent[]> {
-    const currentAcademicYear = await api.calendar.getCurrentAcademicYear();
+    const currentAcademicYear = await api.calendar.getCurrentAcademicYear(
+      z.array(ExportAcademicYearSchema),
+    );
     const currentTerm = api.calendar.getCurrentTerm(currentAcademicYear);
 
     const weeks: Date[] = getWeekStartDates(
@@ -46,8 +52,8 @@ export class TimetableExporter extends VismaModule {
       currentTerm.endDate,
     );
 
-    const timetables: Timetable[] = await Promise.all(
-      weeks.map((week) => api.timetable.getTimetable(week)),
+    const timetables = await Promise.all(
+      weeks.map((week) => api.timetable.getTimetable(week, ExportTimetableSchema)),
     );
 
     return timetables.flatMap((t) =>

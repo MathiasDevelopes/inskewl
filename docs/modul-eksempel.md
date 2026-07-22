@@ -149,26 +149,51 @@ høyre. Hvis du navigerer bort fra dashboardet, fjernes panelet av
 ## Valgfritt: kall et API
 
 Når DOM-modulen fungerer, kan du legge til API-bruk. Dette eksempelet henter
-aktivt skoleår og skriver det til konsollen når modulen lastes:
+aktivt skoleår og skriver det til konsollen når modulen lastes.
+
+API-endepunktene validerer ikke hele svaret fra VIS. I stedet gir hver modul
+med sitt eget Zod-schema med akkurat feltene den trenger. Schemaet plukkes
+(`pick`) fra katalog-schemaene i `src/api/types`, slik at transformeringer
+(f.eks. datoer) og feltdokumentasjon følger med.
+
+Lag en `schemas.ts` i modulmappen:
+
+```typescript
+import { z } from "zod";
+import { AcademicYearSchema } from "../../api/types/calendar";
+
+export const MittSkoleaarSchema = z.array(
+  AcademicYearSchema.pick({
+    name: true,
+    currentYear: true,
+  }),
+);
+```
 
 Legg til disse importene øverst i samme modulfil:
 
 ```typescript
 import { api } from "../../api/api";
+import { MittSkoleaarSchema } from "./schemas";
 ```
 
 Legg deretter `onLoad` inn i `SimpleDashboardNote`-klassen:
 
 ```typescript
   override async onLoad(): Promise<void> {
-    const academicYear = await api.calendar.getCurrentAcademicYear();
+    const academicYear = await api.calendar.getCurrentAcademicYear(
+      MittSkoleaarSchema,
+    );
     this.logger.info("Aktivt skoleår:", academicYear.name);
   }
 ```
 
-API-laget bruker Zod til å validere data fra VIS InSchool. Hvis VIS endrer
-responsformatet sitt, kan API-kallet derfor feile selv om TypeScript-koden
-kompilerer.
+API-laget bruker Zod til å validere data fra VIS InSchool. Fordelen med å
+plukke bare det modulen trenger: hvis VIS endrer eller fjerner et felt modulen
+ikke bruker, fortsetter den å fungere. Mangler eller endres et felt modulen
+faktisk trenger, kastes en feil umiddelbart — selv om TypeScript-koden
+kompilerer. Trenger du et felt som ikke finnes i katalogen ennå, legg det til i
+`src/api/types` først og plukk det deretter.
 
 ## Vanlige feil
 

@@ -30,14 +30,15 @@ To add a new feature: extend `VismaModule`, implement `injectables()`, and regis
 
 ### API Layer (`src/api/`)
 
+Validation is **feature-driven**: the API is undocumented and unstable, so each module validates only the fields it actually consumes, instead of endpoints enforcing whole-response schemas.
+
 - **`ApiClient`** — thin fetch wrapper; always sends `credentials: 'include'` to reuse the user's existing browser session. Authentication is handled entirely by the browser — the userscript never manages tokens or login flows.
 - **`Session`** — facade that lazily initialises all endpoints and caches the learner ID. Inject `Session` into modules rather than constructing endpoints directly.
-- **Endpoints** (`src/api/endpoints/`) — one class per resource (User, Timetable, Calendar, Attendance, School, Assessment, Inbox, Events).
-- **Types** (`src/api/types/`) — Zod schemas for every endpoint response. All API responses are parsed through Zod at runtime; a schema mismatch throws immediately. When the upstream API changes, update the schema here.
+- **Endpoints** (`src/api/endpoints/`) — one class per resource. Endpoints only build requests (URL, query params, learner-ID injection). Every schema-validated method takes a **required Zod schema argument** and returns `z.output` of it; `getWithSchema`/`postWithSchema` `safeParse` and throw on mismatch.
+- **Catalog schemas** (`src/api/types/`) — documentation of known upstream response shapes, *not* an enforced contract. Modules derive feature schemas from them via `.pick()` so transforms (e.g. `dd/mm/yyyy` → `Date`) and field docs come along.
+- **Feature schemas** — each module owns a `schemas.ts` picking exactly the fields it needs (e.g. `src/modules/attendance-calculator/attendance-calculator.schemas.ts`). An upstream change to a field no module picks breaks nothing; a change to a picked field throws immediately, scoped to that module.
 
-> **Important:** The VIS InSchool API is entirely reverse-engineered — there is no official documentation. Response shapes can vary between students (different school configurations, roles, or data), so some Zod schemas are intentionally broad (e.g. `z.unknown()`, optional fields, loose unions) to avoid breaking for users whose accounts return different payloads. Do not tighten a schema unless you have verified the stricter shape against live data from multiple accounts. New schemas must also be validated via live testing using `window.testAllApiSchemas()` in the browser console.
->
-> `getWithSchema` / `postWithSchema` use `safeParse` rather than `parse`. On a schema mismatch they emit a `console.warn` and return the raw response cast as `T`, so features degrade gracefully instead of failing silently when the upstream API adds or changes fields.
+> **Important:** The VIS InSchool API is entirely reverse-engineered — there is no official documentation. Response shapes can vary between students (different school configurations, roles, or data), so keep catalog schemas broad (`z.unknown()`, optional fields, loose unions) unless the stricter shape is verified against live data from multiple accounts. When upstream adds/renames a field, update the catalog schema; picks referencing renamed/removed catalog keys then fail at compile time, pointing at exactly the affected features. Run `window.testAllApiSchemas()` in the browser console to validate the full catalog against live responses — it is the drift-detection net for fields no feature consumes.
 
 ### Features
 

@@ -1,42 +1,29 @@
-import {
-  AbsenceCodesByTeachingGroups,
-  AbsenceCodesByTeachingGroupsSchema,
-  AbsenceOverview,
-  AttendanceSubjectGroup,
-  AttendanceSubjectGroupSchema,
-  DiplomaAbsences,
-  DiplomaAbsencesSchema,
-  DiplomaTermAbsences,
-  DiplomaTermAbsencesSchema,
-  LessonAttendance,
-  LessonAttendancesSchema,
-  MembershipFilter,
-  AbsenceOverviewSchema,
-} from "../types/attendance";
-import { AcademicYear } from "../types/calendar";
-import z from "zod";
+import type { MembershipFilter } from "../types/attendance";
+import type { z, ZodType } from "zod";
 import { Endpoint } from "../endpoint";
 
 export class AttendanceApi extends Endpoint {
-  async getAttendanceForSubjectGroups(
-    academicYear: AcademicYear,
-  ): Promise<AttendanceSubjectGroup[]> {
+  async getAttendanceForSubjectGroups<S extends ZodType>(
+    academicYear: { id: number },
+    schema: S,
+  ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `attendance/subject-groups/learner/${learnerId}/academic-year/${academicYear.id}`,
-      z.array(AttendanceSubjectGroupSchema),
+      schema,
     );
   }
 
-  async getAbsenceOverview(
+  async getAbsenceOverview<S extends ZodType>(
+    schema: S,
     membershipFilter: MembershipFilter = "MEMBER",
-  ): Promise<AbsenceOverview> {
+  ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `attendance/overview/learners/${learnerId}/absence-overview`,
-      AbsenceOverviewSchema,
+      schema,
       {
         query: {
           membershipFilter: membershipFilter,
@@ -45,14 +32,15 @@ export class AttendanceApi extends Endpoint {
     );
   }
 
-  async getAbsenceCodesByTeachingGroups(
+  async getAbsenceCodesByTeachingGroups<S extends ZodType>(
+    schema: S,
     membershipFilter: MembershipFilter = "MEMBER",
-  ): Promise<AbsenceCodesByTeachingGroups> {
+  ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `attendance/overview/learners/${learnerId}/absence-overview/codes-by-teaching-groups`,
-      AbsenceCodesByTeachingGroupsSchema,
+      schema,
       {
         query: {
           membershipFilter,
@@ -61,15 +49,16 @@ export class AttendanceApi extends Endpoint {
     );
   }
 
-  async getDiplomaAbsences(
-    academicYear: AcademicYear,
+  async getDiplomaAbsences<S extends ZodType>(
+    academicYear: { id: number },
+    schema: S,
     membershipFilter: MembershipFilter = "MEMBER",
-  ): Promise<DiplomaAbsences> {
+  ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `attendance/v2/learners/${learnerId}/diploma-absences/academic-year/${academicYear.id}`,
-      DiplomaAbsencesSchema,
+      schema,
       {
         query: {
           membershipFilter,
@@ -78,16 +67,17 @@ export class AttendanceApi extends Endpoint {
     );
   }
 
-  async getDiplomaAbsencesForTerm(
-    academicYear: AcademicYear,
+  async getDiplomaAbsencesForTerm<S extends ZodType>(
+    academicYear: { id: number },
     term: 1 | 2,
+    schema: S,
     membershipFilter: MembershipFilter = "MEMBER",
-  ): Promise<DiplomaTermAbsences> {
+  ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `attendance/v2/learners/${learnerId}/diploma-absences/academic-year/${academicYear.id}/term/${term}`,
-      DiplomaTermAbsencesSchema,
+      schema,
       {
         query: {
           membershipFilter,
@@ -96,17 +86,18 @@ export class AttendanceApi extends Endpoint {
     );
   }
 
-  async getLessonAttendancesForTeachingGroups(
-    academicYear: AcademicYear,
+  async getLessonAttendancesForTeachingGroups<S extends ZodType>(
+    academicYear: { id: number },
     subjectGroupIds: number[],
-  ): Promise<LessonAttendance[]> {
-    if (subjectGroupIds.length === 0) return [];
+    schema: S,
+  ): Promise<z.output<S>> {
+    if (subjectGroupIds.length === 0) return [] as z.output<S>;
 
     const learnerId = await this.session.getLearnerId();
 
     return this.client.getWithSchema(
       `attendance/v2/lesson/learner/${learnerId}/academic-year/${academicYear.id}/teaching-groups`,
-      LessonAttendancesSchema,
+      schema,
       {
         query: {
           teachingGroupIds: subjectGroupIds.join(","),

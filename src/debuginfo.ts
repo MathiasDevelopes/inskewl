@@ -1,4 +1,5 @@
 import { api } from "./api/api";
+import { LoginPageSchema } from "./api/types/login-page";
 import { version } from "../package.json" with { type: "json" };
 
 export async function printDebugInfo(): Promise<void> {
@@ -6,7 +7,7 @@ export async function printDebugInfo(): Promise<void> {
   console.log("Version:", version);
 
   try {
-    const loginPage = await api.loginPage.getLoginPage();
+    const loginPage = await api.loginPage.getLoginPage(LoginPageSchema);
 
     console.log("Valid VIS tenant:", loginPage.validUrl);
 
