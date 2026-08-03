@@ -153,14 +153,14 @@ aktivt skoleår og skriver det til konsollen når modulen lastes.
 
 API-endepunktene validerer ikke hele svaret fra VIS. I stedet gir hver modul
 med sitt eget Zod-schema med akkurat feltene den trenger. Schemaet plukkes
-(`pick`) fra katalog-schemaene i `src/api/types`, slik at transformeringer
+(`pick`) fra katalog-schemaene i `packages/api-client/src/types`, slik at transformeringer
 (f.eks. datoer) og feltdokumentasjon følger med.
 
 Lag en `schemas.ts` i modulmappen:
 
 ```typescript
 import { z } from "zod";
-import { AcademicYearSchema } from "../../api/types/calendar";
+import { AcademicYearSchema } from "@inskewl/api-client";
 
 export const MittSkoleaarSchema = z.array(
   AcademicYearSchema.pick({
@@ -173,7 +173,7 @@ export const MittSkoleaarSchema = z.array(
 Legg til disse importene øverst i samme modulfil:
 
 ```typescript
-import { api } from "../../api/api";
+import { api } from "@inskewl/api-client";
 import { MittSkoleaarSchema } from "./schemas";
 ```
 
@@ -193,7 +193,7 @@ plukke bare det modulen trenger: hvis VIS endrer eller fjerner et felt modulen
 ikke bruker, fortsetter den å fungere. Mangler eller endres et felt modulen
 faktisk trenger, kastes en feil umiddelbart — selv om TypeScript-koden
 kompilerer. Trenger du et felt som ikke finnes i katalogen ennå, legg det til i
-`src/api/types` først og plukk det deretter.
+`packages/api-client/src/types` først og plukk det deretter.
 
 ## Vanlige feil
 
