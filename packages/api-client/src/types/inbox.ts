@@ -1,17 +1,6 @@
 import { z } from "zod";
-import { transformISODateTime } from "../../utils/parsing";
-
-// User roles are labeled differently for different endpoints.
-// It seems the inbox/messages endpoint does not have ROLE_ prefix before the role name.
-export const UserRole = z.enum([
-  "TEACHER",
-  "PRINCIPAL",
-  "LEARNER",
-  "CONTACT",
-  "ADMIN",
-  "SCHOOL_OWNER",
-  "BASIC",
-]);
+import { transformISODateTime } from "../../../../src/utils/parsing";
+import { UserRole } from "./models/userRole";
 
 // The filter type for the getMessages endpoint. ALL returns all messages, while INBOX returns only unread messages.
 export const FilterTypeSchema = z.enum(["ALL", "INBOX"]);

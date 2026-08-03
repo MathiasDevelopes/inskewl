@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformISODateTime } from "../../utils/parsing";
+import { transformISODateTime } from "../../../../src/utils/parsing";
 
 export const SchoolInfoSchema = z.object({
   tenant: z.number().meta({

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformDDMMYYYY, transformISODate } from "../../utils/parsing";
+import { transformDDMMYYYY, transformISODate } from "../../../../src/utils/parsing";
 import { TimetableTypeSchema } from "./timetable";
 
 export const ThresholdSchema = z.object({

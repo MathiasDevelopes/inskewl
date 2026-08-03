@@ -3,10 +3,9 @@
     "moduleResolution": "bundler",
     "strict": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "allowJs": true,
     "module": "ESNext",
     "target": "ES2023"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "./packages/*/src/**/*"]
 }

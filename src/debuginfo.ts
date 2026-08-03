@@ -1,5 +1,5 @@
-import { api } from "./api/api";
-import { LoginPageSchema } from "./api/types/login-page";
+import { api } from "@inskewl/api-client";
+import { LoginPageSchema } from "@inskewl/api-client";
 import { version } from "../package.json" with { type: "json" };
 
 export async function printDebugInfo(): Promise<void> {

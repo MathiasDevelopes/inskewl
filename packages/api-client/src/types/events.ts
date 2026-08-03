@@ -1,15 +1,6 @@
 import { z } from "zod";
-import { transformISODate } from "../../utils/parsing";
-
-export const UserRole = z.enum([
-  "ROLE_TEACHER",
-  "ROLE_PRINCIPAL",
-  "ROLE_LEARNER",
-  "ROLE_CONTACT",
-  "ROLE_ADMIN",
-  "ROLE_BASIC",
-  "ROLE_SCHOOL_OWNER",
-]);
+import { transformISODate } from "../../../../src/utils/parsing";
+import { PrefixedUserRole } from "./models/userRole";
 
 export const LearnerSchema = z.object({
   className: z.any().optional(),
@@ -23,7 +14,7 @@ export const LearnerSchema = z.object({
 });
 
 export const WorkForceSchema = z.object({
-  userRole: UserRole.optional(),
+  userRole: PrefixedUserRole.optional(),
   workforcePersonalId: z.number().optional().meta({
     description: "The personal id of the employee",
   }),

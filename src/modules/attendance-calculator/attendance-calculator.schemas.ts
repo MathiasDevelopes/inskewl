@@ -2,9 +2,9 @@ import { z } from "zod";
 import {
   AttendanceSubjectGroupSchema,
   LessonAttendanceSchema,
-} from "../../api/types/attendance";
-import { AcademicYearSchema } from "../../api/types/calendar";
-import { TimetableItemSchema } from "../../api/types/timetable";
+} from "@inskewl/api-client";
+import { AcademicYearSchema } from "@inskewl/api-client";
+import { TimetableItemSchema } from "@inskewl/api-client";
 
 /**
  * Feature-driven schemas: validate only the fields the calculator needs.

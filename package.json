@@ -3,6 +3,8 @@
   "version": "1.1.9",
   "description": "",
   "main": "src/main.ts",
+  "private": true,
+  "workspaces": ["packages/*"],
   "scripts": {
     "build": "rollup -c",
     "build:docs-assets": "rollup -c rollup.docs.config.js",
@@ -35,6 +37,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@inskewl/api-client": "*"
   }
 }

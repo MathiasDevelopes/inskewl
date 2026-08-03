@@ -1,4 +1,4 @@
-import type { AttendanceCode } from "../../api/types/attendance";
+import type { AttendanceCode } from "@inskewl/api-client";
 import { startOfWeek } from "../../utils/time";
 import {
   type AttendanceCalculatorState,

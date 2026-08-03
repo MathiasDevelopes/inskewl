@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformDDMMYYYY } from "../../utils/parsing";
+import { transformDDMMYYYY } from "../../../../src/utils/parsing";
 import { SchoolBaseSchema } from "./school";
 
 export const TimetableTypeSchema = z.enum([
@@ -71,7 +71,7 @@ export const TimetableItemSchema = z.object({
   periodNumberInDay: z.any(),
 });
 
-export const SchoolSchema = SchoolBaseSchema.extend({
+export const TimetableSchoolSchema = SchoolBaseSchema.extend({
   isMainSchool: z.boolean().meta({
     description: "Boolean indicating if this is the main school",
   }),
@@ -96,7 +96,7 @@ export const TimetableSchema = z.object({
   presence: z.any(),
   // TODO: Accuqire more info about timetable, especially absences
   absences: z.array(z.any()),
-  schools: z.array(SchoolSchema),
+  schools: z.array(TimetableSchoolSchema),
 });
 
 export type Timetable = z.infer<typeof TimetableSchema>;

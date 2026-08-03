@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { AcademicYearSchema, TermSchema } from "../../../api/types/calendar";
-import { TimetableItemSchema } from "../../../api/types/timetable";
+import { AcademicYearSchema, TermSchema } from "@inskewl/api-client";
+import { TimetableItemSchema } from "@inskewl/api-client";
 
 /**
  * Feature-driven schemas: validate only the fields the exporter needs.

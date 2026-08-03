@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { transformISODate, transformISODateTime } from "../../utils/parsing";
+import { transformISODate, transformISODateTime } from "../../../../src/utils/parsing";
 
 export const LocaleSchema = z.object({
   country: z.string(),

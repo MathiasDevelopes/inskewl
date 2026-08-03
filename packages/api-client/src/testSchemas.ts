@@ -1,6 +1,6 @@
 import { api } from "./api";
 import { z, ZodError } from "zod";
-import { createLogger } from "../utils/logger";
+import { createLogger } from "../../../src/utils/logger";
 import { BehaviourSchema, RemarkLimitSchema } from "./types/assessment";
 import {
   AbsenceCodesByTeachingGroupsSchema,
