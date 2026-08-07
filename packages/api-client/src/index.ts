@@ -6,7 +6,6 @@ export * from "./api";
 export * from "./apiClient";
 export * from "./authProvider";
 export * from "./endpoint";
-export * from "./testSchemas";
 export * from "./endpoints/assessment";
 export * from "./endpoints/attendance";
 export * from "./endpoints/calendar";

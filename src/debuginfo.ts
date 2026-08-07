@@ -1,4 +1,4 @@
-import { api } from "@inskewl/api-client";
+import { api } from "./api/client";
 import { LoginPageSchema } from "@inskewl/api-client";
 import { version } from "../package.json" with { type: "json" };
 

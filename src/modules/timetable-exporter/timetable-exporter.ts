@@ -1,4 +1,4 @@
-import { api } from "@inskewl/api-client";
+import { api } from "../../api/client";
 import { z } from "zod";
 import {
   ExportAcademicYearSchema,

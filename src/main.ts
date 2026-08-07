@@ -2,7 +2,7 @@ import { ModuleLoader } from "./modules/core/ModuleLoader";
 import { UrlWatcher } from "./modules/core/UrlWatcher";
 import { AttendanceCalculator } from "./modules/attendance-calculator/attendance-calculator";
 import { TimetableExporter } from "./modules/timetable-exporter/timetable-exporter";
-import { testAllApiSchemas } from "@inskewl/api-client";
+import { testAllApiSchemas } from "./api/testSchemas";
 import { printDebugInfo } from "./debuginfo";
 
 // Expose API schema test function to global window context

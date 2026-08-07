@@ -1,4 +1,4 @@
-import { api } from "@inskewl/api-client";
+import { api } from "../../api/client";
 import { startOfWeek } from "../../utils/time";
 import {
   CalcAcademicYearsSchema,

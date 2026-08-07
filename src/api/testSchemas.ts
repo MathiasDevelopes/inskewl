@@ -1,24 +1,27 @@
-import { api } from "./api";
+import { api } from "./client";
 import { z, ZodError } from "zod";
-import { createLogger } from "../../../src/utils/logger";
-import { BehaviourSchema, RemarkLimitSchema } from "./types/assessment";
+import { createLogger } from "../utils/logger";
 import {
+  AcademicYearSchema,
   AbsenceCodesByTeachingGroupsSchema,
   AbsenceOverviewSchema,
   AttendanceSubjectGroupSchema,
+  BehaviourSchema,
+  DayCountSchema,
   DiplomaAbsencesSchema,
   DiplomaTermAbsencesSchema,
+  EventSchema,
+  ExamGroupsSchema,
   LessonAttendancesSchema,
-} from "./types/attendance";
-import { AcademicYearSchema, DayCountSchema } from "./types/calendar";
-import { EventSchema } from "./types/events";
-import { ExamGroupsSchema } from "./types/exams";
-import { MessagesSchema } from "./types/inbox";
-import { LoginPageSchema } from "./types/login-page";
-import { SchoolSchema } from "./types/school";
-import { TenantSchema } from "./types/tenant";
-import { TimetableSchema } from "./types/timetable";
-import { PersonalInfoSchema, UserSchema } from "./types/user";
+  LoginPageSchema,
+  MessagesSchema,
+  PersonalInfoSchema,
+  RemarkLimitSchema,
+  SchoolSchema,
+  TenantSchema,
+  TimetableSchema,
+  UserSchema,
+} from "@inskewl/api-client";
 
 // Features validate only the fields they need (feature-driven schemas).
 // This suite passes the full catalog schemas to detect upstream API drift

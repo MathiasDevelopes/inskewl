@@ -13,12 +13,6 @@ import { ExamsApi } from "./endpoints/exams";
 import { LoginPageApi } from "./endpoints/login-page";
 import { IncludeAuthProvider } from "./providers/includeAuthProvider";
 
-// fungerer kun i fanen med visma...
-const client: ApiClient = new ApiClient(
-  new URL(`${window.location.origin}/control/`),
-  new IncludeAuthProvider(),
-);
-
 export class Session {
   private learnerId: number | null = null;
 
@@ -58,5 +52,3 @@ export class Session {
     return this.learnerId;
   }
 }
-
-export const api = new Session(client);
