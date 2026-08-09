@@ -8,6 +8,9 @@ Gjør VIS InSchool litt enklere for elever.
 
 `inskewl` er et uoffisielt userscript som legger til ekstra funksjoner i VIS InSchool. Det er laget for elever som vil få bedre oversikt over fravær og timeplan uten å gjøre alt manuelt.
 
+> [!IMPORTANT]
+> Prosjektet er ikke lenger i aktiv utvikling, men vil forhåpentligvis fungere så lenge API-et til InSchool ikke blir dramatisk endret.<br/>
+> Jeg tar gjerne imot PR-er og issues som beskriver endringer i API-et. Er du elev og kan TypeScript, er det også bare å fork’e prosjektet og bygge videre på det! Jeg lover ikke større oppdateringer herfra.
 ## Hva får du?
 
 - **Fraværskalkulator:** prøv ut fremtidig fravær og se hvordan det kan påvirke fraværsprosenten din.
