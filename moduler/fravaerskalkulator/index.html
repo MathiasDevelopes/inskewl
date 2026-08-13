@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://mathiasdevelopes.github.io/inskewl/moduler/fravaerskalkulator/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>2. Fraværskalkulator - inskewl</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">inskewl</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Start her</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../installasjon/" class="nav-link">1. Installer</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">2. Fraværskalkulator</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../kalendereksport/" class="nav-link">3. Kalendereksport</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../hjelp/" class="nav-link">Hjelp</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">For utviklere</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../utvikling/" class="dropdown-item">Utvikling</a>
+</li>
+                                    
+<li>
+    <a href="../../modul-eksempel/" class="dropdown-item">Lage en modul</a>
+</li>
+                                    
+<li>
+    <a href="../../arkitektur/" class="dropdown-item">Arkitektur</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../../installasjon/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../kalendereksport/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/MathiasDevelopes/inskewl/edit/master/docs/moduler/fravaerskalkulator.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#2-fravrskalkulator" class="nav-link">2. Fraværskalkulator</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#dette-kan-du-gjre" class="nav-link">Dette kan du gjøre</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#prv-frst" class="nav-link">Prøv først</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#slik-bruker-du-den-i-vis" class="nav-link">Slik bruker du den i VIS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#eksempel" class="nav-link">Eksempel</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#hvis-det-ikke-fungerer" class="nav-link">Hvis det ikke fungerer</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#begrensninger" class="nav-link">Begrensninger</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="2-fravrskalkulator">2. Fraværskalkulator</h1>
+<p>Fraværskalkulatoren viser hvordan fremtidig fravær kan påvirke fraværsprosenten din.</p>
+<p>Den registrerer ikke fravær. Alt du klikker på er bare en simulering i nettleseren.</p>
+<h2 id="dette-kan-du-gjre">Dette kan du gjøre</h2>
+<ul>
+<li>Se fraværsprosenten din per fag.</li>
+<li>Se hvor mange timer du har igjen før du nærmer deg fraværsgrensen.</li>
+<li>Klikke på fremtidige timer for å simulere fravær.</li>
+<li>Bytte til kommende uker.</li>
+<li>Nullstille og prøve på nytt.</li>
+</ul>
+<h2 id="prv-frst">Prøv først</h2>
+<p>Demoen under bruker eksempeldata. Den er ikke koblet til VIS InSchool.</p>
+<p>Klikk på en time i ukevisningen og se hva som skjer med fraværsprosenten.</p>
+<div id="attendance-calculator-demo"></div>
+
+<h2 id="slik-bruker-du-den-i-vis">Slik bruker du den i VIS</h2>
+<p>Gå til startsiden eller timeplanen i VIS InSchool.</p>
+<p>Klikk på menyknappen med tre prikker oppe til høyre i timeplanen:</p>
+<p><img alt="Bilde av dropdown meny, med tydelig pil" src="../../images/pildropdown.jpg" /></p>
+<p>Velg <strong>Fraværskalkulator</strong> i menyen:</p>
+<p><img alt="Bilde av dropdown meny, med pil som peker på fraværskalkulator" src="../../images/pilfravaerskalkulator.jpg" /></p>
+<p>Fraværskalkulatoren åpnes i VIS. Bruk ukevelgeren for å se kommende uker.
+Klikk på fremtidige timer for å simulere fravær i de timene. Klikk på en valgt
+time en gang til for å fjerne den fra simuleringen.</p>
+<p>Statusene viser om simuleringen fortsatt er under fraværsgrensen:</p>
+<ul>
+<li><strong>OK</strong> betyr at simuleringen er under grensen.</li>
+<li><strong>Advarsel</strong> betyr at du nærmer deg grensen.</li>
+<li><strong>Over grensen</strong> betyr at simuleringen går over grensen.</li>
+</ul>
+<h2 id="eksempel">Eksempel</h2>
+<p>Hvis du har 7,5 prosent fravær i et fag og vurderer å være borte fra en
+dobbelttime, kan du klikke på de to fremtidige timene. Kalkulatoren viser den
+nye simulerte prosenten før du tar en avgjørelse.</p>
+<h2 id="hvis-det-ikke-fungerer">Hvis det ikke fungerer</h2>
+<p>Sjekk at userscriptet er aktivert, at du er logget inn i VIS InSchool, og at du
+står på en side med timeplan. Last siden på nytt hvis kalkulatoren ikke vises.
+Hvis timeplanen eller fraværsdata ikke lastes, kan VIS InSchool ha endret dataene
+modulen bruker.</p>
+<p>Se også <a href="../../hjelp/">hjelp og feilsøking</a>.</p>
+<h2 id="begrensninger">Begrensninger</h2>
+<ul>
+<li>Simuleringen registrerer ikke faktisk fravær.</li>
+<li>Tidligere timer kan ikke simuleres.</li>
+<li>Modulen bruker data fra VIS InSchool og kan slutte å fungere hvis VIS endrer systemet sitt.</li>
+</ul>
+<p><strong>Neste:</strong> <a href="../kalendereksport/">Eksporter timeplanen din</a></p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../assets/attendance-calculator-demo.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
