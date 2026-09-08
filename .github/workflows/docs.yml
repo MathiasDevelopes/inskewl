@@ -12,7 +12,7 @@ on:
       - "package.json"
       - "requirements.txt"
       - "rollup.docs.config.js"
-      - "src/api/types/**"
+      - "packages/api-client/types/**"
       - "src/modules/attendance-calculator/**"
       - "src/utils/**"
   workflow_dispatch:
