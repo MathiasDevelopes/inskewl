@@ -1,6 +1,6 @@
 import { DomInjector } from "./DOMInjector";
 import type { VismaModule } from "./VismaModule";
-import { createLogger } from "../../utils/logger";
+import { createLogger } from "@inskewl/core";
 
 const logger = createLogger("ModuleLoader");
 

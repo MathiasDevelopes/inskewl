@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "zod": "^4.4.3",
-    "@inskewl/api-client": "*"
+    "@inskewl/api-client": "*",
+    "@inskewl/core": "*"
   }
 }

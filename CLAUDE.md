@@ -28,6 +28,10 @@ The core of the project is a plugin system built around URL-based lifecycle mana
 
 To add a new feature: extend `VismaModule`, implement `injectables()`, and register it in `src/main.ts`.
 
+### Shared Core Package (`packages/core/`)
+
+`@inskewl/core` holds small utilities shared by the app and workspace packages (currently `createLogger`). Workspace packages such as `@inskewl/api-client` must depend on it rather than importing from `src/` via relative paths, so they stay publishable on their own.
+
 ### API Layer (`src/api/`)
 
 Validation is **feature-driven**: the API is undocumented and unstable, so each module validates only the fields it actually consumes, instead of endpoints enforcing whole-response schemas.
