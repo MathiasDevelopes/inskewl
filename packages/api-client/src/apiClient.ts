@@ -1,5 +1,5 @@
 import type { z, ZodType } from "zod";
-import { createLogger } from "../../../src/utils/logger";
+import { createLogger } from "@inskewl/core";
 import { AuthProvider } from "./authProvider";
 
 const logger = createLogger("ApiClient");

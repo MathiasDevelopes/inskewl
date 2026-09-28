@@ -1,6 +1,6 @@
 import { api } from "./client";
 import { z, ZodError } from "zod";
-import { createLogger } from "../utils/logger";
+import { createLogger } from "@inskewl/core";
 import {
   AcademicYearSchema,
   AbsenceCodesByTeachingGroupsSchema,
