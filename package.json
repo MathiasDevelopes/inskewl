@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "build:debug": "MINIFY=false rollup -c",
     "build:docs-assets": "rollup -c rollup.docs.config.js",
     "docs:build": "npm run build:docs-assets && mkdocs build --strict",
     "docs:serve": "npm run build:docs-assets && mkdocs serve",
-    "dev": "rollup -c -w",
+    "dev": "MINIFY=false rollup -c -w",
     "barrels": "npm run barrels -w @inskewl/api-client"
   },
   "repository": {
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^26.5.1",
     "rollup": "^4.63.5",
