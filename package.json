@@ -10,7 +10,8 @@
     "build:docs-assets": "rollup -c rollup.docs.config.js",
     "docs:build": "npm run build:docs-assets && mkdocs build --strict",
     "docs:serve": "npm run build:docs-assets && mkdocs serve",
-    "dev": "rollup -c -w"
+    "dev": "rollup -c -w",
+    "barrels": "npm run barrels -w @inskewl/api-client"
   },
   "repository": {
     "type": "git",

@@ -5,10 +5,14 @@
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "scripts": {
+    "barrels": "barrelsby -d src/types -e models -e \"types/index\\.ts$\" && barrelsby -d src -e \"types/(?!index)\" -e models -e \"src/index\\.ts$\""
+  },
   "dependencies": {
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "barrelsby": "^2.8.1"
   }
 }
