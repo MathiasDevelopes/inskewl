@@ -1,6 +1,6 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import metablock from "rollup-plugin-userscript-metablock";
-import typescript from "@rollup/plugin-typescript";
+import esbuild from "rollup-plugin-esbuild";
 import json from "@rollup/plugin-json";
 import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
@@ -23,7 +23,7 @@ export default {
   plugins: [
     json(),
     nodeResolve(),
-    typescript(),
+    esbuild({ target: "es2023" }),
     // Must run before metablock, which prepends the ==UserScript== header.
     ...(minify ? [terser()] : []),
     metablock({

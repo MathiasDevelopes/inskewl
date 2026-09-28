@@ -1,5 +1,5 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
+import esbuild from "rollup-plugin-esbuild";
 
 export default {
   input: "src/modules/attendance-calculator/attendance-calculator.demo.ts",
@@ -10,10 +10,6 @@ export default {
   },
   plugins: [
     nodeResolve(),
-    typescript({
-      compilerOptions: {
-        outDir: "docs/assets",
-      },
-    }),
+    esbuild({ target: "es2023" }),
   ],
 };
