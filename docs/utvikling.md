@@ -34,7 +34,9 @@ dist/inskewl.user.js
 npm run dev
 ```
 
-Dette starter Rollup i watch-modus, slik at userscriptet bygges på nytt når kildekoden endres.
+Dette starter Rollup i watch-modus, slik at userscriptet bygges på nytt når kildekoden endres. Utviklingsmodus bygger uten minifisering.
+
+`npm run build` minifiserer utdataene (ca. 160 KB). Bruk `npm run build:debug` for en lesbar, uminifisert build (ca. 410 KB).
 
 ## Lage en modul
 

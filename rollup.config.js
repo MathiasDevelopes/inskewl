@@ -2,8 +2,11 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import metablock from "rollup-plugin-userscript-metablock";
 import typescript from "@rollup/plugin-typescript";
 import json from "@rollup/plugin-json";
+import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
 
+// Minify by default; set MINIFY=false for a readable build (see "build:debug").
+const minify = process.env.MINIFY !== "false";
 const buildVersion = process.env.BUILD_VERSION ?? pkg.version;
 const updateURL = process.env.UPDATE_URL;
 const downloadURL = process.env.DOWNLOAD_URL ?? updateURL;
@@ -21,6 +24,8 @@ export default {
     json(),
     nodeResolve(),
     typescript(),
+    // Must run before metablock, which prepends the ==UserScript== header.
+    ...(minify ? [terser()] : []),
     metablock({
       file: "./meta.json",
       override: {
