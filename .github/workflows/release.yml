@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to release, for example v1.1.3'
+        description: 'Version to release, for example v1.2.0. Built from the selected branch; the tag is created when the draft is published.'
         required: true
         type: string
 
@@ -24,8 +24,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -52,9 +50,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            # No tag yet: pin the draft to the exact commit that was built.
+            tag_args=(--target "$GITHUB_SHA")
+          else
+            tag_args=(--verify-tag)
+          fi
+
           gh release create "$RELEASE_TAG" \
             ./dist/inskewl.user.js \
             --draft \
             --title "$RELEASE_TAG" \
             --notes "Automatic release of $RELEASE_TAG" \
-            --verify-tag
+            "${tag_args[@]}"
