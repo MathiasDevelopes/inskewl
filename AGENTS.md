@@ -56,7 +56,7 @@ Validation is **feature-driven**: the API is undocumented and unstable, so each 
 | Module | File | Description |
 |--------|------|-------------|
 | Timetable Exporter | `src/modules/timetable-exporter/` | Exports the school timetable as an ICS file compatible with Outlook/Google Calendar/Apple Calendar |
-| Attendance Calculator | `src/modules/attendance-calculator/` | Absence calculator with per-subject attendance stats (split into `.data`, `.view`, `.ui`, `.helpers`, `.schemas` files) |
+| Attendance Calculator | `src/modules/attendance-calculator/` | Simulates how future absence affects the per-subject absence percentage (split into `.data`, `.view`, `.ui`, `.helpers`, `.schemas` files) |
 
 ### Build Pipeline
 
