@@ -12,7 +12,7 @@ on:
       - "package.json"
       - "requirements.txt"
       - "rollup.docs.config.js"
-      - "packages/api-client/types/**"
+      - "packages/api-client/src/types/**"
       - "src/modules/attendance-calculator/**"
       - "src/utils/**"
   pull_request:
@@ -24,7 +24,7 @@ on:
       - "package.json"
       - "requirements.txt"
       - "rollup.docs.config.js"
-      - "packages/api-client/types/**"
+      - "packages/api-client/src/types/**"
       - "src/modules/attendance-calculator/**"
       - "src/utils/**"
   workflow_dispatch:

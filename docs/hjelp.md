@@ -7,7 +7,7 @@ Start med problemet som ligner mest på ditt.
 Sjekk dette:
 
 - Du er logget inn på VIS InSchool.
-- Du er på en side som slutter med `inschool.visma.no`.
+- Adressen til siden inneholder `inschool.visma.no`.
 - Violentmonkey eller Tampermonkey er aktivert.
 - `inskewl` er aktivert i userscript-manageren.
 - Du har refreshet VIS etter installasjon.
@@ -16,7 +16,7 @@ Sjekk dette:
 
 Prøv dette:
 
-- Gå til dashboardet i VIS.
+- Gå til dashboardet i VIS. Modulene lastes bare der.
 - Refresh siden.
 - Sjekk at du har fraværsdata i VIS.
 - Vent litt hvis VIS er tregt.
@@ -51,5 +51,6 @@ Ta gjerne med:
 - hvilken nettleser du bruker
 - om feilen skjer hver gang
 - eventuelle feilmeldinger fra Console i nettleseren
+- resultatet av `debugInfo()` kjørt i Console (viser blant annet hvilken versjon av inskewl som kjører)
 
 **Tilbake:** [Start her](index.md)

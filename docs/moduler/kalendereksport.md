@@ -12,7 +12,7 @@ Filen kan importeres i kalenderapper som Google Calendar, Apple Calendar og Outl
 
 ## Slik bruker du den
 
-Gå til startsiden eller timeplanen i VIS InSchool.
+Gå til dashboardet i VIS InSchool, der timeplanen ligger.
 
 Klikk på menyknappen med tre prikker oppe til høyre i timeplanen:
 
@@ -58,6 +58,7 @@ Se også [hjelp og feilsøking](../hjelp.md).
 
 ## Begrensninger
 
+- Eksporten dekker fra inneværende uke til slutten av inneværende termin.
 - Eksporten lager en fil på eksporttidspunktet.
 - Den synkroniserer ikke automatisk senere endringer i timeplanen.
 - Importopplevelsen varierer mellom kalenderapper.

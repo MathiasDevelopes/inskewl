@@ -22,7 +22,7 @@ Klikk på en time i ukevisningen og se hva som skjer med fraværsprosenten.
 
 ## Slik bruker du den i VIS
 
-Gå til startsiden eller timeplanen i VIS InSchool.
+Gå til dashboardet i VIS InSchool, der timeplanen ligger.
 
 Klikk på menyknappen med tre prikker oppe til høyre i timeplanen:
 
@@ -42,6 +42,12 @@ Statusene viser om simuleringen fortsatt er under fraværsgrensen:
 - **Advarsel** betyr at du nærmer deg grensen.
 - **Over grensen** betyr at simuleringen går over grensen.
 
+Oppsummeringen øverst viser hvor mange fag som er over eller nær grensen. Timer der fravær allerede er registrert, er merket med **Allerede registrert** eller **Teller ikke**, og kan ikke endres.
+
+## Fraværsprosent på timeplanen
+
+Når fraværsdata er lastet, legger inskewl en liten merkelapp med fraværsprosenten på hver time i timeplanen i VIS. Fargen viser om faget er under grensen, nær grensen eller over den.
+
 ## Eksempel
 
 Hvis du har 7,5 prosent fravær i et fag og vurderer å være borte fra en
@@ -60,7 +66,7 @@ Se også [hjelp og feilsøking](../hjelp.md).
 ## Begrensninger
 
 - Simuleringen registrerer ikke faktisk fravær.
-- Tidligere timer kan ikke simuleres.
+- Timer som har startet eller er passert, kan ikke simuleres (de vises som utilgjengelige).
 - Modulen bruker data fra VIS InSchool og kan slutte å fungere hvis VIS endrer systemet sitt.
 
 **Neste:** [Eksporter timeplanen din](kalendereksport.md)
