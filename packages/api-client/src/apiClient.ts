@@ -43,14 +43,18 @@ export class ApiClient {
 
     await this.authProvider.authorize(init);
 
+    logger.debug(`${method} ${url.pathname}`);
     const res = await fetch(url, init);
 
     if (!res.ok) {
+      // Log status and path only; the response body may contain student data.
+      logger.warn(`${method} ${url.pathname} failed with ${res.status}`);
       throw new Error(
         `inskewl: api ${path} went ${res.status}...\n${await res.text()}`,
       );
     }
 
+    logger.debug(`${method} ${url.pathname} -> ${res.status}`);
     return res.json() as Promise<T>;
   }
 

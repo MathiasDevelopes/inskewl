@@ -1,5 +1,8 @@
 import type { Injectable } from "./Injectable";
 import type { VismaModule } from "./VismaModule";
+import { createLogger } from "@inskewl/core";
+
+const logger = createLogger("DomInjector");
 
 interface InjectedElement {
   el: HTMLElement;
@@ -53,6 +56,7 @@ export class DomInjector {
       }
 
       this.injected.set(key, { el, inj });
+      logger.debug(`Injected ${key} (${inj.placement} ${inj.target})`);
     }
   }
 

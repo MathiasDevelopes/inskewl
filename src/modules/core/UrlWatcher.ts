@@ -1,3 +1,7 @@
+import { createLogger } from "@inskewl/core";
+
+const logger = createLogger("UrlWatcher");
+
 export class UrlWatcher {
   private currentUrl: string;
   private callback: (url: string) => void;
@@ -42,6 +46,7 @@ export class UrlWatcher {
   private checkUrl() {
     if (window.location.href !== this.currentUrl) {
       this.currentUrl = window.location.href;
+      logger.debug(`URL changed: ${window.location.pathname}`);
       this.callback(this.currentUrl);
     }
   }

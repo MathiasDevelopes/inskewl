@@ -4,6 +4,10 @@ import { AttendanceCalculator } from "./modules/attendance-calculator/attendance
 import { TimetableExporter } from "./modules/timetable-exporter/timetable-exporter";
 import { testAllApiSchemas } from "./api/testSchemas";
 import { printDebugInfo } from "./debuginfo";
+import { createLogger } from "@inskewl/core";
+import { version } from "../package.json" with { type: "json" };
+
+const logger = createLogger("main");
 
 // Expose API schema test function to global window context
 declare global {
@@ -30,6 +34,7 @@ if (typeof window !== "undefined" && !("debugInfo" in window)) {
 }
 
 (async function () {
+  logger.info(`v${version} starting.`);
   const moduleLoader = new ModuleLoader([
     new AttendanceCalculator(),
     new TimetableExporter(),

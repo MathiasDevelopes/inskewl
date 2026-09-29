@@ -62,7 +62,12 @@ export class TimetableExporter extends VismaModule {
   }
 
   private async exportCalendar(exporter: Exporter): Promise<void> {
+    this.logger.debug(`Exporting timetable as ${exporter.id}...`);
     const events = await this.loadEvents();
+    if (events.length === 0) {
+      this.logger.warn("Timetable export contains no events.");
+    }
+    this.logger.info(`Exported ${events.length} events as ${exporter.id}.`);
     const blob = exporter.exportToBlob(events);
     this.downloadBlob(blob, `timetable.${exporter.extension}`);
   }

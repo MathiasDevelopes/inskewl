@@ -48,8 +48,9 @@ export class AttendanceCalculator extends VismaModule implements AttendanceCalcu
       this.currentYear = currentYear;
       this.groups = groups;
       this.view.injectBadgesOnVisma();
-    } catch {
-      // silent — badges are a nice-to-have
+    } catch (err) {
+      // Badges are a nice-to-have, so don't surface this to the user.
+      this.logger.warn("Failed to load attendance data for badges:", err);
     }
   }
 

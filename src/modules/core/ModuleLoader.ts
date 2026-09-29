@@ -53,6 +53,7 @@ export class ModuleLoader {
   }
 
   private async loadModule(mod: VismaModule): Promise<void> {
+    logger.debug(`Loading ${mod.name}...`);
     try {
       mod._loaded = true;
       this.injector.inject(mod);
