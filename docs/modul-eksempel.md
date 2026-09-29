@@ -173,7 +173,7 @@ export const MittSkoleaarSchema = z.array(
 Legg til disse importene øverst i samme modulfil:
 
 ```typescript
-import { api } from "@inskewl/api-client";
+import { api } from "../../api/client";
 import { MittSkoleaarSchema } from "./schemas";
 ```
 
