@@ -10,6 +10,6 @@ export default {
   },
   plugins: [
     nodeResolve(),
-    esbuild({ target: "es2023" }),
+    esbuild({ target: "es2024" }),
   ],
 };

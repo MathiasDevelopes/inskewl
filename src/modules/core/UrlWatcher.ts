@@ -4,46 +4,46 @@ const logger = createLogger("UrlWatcher");
 
 export class UrlWatcher {
   private currentUrl: string;
-  private callback: (url: string) => void;
+  private readonly callback: (url: string) => void;
+  private restore: (() => void) | null = null;
 
   constructor(callback: (url: string) => void) {
     this.currentUrl = window.location.href;
     this.callback = callback;
   }
 
-  public start() {
-    this.patchHistory();
-    window.addEventListener("popstate", () => this.checkUrl());
-    window.addEventListener("hashchange", () => this.checkUrl());
-  }
+  public start(): void {
+    if (this.restore) return;
 
-  private patchHistory() {
     const originalPush = history.pushState;
     const originalReplace = history.replaceState;
+    const check = () => this.checkUrl();
 
-    // behold referanse til denne instansen
-    const watcher = this;
-
-    history.pushState = function (
-      data: any,
-      unused: string,
-      url?: string | URL | null,
-    ) {
-      originalPush.call(history, data, unused, url);
-      watcher.checkUrl(); // bruk watcher, ikke self
+    history.pushState = (...args: Parameters<History["pushState"]>) => {
+      originalPush.apply(history, args);
+      check();
     };
+    history.replaceState = (...args: Parameters<History["replaceState"]>) => {
+      originalReplace.apply(history, args);
+      check();
+    };
+    window.addEventListener("popstate", check);
+    window.addEventListener("hashchange", check);
 
-    history.replaceState = function (
-      data: any,
-      unused: string,
-      url?: string | URL | null,
-    ) {
-      originalReplace.call(history, data, unused, url);
-      watcher.checkUrl(); // bruk watcher
+    this.restore = () => {
+      history.pushState = originalPush;
+      history.replaceState = originalReplace;
+      window.removeEventListener("popstate", check);
+      window.removeEventListener("hashchange", check);
     };
   }
 
-  private checkUrl() {
+  public stop(): void {
+    this.restore?.();
+    this.restore = null;
+  }
+
+  private checkUrl(): void {
     if (window.location.href !== this.currentUrl) {
       this.currentUrl = window.location.href;
       logger.debug(`URL changed: ${window.location.pathname}`);

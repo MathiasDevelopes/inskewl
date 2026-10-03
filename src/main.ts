@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-if (typeof window !== "undefined" && !("testAllApiSchemas" in window)) {
+if (!("testAllApiSchemas" in window)) {
   Object.defineProperty(window, "testAllApiSchemas", {
     value: testAllApiSchemas,
     writable: false,
@@ -25,7 +25,7 @@ if (typeof window !== "undefined" && !("testAllApiSchemas" in window)) {
   });
 }
 
-if (typeof window !== "undefined" && !("debugInfo" in window)) {
+if (!("debugInfo" in window)) {
   Object.defineProperty(window, "debugInfo", {
     value: printDebugInfo,
     writable: false,
@@ -33,18 +33,14 @@ if (typeof window !== "undefined" && !("debugInfo" in window)) {
   });
 }
 
-(async function () {
-  logger.info(`v${version} starting.`);
-  const moduleLoader = new ModuleLoader([
-    new AttendanceCalculator(),
-    new TimetableExporter(),
-  ]);
+logger.info(`v${version} starting.`);
+const moduleLoader = new ModuleLoader([
+  new AttendanceCalculator(),
+  new TimetableExporter(),
+]);
 
-  const watcher = new UrlWatcher((url: string) => {
-    void moduleLoader.handleUrlChange(url);
-  });
+new UrlWatcher((url) => {
+  void moduleLoader.handleUrlChange(url);
+}).start();
 
-  watcher.start();
-
-  void moduleLoader.handleUrlChange(window.location.href);
-})();
+void moduleLoader.handleUrlChange(window.location.href);

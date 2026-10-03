@@ -8,6 +8,7 @@ export class ModuleLoader {
   private injector = new DomInjector();
   private observer: MutationObserver;
   private mutationTimeout: number | null = null;
+  private urlQueue: Promise<void> = Promise.resolve();
 
   private readonly modules: VismaModule[];
 
@@ -43,7 +44,13 @@ export class ModuleLoader {
     this.observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  public async handleUrlChange(url: string): Promise<void> {
+  /** Runs URL changes one at a time so a load never overlaps an unload. */
+  public handleUrlChange(url: string): Promise<void> {
+    this.urlQueue = this.urlQueue.then(() => this.applyUrl(url));
+    return this.urlQueue;
+  }
+
+  private async applyUrl(url: string): Promise<void> {
     for (const mod of this.modules) {
       const should = mod.shouldLoad(url);
 

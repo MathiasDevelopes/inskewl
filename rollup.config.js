@@ -23,7 +23,7 @@ export default {
   plugins: [
     json(),
     nodeResolve(),
-    esbuild({ target: "es2023" }),
+    esbuild({ target: "es2024" }),
     // Must run before metablock, which prepends the ==UserScript== header.
     ...(minify ? [terser()] : []),
     metablock({
