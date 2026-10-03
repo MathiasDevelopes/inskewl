@@ -1,4 +1,4 @@
-import { Injectable } from "./Injectable";
+import type { Injectable } from "./Injectable";
 import { createLogger } from "@inskewl/core";
 
 export abstract class VismaModule {

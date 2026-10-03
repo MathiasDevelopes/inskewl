@@ -91,7 +91,7 @@ export class AttendanceApi extends Endpoint {
     subjectGroupIds: number[],
     schema: S,
   ): Promise<z.output<S>> {
-    if (subjectGroupIds.length === 0) return [] as z.output<S>;
+    if (subjectGroupIds.length === 0) return schema.parse([]);
 
     const learnerId = await this.session.getLearnerId();
 

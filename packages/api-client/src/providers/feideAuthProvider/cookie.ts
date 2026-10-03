@@ -79,4 +79,5 @@ function cookieNames(cookieHeader: string): string[] {
   return cookieHeader ? cookieHeader.split("; ").map((c) => c.split("=")[0]) : [];
 }
 
-export { CookieJar, StoredCookie, getSetCookieHeaders, cookieNames };
+export { CookieJar, getSetCookieHeaders, cookieNames };
+export type { StoredCookie };

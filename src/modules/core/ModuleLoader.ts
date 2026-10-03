@@ -9,7 +9,10 @@ export class ModuleLoader {
   private observer: MutationObserver;
   private mutationTimeout: number | null = null;
 
-  constructor(private modules: VismaModule[]) {
+  private readonly modules: VismaModule[];
+
+  constructor(modules: VismaModule[]) {
+    this.modules = modules;
     this.observer = new MutationObserver(() => {
       for (const mod of this.modules) {
         if (mod._loaded) {

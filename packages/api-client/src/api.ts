@@ -11,10 +11,9 @@ import { EventsApi } from "./endpoints/events";
 import { TenantApi } from "./endpoints/tenant";
 import { ExamsApi } from "./endpoints/exams";
 import { LoginPageApi } from "./endpoints/login-page";
-import { IncludeAuthProvider } from "./providers/includeAuthProvider";
 
 export class Session {
-  private learnerId: number | null = null;
+  private learnerId: Promise<number> | null = null;
 
   user: UserApi;
   timetable: TimetableApi;
@@ -28,7 +27,10 @@ export class Session {
   exams: ExamsApi;
   loginPage: LoginPageApi;
 
-  constructor(public client: ApiClient) {
+  readonly client: ApiClient;
+
+  constructor(client: ApiClient) {
+    this.client = client;
     this.user = new UserApi(this.client, this);
     this.timetable = new TimetableApi(this.client, this);
     this.calendar = new CalendarApi(this.client, this);
@@ -42,13 +44,16 @@ export class Session {
     this.loginPage = new LoginPageApi(this.client, this);
   }
 
-  async getLearnerId(): Promise<number> {
-    if (this.learnerId != null) return this.learnerId;
-    // Every feature funnels through here — validate only what we need.
-    const user = await this.user.getCurrentUser(
-      z.object({ learnerId: z.number() }),
-    );
-    this.learnerId = user.learnerId;
+  getLearnerId(): Promise<number> {
+    // Cache the promise, not the value, so concurrent callers share one request.
+    // Every feature funnels through here, so validate only what we need.
+    this.learnerId ??= this.user
+      .getCurrentUser(z.object({ learnerId: z.number() }))
+      .then((user) => user.learnerId)
+      .catch((err: unknown) => {
+        this.learnerId = null; // don't cache failures
+        throw err;
+      });
     return this.learnerId;
   }
 }

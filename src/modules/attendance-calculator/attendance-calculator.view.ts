@@ -46,7 +46,11 @@ export interface AttendanceCalculatorController {
 }
 
 export class AttendanceCalculatorView {
-  constructor(private readonly controller: AttendanceCalculatorController) {}
+  private readonly controller: AttendanceCalculatorController;
+
+  constructor(controller: AttendanceCalculatorController) {
+    this.controller = controller;
+  }
 
   setState(state: AttendanceCalculatorState): void {
     this.controller.currentYear = state.currentYear;

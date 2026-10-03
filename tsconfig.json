@@ -2,6 +2,11 @@
   "compilerOptions": {
     "moduleResolution": "bundler",
     "strict": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
     "outDir": "./dist",
     "allowJs": true,
     "module": "ESNext",

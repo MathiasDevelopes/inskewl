@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Tenant, TenantSchema } from "./tenant";
+import { type Tenant, TenantSchema } from "./tenant";
 
 export const IdentityProviderSchema = z.enum(["FEIDE", "ID_PORTEN"]).meta({
   description: "An identity provider",
