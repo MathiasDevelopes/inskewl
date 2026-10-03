@@ -18,4 +18,7 @@ export * from "./endpoints/tenant";
 export * from "./endpoints/timetable";
 export * from "./endpoints/user";
 export * from "./providers/includeAuthProvider";
+export * from "./providers/feideAuthProvider/cookie";
+export * from "./providers/feideAuthProvider/feideAuthProvider";
+export * from "./providers/feideAuthProvider/html";
 export * from "./types/index";
