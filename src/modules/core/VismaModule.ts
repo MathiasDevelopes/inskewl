@@ -25,6 +25,4 @@ export abstract class VismaModule {
   onLoad?(): void | Promise<void>;
   onUnload?(): void | Promise<void>;
   onMutation?(): void;
-
-  _loaded = false;
 }

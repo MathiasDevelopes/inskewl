@@ -6,6 +6,7 @@
     "verbatimModuleSyntax": true,
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "outDir": "./dist",
