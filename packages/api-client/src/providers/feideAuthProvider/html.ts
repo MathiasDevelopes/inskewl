@@ -32,7 +32,7 @@ function parseAttrs(raw: string): Record<string, string> {
   const attrRe = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*(?:=\s*("([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
   let m: RegExpExecArray | null;
   while ((m = attrRe.exec(raw)) !== null) {
-    attrs[m[1].toLowerCase()] = decodeHtmlEntities(m[3] ?? m[4] ?? m[5] ?? "");
+    attrs[(m[1] ?? "").toLowerCase()] = decodeHtmlEntities(m[3] ?? m[4] ?? m[5] ?? "");
   }
   return attrs;
 }
@@ -44,14 +44,14 @@ function parseForms(html: string): ParsedForm[] {
 
   let formMatch: RegExpExecArray | null;
   while ((formMatch = formRe.exec(html)) !== null) {
-    const attrs = parseAttrs(formMatch[1]);
-    const body = formMatch[2];
+    const attrs = parseAttrs(formMatch[1] ?? "");
+    const body = formMatch[2] ?? "";
     const inputs: FormInput[] = [];
 
     inputRe.lastIndex = 0;
     let inputMatch: RegExpExecArray | null;
     while ((inputMatch = inputRe.exec(body)) !== null) {
-      const iattrs = parseAttrs(inputMatch[1]);
+      const iattrs = parseAttrs(inputMatch[1] ?? "");
       const name = iattrs["name"] ?? "";
       if (!name) continue;
       inputs.push({
@@ -93,7 +93,7 @@ function selectForm(
   for (const form of forms) {
     if (form.inputs.some((i) => passwordFields.has(i.name.toLowerCase()))) return form;
   }
-  return forms[0];
+  return forms[0] ?? null;
 }
 
 function responseHasPasswordForm(html: string, passwordFields: Set<string>): boolean {
@@ -109,7 +109,7 @@ function extractHtmlRedirect(html: string): string | null {
   const metaMatch = html.match(
     /<meta[^>]+http-equiv=["']?refresh["']?[^>]+content=["']?\s*\d+\s*;\s*url=([^"'>]+)["']?/i
   );
-  if (metaMatch) return metaMatch[1].trim();
+  if (metaMatch?.[1]) return metaMatch[1].trim();
 
   const jsPatterns = [
     /location\.href\s*=\s*['"]([^'"]+)['"]/i,
@@ -120,7 +120,7 @@ function extractHtmlRedirect(html: string): string | null {
   ];
   for (const pattern of jsPatterns) {
     const m = html.match(pattern);
-    if (m) return m[1].trim();
+    if (m?.[1]) return m[1].trim();
   }
   return null;
 }
@@ -136,7 +136,7 @@ function extractErrorMessage(html: string): string | null {
   const candidates: string[] = [];
   for (const pattern of patterns) {
     const m = html.match(pattern);
-    if (m) candidates.push(m[1]);
+    if (m?.[1]) candidates.push(m[1]);
   }
   if (candidates.length === 0) return null;
 

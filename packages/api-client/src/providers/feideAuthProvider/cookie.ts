@@ -46,7 +46,7 @@ class CookieJar {
   }
 
   private parse(raw: string, defaultHost: string): StoredCookie | null {
-    const [nameValue, ...attrParts] = raw.split(";").map((p) => p.trim());
+    const [nameValue = "", ...attrParts] = raw.split(";").map((p) => p.trim());
     const eq = nameValue.indexOf("=");
     if (eq === -1) return null;
 
@@ -76,7 +76,7 @@ class CookieJar {
 }
 
 function cookieNames(cookieHeader: string): string[] {
-  return cookieHeader ? cookieHeader.split("; ").map((c) => c.split("=")[0]) : [];
+  return cookieHeader ? cookieHeader.split("; ").map((c) => c.split("=")[0] ?? c) : [];
 }
 
 export { CookieJar, getSetCookieHeaders, cookieNames };

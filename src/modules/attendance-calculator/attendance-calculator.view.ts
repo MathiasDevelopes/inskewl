@@ -403,14 +403,12 @@ export class AttendanceCalculatorView {
       this.controller.groups.map((g) => [g.subjectCode, g]),
     );
 
-    const dayGroups = new Map<number, SelectableLesson[]>();
-    for (const lesson of this.controller.lessons) {
-      const day = lesson.item.date.getDay();
-      if (!dayGroups.has(day)) dayGroups.set(day, []);
-      dayGroups.get(day)!.push(lesson);
-    }
+    const dayGroups = Map.groupBy(
+      this.controller.lessons,
+      (lesson) => lesson.item.date.getDay(),
+    );
 
-    const days = [...dayGroups.keys()].sort();
+    const days = [...dayGroups.keys()].sort((a, b) => a - b);
     if (days.length === 0) {
       const empty = document.createElement("p");
       empty.className = "inskewl-muted";

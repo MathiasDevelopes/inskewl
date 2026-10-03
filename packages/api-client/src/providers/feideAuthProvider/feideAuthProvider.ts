@@ -68,7 +68,7 @@ function buildPayload(
   for (const [k, v] of Object.entries(extraFields)) payload[k] = v;
   for (const name of Object.keys(payload)) {
     const lname = name.toLowerCase();
-    if (lname in overrides) payload[name] = overrides[lname];
+    if (lname in overrides) payload[name] = overrides[lname] ?? "";
   }
 
   return payload;
@@ -234,7 +234,7 @@ export class InschoolAuthClient {
         clearTimeout(timer);
       }
 
-      const receivedCookies = getSetCookieHeaders(response).map((c) => c.split(";")[0].split("=")[0]);
+      const receivedCookies = getSetCookieHeaders(response).map((c) => (c.split(";")[0] ?? c).split("=")[0] ?? c);
       this.cookieJar.applyFromResponse(response, currentUrl);
       this.log(
         `  <- ${response.status} ${currentUrl}` +

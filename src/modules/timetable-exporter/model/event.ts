@@ -67,14 +67,14 @@ export function fromTimetableItem(item: ExportTimetableItem): CalendarEvent {
   const start = combineDateWithTime(item.date, item.startTime);
   const end = combineDateWithTime(item.date, item.endTime);
 
-  const typeLabels: Record<ExportTimetableItem["type"], string> = {
+  const typeLabels = {
     LESSON: "Undervisning",
     EVENT: "Hendelse",
     ACTIVITY: "Aktivitet",
     SUBSTITUTION: "Vikar/endring",
     EXAM: "Eksamen",
     ASSESSMENT: "Vurdering",
-  };
+  } satisfies Record<ExportTimetableItem["type"], string>;
   const descriptionParts = [`Type: ${typeLabels[item.type]}`];
   if (item.label) descriptionParts.push(`Gruppe: ${item.label}`);
   if (item.teachers?.length && item.teachers.length >= 1)

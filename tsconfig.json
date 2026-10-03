@@ -5,12 +5,13 @@
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "outDir": "./dist",
     "allowJs": true,
     "module": "ESNext",
-    "target": "ES2023"
+    "target": "ES2024"
   },
   "include": ["./src/**/*", "./packages/*/src/**/*"]
 }

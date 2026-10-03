@@ -60,7 +60,7 @@ Validation is **feature-driven**: the API is undocumented and unstable, so each 
 
 ### Build Pipeline
 
-Rollup (`rollup.config.js`) bundles the project to an IIFE (required format for userscripts). `rollup-plugin-esbuild` transpiles TypeScript (ES2023 target, no type checking, no `tslib`), and `@rollup/plugin-terser` minifies unless `MINIFY=false` (`build:debug` and `dev`). `rollup-plugin-userscript-metablock` reads `meta.json` and prepends the `// ==UserScript==` header block; `BUILD_VERSION`, `UPDATE_URL` and `DOWNLOAD_URL` env vars override the version and URLs. TypeScript 7 (`tsc --noEmit`) does the type checking, in strict mode.
+Rollup (`rollup.config.js`) bundles the project to an IIFE (required format for userscripts). `rollup-plugin-esbuild` transpiles TypeScript (ES2024 target, no type checking, no `tslib`), and `@rollup/plugin-terser` minifies unless `MINIFY=false` (`build:debug` and `dev`). `rollup-plugin-userscript-metablock` reads `meta.json` and prepends the `// ==UserScript==` header block; `BUILD_VERSION`, `UPDATE_URL` and `DOWNLOAD_URL` env vars override the version and URLs. TypeScript 7 (`tsc --noEmit`) does the type checking, in strict mode (plus `noUncheckedIndexedAccess`, `erasableSyntaxOnly`, `verbatimModuleSyntax`, `noImplicitOverride`, `noUnusedLocals`).
 
 `rollup.docs.config.js` builds the assets embedded in the MkDocs site.
 
