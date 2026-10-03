@@ -223,7 +223,7 @@ export class InschoolAuthClient {
         response = await fetch(currentUrl, {
           method: currentMethod,
           headers,
-          body: currentMethod === "POST" ? currentBody : undefined,
+          ...(currentMethod === "POST" && currentBody !== undefined ? { body: currentBody } : {}),
           redirect: "manual",
           signal: controller.signal,
         });
@@ -271,13 +271,7 @@ export class LoginAuthProvider implements AuthProvider {
 
   constructor(username: string, password: string, startUrl: string, options: LoginAuthProviderOptions = {}) {
     this.authOptions = { username, password, startUrl, ...options };
-    this.client = new InschoolAuthClient({
-      usernameFields: options.usernameFields,
-      passwordFields: options.passwordFields,
-      timeoutMs: options.timeoutMs,
-      userAgent: options.userAgent,
-      debug: options.debug,
-    });
+    this.client = new InschoolAuthClient(options);
   }
 
   async authorize(init: RequestInit): Promise<void> {

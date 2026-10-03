@@ -9,6 +9,7 @@ export class ModuleLoader {
   private observer: MutationObserver;
   private mutationTimeout: number | null = null;
   private urlQueue: Promise<void> = Promise.resolve();
+  private readonly loaded = new Set<VismaModule>();
 
   private readonly modules: VismaModule[];
 
@@ -16,7 +17,7 @@ export class ModuleLoader {
     this.modules = modules;
     this.observer = new MutationObserver(() => {
       for (const mod of this.modules) {
-        if (mod._loaded) {
+        if (this.loaded.has(mod)) {
           try {
             this.injector.inject(mod);
           } catch (e) {
@@ -30,7 +31,7 @@ export class ModuleLoader {
       }
       this.mutationTimeout = window.setTimeout(() => {
         for (const mod of this.modules) {
-          if (mod._loaded) {
+          if (this.loaded.has(mod)) {
             try {
               mod.onMutation?.();
             } catch (e) {
@@ -54,9 +55,9 @@ export class ModuleLoader {
     for (const mod of this.modules) {
       const should = mod.shouldLoad(url);
 
-      if (should && !mod._loaded) {
+      if (should && !this.loaded.has(mod)) {
         await this.loadModule(mod);
-      } else if (!should && mod._loaded) {
+      } else if (!should && this.loaded.has(mod)) {
         await this.unloadModule(mod);
       }
     }
@@ -65,10 +66,10 @@ export class ModuleLoader {
   private async loadModule(mod: VismaModule): Promise<void> {
     logger.debug(`Loading ${mod.name}...`);
     try {
-      mod._loaded = true;
+      this.loaded.add(mod);
       this.injector.inject(mod);
     } catch (e) {
-      mod._loaded = false;
+      this.loaded.delete(mod);
       logger.error(`Error injecting ${mod.name}:`, e);
       return;
     }
@@ -90,7 +91,7 @@ export class ModuleLoader {
     } catch (e) {
       logger.error(`Error unloading ${mod.name}:`, e);
     } finally {
-      mod._loaded = false;
+      this.loaded.delete(mod);
     }
   }
 
