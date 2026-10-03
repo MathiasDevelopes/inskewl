@@ -148,4 +148,5 @@ function extractErrorMessage(html: string): string | null {
   return text || null;
 }
 
-export { ParsedForm, selectForm, responseHasPasswordForm, extractHtmlRedirect, extractErrorMessage };
+export type { ParsedForm };
+export { selectForm, responseHasPasswordForm, extractHtmlRedirect, extractErrorMessage };

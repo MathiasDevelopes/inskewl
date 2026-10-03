@@ -1,4 +1,4 @@
-import { TimetableType, TimetableTypeSchema } from "../types/timetable";
+import { type TimetableType, TimetableTypeSchema } from "../types/timetable";
 import type { z, ZodType } from "zod";
 import { Endpoint } from "../endpoint";
 
@@ -23,8 +23,12 @@ export class TimetableApi extends Endpoint {
   ): Promise<z.output<S>> {
     const learnerId = await this.session.getLearnerId();
 
-    // dd/mm/yyyy
-    const dateStr = week.toLocaleDateString("en-GB");
+    // dd/mm/yyyy, formatted by hand so it doesn't depend on the browser's locale data.
+    const dateStr = [
+      String(week.getDate()).padStart(2, "0"),
+      String(week.getMonth() + 1).padStart(2, "0"),
+      String(week.getFullYear()),
+    ].join("/");
 
     return this.client.getWithSchema(
       `timetablev2/learner/${learnerId}/fetch/ALL/0/current`,

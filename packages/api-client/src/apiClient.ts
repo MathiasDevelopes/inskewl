@@ -1,13 +1,11 @@
 import type { z, ZodType } from "zod";
 import { createLogger } from "@inskewl/core";
-import { AuthProvider } from "./authProvider";
+import type { AuthProvider } from "./authProvider";
 
 const logger = createLogger("ApiClient");
 
-export enum Method {
-  GET = "GET",
-  POST = "POST",
-}
+export const Method = { GET: "GET", POST: "POST" } as const;
+export type Method = (typeof Method)[keyof typeof Method];
 
 type RequestOptions = {
   headers?: Record<string, string>;
@@ -15,7 +13,13 @@ type RequestOptions = {
 };
 
 export class ApiClient {
-  constructor(private readonly baseUrl: URL, private readonly authProvider: AuthProvider) {}
+  private readonly baseUrl: URL;
+  private readonly authProvider: AuthProvider;
+
+  constructor(baseUrl: URL, authProvider: AuthProvider) {
+    this.baseUrl = baseUrl;
+    this.authProvider = authProvider;
+  }
 
   private async request<T>(
     method: Method,
@@ -49,9 +53,8 @@ export class ApiClient {
     if (!res.ok) {
       // Log status and path only; the response body may contain student data.
       logger.warn(`${method} ${url.pathname} failed with ${res.status}`);
-      throw new Error(
-        `inskewl: api ${path} went ${res.status}...\n${await res.text()}`,
-      );
+      // Keep the body out of the message too, so it can't leak into logs or alerts.
+      throw new Error(`inskewl: api ${path} went ${res.status}`);
     }
 
     logger.debug(`${method} ${url.pathname} -> ${res.status}`);

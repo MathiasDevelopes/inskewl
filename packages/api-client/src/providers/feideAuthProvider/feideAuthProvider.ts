@@ -4,8 +4,8 @@ Uses a headless fetch-based client to follow redirects, submit forms, and mainta
 The flow is designed to be robust against variations in the HTML of the login pages, and to handle common SSO patterns (e.g., identity-provider selection, SAML responses, etc.).
 */
 
-import { AuthProvider } from "../../authProvider";
-import { ParsedForm, selectForm, responseHasPasswordForm, extractHtmlRedirect, extractErrorMessage } from "./html";
+import type { AuthProvider } from "../../authProvider";
+import { type ParsedForm, selectForm, responseHasPasswordForm, extractHtmlRedirect, extractErrorMessage } from "./html";
 import { CookieJar, getSetCookieHeaders, cookieNames } from "./cookie";
 
 export interface InschoolAuthOptions {

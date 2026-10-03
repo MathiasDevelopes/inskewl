@@ -1,4 +1,4 @@
-import { Injectable } from "./core/Injectable";
+import type { Injectable } from "./core/Injectable";
 import { VismaModule } from "./core/VismaModule";
 
 export class TestModule extends VismaModule {
